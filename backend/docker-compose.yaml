@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+
+  adminer:
+    image: docker.io/adminer:latest
+    container_name: db-admin
+    restart: always
+    ports:
+      - "8080:8080"
+
+  db:
+    image: docker.io/mariadb:latest
+    container_name: db
+    restart: always
+    command: --init-file /data/application/init.sql
+    volumes:
+      - ./init.sql:/data/application/init.sql
+      - ./db-data:/var/lib/mysql
+    ports:
+      - "8081:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: secret
+      MARIADB_DATABASE: KONNECT
