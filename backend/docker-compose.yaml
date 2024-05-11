@@ -17,8 +17,6 @@ services:
     volumes:
       - ./init.sql:/data/application/init.sql
       - ./db-data:/var/lib/mysql
-    ports:
-      - "8081:3306"
     environment:
       MARIADB_ROOT_PASSWORD: secret
       MARIADB_DATABASE: KONNECT
