@@ -1,36 +1,30 @@
-use axum::{http::StatusCode, Json};
-use serde::{Deserialize, Serialize};
-// basic handler that responds with a static string
+use super::schema::*;
+use axum::{extract::State, http::StatusCode, Json};
+use sqlx::PgPool;
 
-pub async fn root() -> &'static str {
-    "Hello, World!"
+#[derive(Clone)]
+pub struct AppState {
+    pub pool: PgPool,
 }
 
 pub async fn create_user(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
-    Json(payload): Json<CreateUser>,
+    State(pool): State<AppState>,
+    Json(payload): Json<NewUser>,
 ) -> (StatusCode, Json<User>) {
-    // insert your application logic here
     let user = User {
-        id: 1337,
+        email: payload.email,
         username: payload.username,
+        address: payload.address,
+        passwd: payload.passwd,
+        profile: String::from("abc"),
+        contact_no: payload.contact_no,
     };
+    sqlx::query!(
+        "INSERT INTO USERS VALUES ('ABBA','HARMONIUM','KHATE','THE','ABE','2024-05-20','123423')",
+    )
+    .execute(&pool.pool)
+    .await
+    .expect("Cannot create user");
 
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
     (StatusCode::CREATED, Json(user))
-}
-
-// the input to our `create_user` handler
-#[derive(Deserialize)]
-pub struct CreateUser {
-    username: String,
-}
-
-// the output to our `create_user` handler
-#[derive(Serialize)]
-pub struct User {
-    id: u64,
-    username: String,
 }
