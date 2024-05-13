@@ -1,16 +1,19 @@
 version: "3"
 
 services:
-
-  mongo:
-    image: mongo
+  database:
+    image: postgres
     container_name: db
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: secret
-    ports:
-      - 27017:27017
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: KONNECT
     volumes:
-      - ./backend/db-data/:/data/db
+      - ./backend/pgsetup/:/docker-entrypoint-initdb.d/
+      - ./backend/pgdata/:/var/lib/postgresql/data
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
