@@ -1,4 +1,6 @@
-use super::schema::{AppState, OTP};
+use crate::SharedState;
+
+use super::schema::OTP;
 use axum::{self, extract::State, http::StatusCode};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
@@ -13,8 +15,7 @@ fn generate_otp() -> u16 {
     otp
 }
 
-pub fn verify_otp(email: String, otp: u16, mut otp_storage: HashMap<String, OTP>) -> bool {
-    // let stored_otp = &otp_storage.get(&email).unwrap_or_else();
+pub fn verify_otp(email: String, otp: u16, otp_storage: &mut HashMap<String, OTP>) -> bool {
     let stored_otp = &otp_storage.remove(&email);
     println!("{:?}", otp_storage);
     println!("Hallo ");
@@ -32,8 +33,9 @@ pub fn verify_otp(email: String, otp: u16, mut otp_storage: HashMap<String, OTP>
     }
 }
 
-pub async fn send_otp(State(mut state): State<AppState>, payload: String) -> StatusCode {
+pub async fn send_otp(State(state): State<SharedState>, payload: String) -> StatusCode {
     let mailid = "kampuskonnect@zohomail.in";
+    let mut st = state.write().await;
     let otp = generate_otp();
 
     let email = Message::builder()
@@ -47,7 +49,7 @@ pub async fn send_otp(State(mut state): State<AppState>, payload: String) -> Sta
         )))
         .unwrap();
 
-    let creds = Credentials::new(mailid.to_owned(), state.mail_pass.to_owned());
+    let creds = Credentials::new(mailid.to_owned(), st.mail_pass.to_owned());
 
     // Open a remote connection to mail
     let mailer = SmtpTransport::relay("smtp.zoho.in")
@@ -59,7 +61,7 @@ pub async fn send_otp(State(mut state): State<AppState>, payload: String) -> Sta
     match mailer.send(&email) {
         Ok(_) => {
             let exp = SystemTime::now() + Duration::from_secs(10 * 60);
-            state.otp_storage.insert(
+            st.otp_storage.insert(
                 payload.clone(),
                 OTP {
                     otp,
@@ -67,7 +69,7 @@ pub async fn send_otp(State(mut state): State<AppState>, payload: String) -> Sta
                     exp,
                 },
             );
-            println!("{:?}", state.otp_storage);
+            println!("{:?}", st.otp_storage);
             StatusCode::OK
         }
         Err(_) => StatusCode::SERVICE_UNAVAILABLE,

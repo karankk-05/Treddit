@@ -11,7 +11,9 @@ use dotenv::dotenv;
 use schema::{AppState, OTP};
 use sqlx::postgres::PgPoolOptions;
 use std::{collections::HashMap, env, sync::Arc};
-use tokio::sync::{Mutex, RwLock};
+use tokio::sync::RwLock;
+
+type SharedState = Arc<RwLock<AppState>>;
 
 #[tokio::main]
 async fn main() {
@@ -30,13 +32,13 @@ async fn main() {
         mail_pass,
         otp_storage,
     };
-    // let state = Arc::new(RwLock::new(st));
+    let state = Arc::new(RwLock::new(st));
 
     tracing_subscriber::fmt::init();
     let app = Router::new()
-        .route("/users", post(create_user))
-        .route("/otp", post(auth::send_otp))
-        .with_state(st);
+        .route("/users", post(create_user).with_state(Arc::clone(&state)))
+        .route("/otp", post(auth::send_otp).with_state(Arc::clone(&state)))
+        .with_state(Arc::clone(&state));
 
     println!("Listening on port: 3000");
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
