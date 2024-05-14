@@ -1,4 +1,26 @@
 use serde::{Deserialize, Serialize};
+use sqlx::PgPool;
+use std::collections::HashMap;
+use std::time::SystemTime;
+
+#[derive(Clone, Debug)]
+pub struct OTP {
+    pub otp: u16,
+    pub email: String,
+    pub exp: SystemTime,
+}
+impl OTP {
+    pub fn expired(&self) -> bool {
+        SystemTime::now() >= self.exp
+    }
+}
+
+#[derive(Clone)]
+pub struct AppState {
+    pub pool: PgPool,
+    pub mail_pass: String,
+    pub otp_storage: HashMap<String, OTP>,
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct NewUser {
@@ -8,6 +30,7 @@ pub struct NewUser {
     pub address: String,
     pub profile: String,
     pub contact_no: String,
+    pub otp: u16,
 }
 
 #[derive(Serialize, Deserialize)]

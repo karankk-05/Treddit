@@ -1,17 +1,11 @@
+use super::auth::verify_otp;
 use super::schema::*;
 use axum::{extract::State, http::StatusCode, Json};
-use sqlx::PgPool;
-
-#[derive(Clone)]
-pub struct AppState {
-    pub pool: PgPool,
-    pub mail_pass: String,
-}
 
 pub async fn create_user(
-    State(pool): State<AppState>,
+    State(state): State<AppState>,
     Json(payload): Json<NewUser>,
-) -> (StatusCode, Json<User>) {
+) -> Result<(StatusCode, Json<User>), StatusCode> {
     let user = User {
         email: payload.email,
         username: payload.username,
@@ -20,12 +14,22 @@ pub async fn create_user(
         profile: String::from("abc"),
         contact_no: payload.contact_no,
     };
-    sqlx::query!(
-        "INSERT INTO USERS VALUES ('ABBA','HARMONIUM','KHATE','THE','ABE','2024-05-20','123423')",
-    )
-    .execute(&pool.pool)
-    .await
-    .expect("Cannot create user");
 
-    (StatusCode::CREATED, Json(user))
+    if verify_otp(user.email.clone(), payload.otp, state.otp_storage) {
+        sqlx::query!("INSERT INTO USERS(email,username,passwd,address,profile_pic_path,contact_no) VALUES ($1,$2,$3,$4,$5,$6)",
+        user.email,
+        user.username,
+        user.passwd,
+        user.address,
+        user.profile,
+        user.contact_no,
+    )
+        .execute(&state.pool)
+        .await
+        .expect("Cannot create user");
+
+        Ok((StatusCode::CREATED, Json(user)))
+    } else {
+        Err(StatusCode::TOO_MANY_REQUESTS)
+    }
 }

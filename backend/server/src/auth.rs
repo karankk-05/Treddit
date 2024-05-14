@@ -1,9 +1,11 @@
-use super::api::AppState;
+use super::schema::{AppState, OTP};
 use axum::{self, extract::State, http::StatusCode};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 use rand::Rng;
+use std::collections::HashMap;
+use std::time::{Duration, SystemTime};
 
 fn generate_otp() -> u16 {
     let mut rng = rand::thread_rng();
@@ -11,24 +13,43 @@ fn generate_otp() -> u16 {
     otp
 }
 
-pub async fn send_otp(State(state): State<AppState>, payload: String) -> StatusCode {
+pub fn verify_otp(email: String, otp: u16, mut otp_storage: HashMap<String, OTP>) -> bool {
+    // let stored_otp = &otp_storage.get(&email).unwrap_or_else();
+    let stored_otp = &otp_storage.remove(&email);
+    println!("{:?}", otp_storage);
+    println!("Hallo ");
+    match stored_otp {
+        Some(val) => {
+            println!("bacho");
+            println!("{}{}{}{}", otp, email, val.otp, val.email);
+            if !val.expired() && val.email == email && val.otp == otp {
+                true
+            } else {
+                false
+            }
+        }
+        None => false,
+    }
+}
+
+pub async fn send_otp(State(mut state): State<AppState>, payload: String) -> StatusCode {
+    let mailid = "kampuskonnect@zohomail.in";
+    let otp = generate_otp();
+
     let email = Message::builder()
-        .from("kampuskonnect@zohomail.in".parse().unwrap())
-        .to(payload.parse().unwrap())
+        .from(mailid.to_owned().parse().unwrap())
+        .to(payload.to_owned().parse().unwrap())
         .subject(String::from("OTP recieved!"))
         .header(ContentType::TEXT_PLAIN)
         .body(String::from(format!(
             "Your OTP for Kampus Konnect is {}",
-            generate_otp()
+            &otp
         )))
         .unwrap();
 
-    let creds = Credentials::new(
-        "kampuskonnect@zohomail.in".to_owned(),
-        state.mail_pass.to_owned(),
-    );
+    let creds = Credentials::new(mailid.to_owned(), state.mail_pass.to_owned());
 
-    // Open a remote connection to gmail
+    // Open a remote connection to mail
     let mailer = SmtpTransport::relay("smtp.zoho.in")
         .unwrap()
         .credentials(creds)
@@ -36,7 +57,19 @@ pub async fn send_otp(State(state): State<AppState>, payload: String) -> StatusC
 
     // Send the email
     match mailer.send(&email) {
-        Ok(_) => StatusCode::OK,
+        Ok(_) => {
+            let exp = SystemTime::now() + Duration::from_secs(10 * 60);
+            state.otp_storage.insert(
+                payload.clone(),
+                OTP {
+                    otp,
+                    email: payload,
+                    exp,
+                },
+            );
+            println!("{:?}", state.otp_storage);
+            StatusCode::OK
+        }
         Err(_) => StatusCode::SERVICE_UNAVAILABLE,
     }
 }
