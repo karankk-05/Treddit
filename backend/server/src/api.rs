@@ -5,6 +5,7 @@ use sqlx::PgPool;
 #[derive(Clone)]
 pub struct AppState {
     pub pool: PgPool,
+    pub mail_pass: String,
 }
 
 pub async fn create_user(
