@@ -1,25 +1,32 @@
-CREATE TABLE IF NOT EXISTS USERS (
-  EMAIL VARCHAR(50),
-  USERNAME VARCHAR(255) NOT NULL,
-  PASSWD VARCHAR(255) NOT NULL,
-  ADDRESS VARCHAR(255) NOT NULL,
-  PROFILE_PIC_PATH VARCHAR(100),
-  OPEN_TIMESTAMP timestamp default (timezone('utc', now())) not null,
-  CONTACT_NO CHAR(10) NOT NULL,
+create table if not exists users (
+  email varchar(50),
+  username varchar(255) not null,
+  address varchar(255) not null,
+  profile_pic_path varchar(100),
+  open_timestamp timestamp default (timezone('utc', now())) not null,
+  reports int default 0 not null,
+  contact_no char(10) not null,
 
-  PRIMARY KEY(EMAIL)
+  primary key(email)
 );
 
-CREATE TABLE IF NOT EXISTS POSTS (
-  POST_ID INT generated always as identity,
-  OWNER VARCHAR(50) NOT NULL,
-  TITLE VARCHAR(255) NOT NULL,
-  BODY TEXT,
-  OPEN_TIMESTAMP timestamp default (timezone('utc', now())) not null,
-  PRICE INT NOT NULL,
-  IMAGE_PATHS TEXT[],
+create table if not exists login(
+  email varchar(50),
+  passwd bytea not null,
 
-  PRIMARY KEY(POST_ID),
-  FOREIGN KEY(OWNER) REFERENCES USERS(EMAIL)
+  FOREIGN KEY(email) REFERENCES users(email)
 );
 
+create table if not exists posts (
+  post_id int generated always as identity,
+  owner varchar(50) not null,
+  title varchar(255) not null,
+  body text,
+  open_timestamp timestamp default (timezone('utc', now())) not null,
+  price int not null,
+  reports int default 0 not null,
+  image_paths text[],
+
+  primary key(post_id),
+  foreign key(owner) references users(email)
+);

@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: KONNECT
     volumes:
       - ./backend/pgsetup/:/docker-entrypoint-initdb.d/
-      - ./backend/pgdata/:/var/lib/postgresql/data
+      # - ./backend/pgdata/:/var/lib/postgresql/data
     ports:
       - 5432:5432
 

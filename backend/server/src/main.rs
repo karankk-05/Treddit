@@ -2,13 +2,10 @@ mod api;
 mod auth;
 mod schema;
 
-use api::create_user;
-use axum::{
-    routing::{get, post},
-    Router,
-};
+use auth::create_user;
+use axum::{routing::post, Router};
 use dotenv::dotenv;
-use schema::{AppState, OTP};
+use schema::{AppState, Otp};
 use sqlx::postgres::PgPoolOptions;
 use std::{collections::HashMap, env, sync::Arc};
 use tokio::sync::RwLock;
@@ -24,7 +21,7 @@ async fn main() {
         .connect(&db_url)
         .await
         .expect("Cannot connect to db");
-    let otp_storage: HashMap<String, OTP> = HashMap::new();
+    let otp_storage: HashMap<String, Otp> = HashMap::new();
     let mail_pass = env::var("MAIL_PASSWD").expect("Mail password not found");
 
     let st = AppState {

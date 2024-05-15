@@ -4,12 +4,12 @@ use std::collections::HashMap;
 use std::time::SystemTime;
 
 #[derive(Clone, Debug)]
-pub struct OTP {
+pub struct Otp {
     pub otp: u16,
     pub email: String,
     pub exp: SystemTime,
 }
-impl OTP {
+impl Otp {
     pub fn expired(&self) -> bool {
         SystemTime::now() >= self.exp
     }
@@ -19,7 +19,7 @@ impl OTP {
 pub struct AppState {
     pub pool: PgPool,
     pub mail_pass: String,
-    pub otp_storage: HashMap<String, OTP>,
+    pub otp_storage: HashMap<String, Otp>,
 }
 
 #[derive(Serialize, Deserialize)]
