@@ -38,6 +38,12 @@ pub struct NewUser {
     pub otp: u16,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Login {
+    pub email: String,
+    pub passwd: String,
+}
+
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Post {
     pub id: i32,

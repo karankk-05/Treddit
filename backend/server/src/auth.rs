@@ -3,11 +3,11 @@ use crate::SharedState;
 use super::schema::*;
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
-    Argon2, PasswordHash, PasswordVerifier,
+    Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
 use axum::{extract::State, http::StatusCode, Json};
+use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
-use lettre::{address, message::header::ContentType};
 use lettre::{Message, SmtpTransport, Transport};
 use rand::Rng;
 use sqlx::PgPool;
@@ -19,16 +19,27 @@ fn generate_otp() -> u16 {
     rng.gen_range(1000..=9999)
 }
 
+pub async fn login(State(state): State<SharedState>, Json(payload): Json<Login>) -> StatusCode {
+    let st = &state.read().await;
+    if is_passwd_correct(&st.pool, payload.email, payload.passwd).await {
+        println!("Logged in");
+        StatusCode::OK
+    } else {
+        StatusCode::NOT_FOUND
+    }
+}
+
 async fn save_passwd(pool: &PgPool, email: &String, passwd: &String) -> Result<(), StatusCode> {
-    let salt = SaltString::generate(&mut OsRng).to_string();
-    let mut output_key_material = [0u8; 32]; // Can be any desired size
-    Argon2::default()
-        .hash_password_into(passwd.as_bytes(), salt.as_bytes(), &mut output_key_material)
-        .expect("Cannot hash");
+    let salt = SaltString::generate(&mut OsRng);
+    let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
+        Ok(val) => val.to_string(),
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+
     match sqlx::query!(
         "insert into login(email,passwd) values ($1,$2) ",
         email,
-        &output_key_material
+        hash
     )
     .execute(pool)
     .await
@@ -38,17 +49,21 @@ async fn save_passwd(pool: &PgPool, email: &String, passwd: &String) -> Result<(
     }
 }
 
-async fn is_passwd_correct(pool: PgPool, email: String, passwd: String) -> bool {
-    let q = sqlx::query!("select passwd from login where email = $1", email)
-        .fetch_one(&pool)
+async fn is_passwd_correct(pool: &PgPool, email: String, passwd: String) -> bool {
+    let record = match sqlx::query!("select passwd from login where email = $1", email)
+        .fetch_one(pool)
         .await
-        .unwrap();
-    let pass = String::from_utf8(q.passwd.to_vec()).unwrap();
-    let parsed_hash = PasswordHash::new(pass.as_str());
-    match Argon2::default().verify_password(passwd.as_bytes(), &parsed_hash.unwrap()) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+    {
+        Ok(val) => val,
+        Err(_) => return false,
+    };
+    let parsed_hash = match PasswordHash::new(&record.passwd) {
+        Ok(val) => val,
+        Err(_) => return false,
+    };
+    Argon2::default()
+        .verify_password(passwd.as_bytes(), &parsed_hash)
+        .is_ok()
 }
 
 fn verify_otp(email: String, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
@@ -60,6 +75,7 @@ fn verify_otp(email: String, otp: u16, otp_storage: &mut HashMap<String, Otp>) -
 }
 
 pub async fn send_otp(State(state): State<SharedState>, payload: String) -> StatusCode {
+    // TODO implement wait for second time otp
     let mailid = "kampuskonnect@zohomail.in";
     let mut st = state.write().await;
     let otp = generate_otp();

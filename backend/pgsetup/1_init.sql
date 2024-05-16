@@ -12,7 +12,7 @@ create table if not exists users (
 
 create table if not exists login(
   email varchar(50),
-  passwd bytea not null,
+  passwd char(97) not null,
 
   FOREIGN KEY(email) REFERENCES users(email)
 );
