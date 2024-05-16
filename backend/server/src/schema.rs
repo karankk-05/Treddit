@@ -44,6 +44,17 @@ pub struct LoginInfo {
     pub passwd: String,
 }
 
+#[derive(Serialize)]
+pub struct LoginResponse {
+    pub token: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Claims {
+    pub email: String,
+    pub exp: SystemTime,
+}
+
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Post {
     pub id: i32,

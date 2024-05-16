@@ -5,7 +5,8 @@ use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode, response::Result, Json};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
@@ -19,13 +20,28 @@ fn generate_otp() -> u16 {
     rng.gen_range(1000..=9999)
 }
 
-pub async fn login(State(state): State<SharedState>, Json(payload): Json<LoginInfo>) -> StatusCode {
+pub async fn login(
+    State(state): State<SharedState>,
+    Json(payload): Json<LoginInfo>,
+) -> Result<Json<LoginResponse>, StatusCode> {
     let st = &state.read().await;
-    if is_passwd_correct(&st.pool, payload.email, payload.passwd).await {
-        println!("Logged in");
-        StatusCode::OK
+    if is_passwd_correct(&st.pool, payload.email.clone(), payload.passwd.clone()).await {
+        let claims = Claims {
+            email: payload.email,
+            exp: SystemTime::now() + Duration::from_secs(60 * 60),
+        };
+        // https://www.youtube.com/watch?v=p2ljQrRl0Mg&t=774s
+        let token = match encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret("secret".as_ref()),
+        ) {
+            Ok(tok) => tok,
+            Err(_) => return Err(StatusCode::UNAUTHORIZED),
+        };
+        Ok(Json(LoginResponse { token }))
     } else {
-        StatusCode::NOT_FOUND
+        Err(StatusCode::NOT_FOUND)
     }
 }
 
