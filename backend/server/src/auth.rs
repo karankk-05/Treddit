@@ -6,8 +6,8 @@ use argon2::{
     Argon2, PasswordHash, PasswordVerifier,
 };
 use axum::{extract::State, http::StatusCode, Json};
-use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
+use lettre::{address, message::header::ContentType};
 use lettre::{Message, SmtpTransport, Transport};
 use rand::Rng;
 use sqlx::PgPool;
@@ -102,34 +102,31 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
 pub async fn create_user(
     State(state): State<SharedState>,
     Json(payload): Json<NewUser>,
-) -> Result<(StatusCode, Json<User>), StatusCode> {
+) -> StatusCode {
     let mut st = state.write().await;
-    let user = User {
-        email: payload.email,
-        username: payload.username,
-        address: payload.address,
-        passwd: payload.passwd,
-        profile: String::from("abc"),
-        contact_no: payload.contact_no,
-    };
+    let new_user: NewUser = payload;
+    let user = &new_user.user;
 
-    if verify_otp(user.email.clone(), payload.otp, &mut st.otp_storage) {
-        sqlx::query!("INSERT INTO USERS(email,username,address,profile_pic_path,contact_no) VALUES ($1,$2,$3,$4,$5)",
-        user.email,
-        user.username,
-        user.address,
-        user.profile,
-        user.contact_no,
-    )
+    if verify_otp(
+        new_user.user.email.clone(),
+        new_user.otp,
+        &mut st.otp_storage,
+    ) {
+        sqlx::query!("INSERT INTO USERS(email,username,address,profile_pic_path,contact_no) VALUES ($1,$2,$3,$4,$5)"
+        ,user.email
+        ,user.username
+        ,user.address
+        ,user.profile
+        ,user.contact_no)
         .execute(&st.pool)
         .await
         .expect("Cannot create user");
-        save_passwd(&st.pool, &user.email, &user.passwd)
+        save_passwd(&st.pool, &new_user.user.email, &new_user.user.passwd)
             .await
             .expect("Cannot save password");
 
-        Ok((StatusCode::CREATED, Json(user)))
+        StatusCode::CREATED
     } else {
-        Err(StatusCode::EXPECTATION_FAILED)
+        StatusCode::EXPECTATION_FAILED
     }
 }

@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use sqlx::PgPool;
+use sqlx::{prelude::FromRow, PgPool};
 use std::collections::HashMap;
 use std::time::SystemTime;
 
@@ -22,18 +22,7 @@ pub struct AppState {
     pub otp_storage: HashMap<String, Otp>,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct NewUser {
-    pub email: String,
-    pub username: String,
-    pub passwd: String,
-    pub address: String,
-    pub profile: String,
-    pub contact_no: String,
-    pub otp: u16,
-}
-
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, FromRow)]
 pub struct User {
     pub email: String,
     pub username: String,
@@ -44,6 +33,12 @@ pub struct User {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct NewUser {
+    pub user: User,
+    pub otp: u16,
+}
+
+#[derive(Serialize, Deserialize, FromRow)]
 pub struct Post {
     pub id: i32,
     pub owner: String,

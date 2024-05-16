@@ -1,4 +1,3 @@
-mod api;
 mod auth;
 mod schema;
 
@@ -33,8 +32,8 @@ async fn main() {
 
     tracing_subscriber::fmt::init();
     let app = Router::new()
-        .route("/users", post(create_user).with_state(Arc::clone(&state)))
-        .route("/otp", post(auth::send_otp).with_state(Arc::clone(&state)))
+        .route("/users", post(create_user))
+        .route("/otp", post(auth::send_otp))
         .with_state(Arc::clone(&state));
 
     println!("Listening on port: 3000");
