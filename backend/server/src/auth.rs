@@ -19,7 +19,7 @@ fn generate_otp() -> u16 {
     rng.gen_range(1000..=9999)
 }
 
-pub async fn login(State(state): State<SharedState>, Json(payload): Json<Login>) -> StatusCode {
+pub async fn login(State(state): State<SharedState>, Json(payload): Json<LoginInfo>) -> StatusCode {
     let st = &state.read().await;
     if is_passwd_correct(&st.pool, payload.email, payload.passwd).await {
         println!("Logged in");

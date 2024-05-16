@@ -39,7 +39,7 @@ pub struct NewUser {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Login {
+pub struct LoginInfo {
     pub email: String,
     pub passwd: String,
 }
