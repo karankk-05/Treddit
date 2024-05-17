@@ -12,6 +12,7 @@ use schema::{AppState, Otp};
 use sqlx::postgres::PgPoolOptions;
 use std::{collections::HashMap, env, sync::Arc};
 use tokio::sync::RwLock;
+use tower_http::services::ServeDir;
 
 type SharedState = Arc<RwLock<AppState>>;
 
@@ -41,7 +42,8 @@ async fn main() {
         .route("/otp", post(auth::signup::send_otp))
         .route("/login", post(auth::login::login))
         .route("/users/*path", get(user::get_user))
-        .with_state(Arc::clone(&state));
+        .with_state(Arc::clone(&state))
+        .nest_service("/res", ServeDir::new("res"));
 
     println!("Listening on port: {port}");
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}"))
