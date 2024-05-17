@@ -1,12 +1,9 @@
-use crate::SharedState;
-
-use super::schema::*;
+use super::super::super::{schema::*, SharedState};
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
-    Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
+    Argon2, PasswordHasher,
 };
 use axum::{extract::State, http::StatusCode, response::Result, Json};
-use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
@@ -15,37 +12,7 @@ use sqlx::PgPool;
 use std::collections::HashMap;
 use std::time::{Duration, SystemTime};
 
-fn generate_otp() -> u16 {
-    let mut rng = rand::thread_rng();
-    rng.gen_range(1000..=9999)
-}
-
-pub async fn login(
-    State(state): State<SharedState>,
-    Json(payload): Json<LoginInfo>,
-) -> Result<Json<LoginResponse>, StatusCode> {
-    let st = &state.read().await;
-    if is_passwd_correct(&st.pool, payload.email.clone(), payload.passwd.clone()).await {
-        let claims = Claims {
-            email: payload.email,
-            exp: SystemTime::now() + Duration::from_secs(60 * 60),
-        };
-        // https://www.youtube.com/watch?v=p2ljQrRl0Mg&t=774s
-        let token = match encode(
-            &Header::default(),
-            &claims,
-            &EncodingKey::from_secret("secret".as_ref()),
-        ) {
-            Ok(tok) => tok,
-            Err(_) => return Err(StatusCode::UNAUTHORIZED),
-        };
-        Ok(Json(LoginResponse { token }))
-    } else {
-        Err(StatusCode::NOT_FOUND)
-    }
-}
-
-async fn save_passwd(pool: &PgPool, email: &String, passwd: &String) -> Result<(), StatusCode> {
+async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
     let salt = SaltString::generate(&mut OsRng);
     let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
         Ok(val) => val.to_string(),
@@ -62,31 +29,6 @@ async fn save_passwd(pool: &PgPool, email: &String, passwd: &String) -> Result<(
     {
         Ok(_) => Ok(()),
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
-    }
-}
-
-async fn is_passwd_correct(pool: &PgPool, email: String, passwd: String) -> bool {
-    let record = match sqlx::query!("select passwd from login where email = $1", email)
-        .fetch_one(pool)
-        .await
-    {
-        Ok(val) => val,
-        Err(_) => return false,
-    };
-    let parsed_hash = match PasswordHash::new(&record.passwd) {
-        Ok(val) => val,
-        Err(_) => return false,
-    };
-    Argon2::default()
-        .verify_password(passwd.as_bytes(), &parsed_hash)
-        .is_ok()
-}
-
-fn verify_otp(email: String, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
-    let stored_otp = &otp_storage.remove(&email);
-    match stored_otp {
-        Some(val) => !val.expired() && val.email == email && val.otp == otp,
-        None => false,
     }
 }
 
@@ -161,4 +103,17 @@ pub async fn create_user(
     } else {
         StatusCode::EXPECTATION_FAILED
     }
+}
+
+fn verify_otp(email: String, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
+    let stored_otp = &otp_storage.remove(&email);
+    match stored_otp {
+        Some(val) => !val.expired() && val.email == email && val.otp == otp,
+        None => false,
+    }
+}
+
+fn generate_otp() -> u16 {
+    let mut rng = rand::thread_rng();
+    rng.gen_range(1000..=9999)
 }

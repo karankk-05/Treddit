@@ -1,6 +1,7 @@
-mod auth;
+mod api;
 mod schema;
 
+use api::auth;
 use axum::{routing::post, Router};
 use dotenv::dotenv;
 use schema::{AppState, Otp};
@@ -31,9 +32,9 @@ async fn main() {
 
     tracing_subscriber::fmt::init();
     let app = Router::new()
-        .route("/new", post(auth::create_user))
-        .route("/otp", post(auth::send_otp))
-        .route("/login", post(auth::login))
+        .route("/new", post(auth::signup::create_user))
+        .route("/otp", post(auth::signup::send_otp))
+        .route("/login", post(auth::login::login))
         .with_state(Arc::clone(&state));
 
     println!("Listening on port: 3000");
