@@ -42,6 +42,7 @@ async fn main() {
         .route("/otp", post(auth::signup::send_otp))
         .route("/login", post(auth::login::login))
         .route("/users/*path", get(user::get_user))
+        .route("/pic", post(user::change_profile_pic))
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"));
 
