@@ -1,26 +1,27 @@
 create table if not exists users (
-  email varchar(50),
-  username varchar(255) not null,
-  address varchar(255) not null,
-  profile_pic_path varchar(100),
+  email text,
+  username text not null,
+  address text not null,
+  profile_pic_path text,
   open_timestamp timestamp default (timezone('utc', now())) not null,
   reports int default 0 not null,
-  contact_no char(10) not null,
+  contact_no varchar(10) not null,
 
   primary key(email)
 );
 
 create table if not exists login(
-  email varchar(50),
-  passwd char(97) not null,
+  email text,
+  passwd text not null,
 
+  PRIMARY KEY(email),
   FOREIGN KEY(email) REFERENCES users(email)
 );
 
 create table if not exists posts (
   post_id int generated always as identity,
-  owner varchar(50) not null,
-  title varchar(255) not null,
+  owner text not null,
+  title text not null,
   body text,
   open_timestamp timestamp default (timezone('utc', now())) not null,
   price int not null,
