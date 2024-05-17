@@ -44,7 +44,13 @@ pub struct UserDisp {
 
 #[derive(Serialize, Deserialize)]
 pub struct NewUser {
-    pub user: User,
+    pub email: String,
+    pub username: String,
+    pub passwd: String,
+    pub address: String,
+    pub profile_pic_path: String,
+    pub contact_no: String,
+    pub reports: i32,
     pub otp: u16,
 }
 

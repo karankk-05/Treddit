@@ -82,13 +82,9 @@ pub async fn create_user(
 ) -> StatusCode {
     let mut st = state.write().await;
     let new_user: NewUser = payload;
-    let user = &new_user.user;
+    let user = &new_user;
 
-    if verify_otp(
-        new_user.user.email.clone(),
-        new_user.otp,
-        &mut st.otp_storage,
-    ) {
+    if verify_otp(new_user.email.clone(), new_user.otp, &mut st.otp_storage) {
         sqlx::query!("INSERT INTO USERS(email,username,address,profile_pic_path,contact_no) VALUES ($1,$2,$3,$4,$5)"
         ,user.email
         ,user.username
@@ -98,7 +94,7 @@ pub async fn create_user(
         .execute(&st.pool)
         .await
         .expect("Cannot create user");
-        save_passwd(&st.pool, &new_user.user.email, &new_user.user.passwd)
+        save_passwd(&st.pool, &new_user.email, &new_user.passwd)
             .await
             .expect("Cannot save password");
 
