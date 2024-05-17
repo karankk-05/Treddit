@@ -28,7 +28,17 @@ pub struct User {
     pub username: String,
     pub passwd: String,
     pub address: String,
-    pub profile: String,
+    pub profile_pic_path: String,
+    pub contact_no: String,
+    pub reports: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct UserDisp {
+    pub email: String,
+    pub username: String,
+    pub address: String,
+    pub profile_pic_path: String,
     pub contact_no: String,
 }
 
@@ -63,4 +73,5 @@ pub struct Post {
     pub body: String,
     pub price: i32,
     pub images: Vec<String>,
+    pub reports: i32,
 }

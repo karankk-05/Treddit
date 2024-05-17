@@ -9,7 +9,7 @@ dotenv = "0.15.0"
 lettre = "0.11.7"
 rand = "0.8.5"
 serde = {version="1.0.201",features=["derive"]}
-sqlx = {version="0.7.4",features=["postgres","runtime-tokio-rustls"]}
+sqlx = {version="0.7.4",features=["postgres","runtime-tokio-rustls","time"]}
 tokio = {version="1.37.0",features=["rt-multi-thread","macros"]}
 tracing-subscriber = "0.3.18"
 argon2 = "0.5.3"

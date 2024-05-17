@@ -3,7 +3,12 @@ use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHasher,
 };
-use axum::{extract::State, http::StatusCode, response::Result, Json};
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    response::Result,
+    Json,
+};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
@@ -69,7 +74,10 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
             println!("{:?}", st.otp_storage);
             StatusCode::OK
         }
-        Err(_) => StatusCode::SERVICE_UNAVAILABLE,
+        Err(_) => {
+            println!("Cannot mail");
+            StatusCode::SERVICE_UNAVAILABLE
+        }
     }
 }
 
@@ -90,7 +98,7 @@ pub async fn create_user(
         ,user.email
         ,user.username
         ,user.address
-        ,user.profile
+        ,user.profile_pic_path
         ,user.contact_no)
         .execute(&st.pool)
         .await

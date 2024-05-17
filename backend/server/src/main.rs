@@ -2,7 +2,11 @@ mod api;
 mod schema;
 
 use api::auth;
-use axum::{routing::post, Router};
+use api::user;
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use dotenv::dotenv;
 use schema::{AppState, Otp};
 use sqlx::postgres::PgPoolOptions;
@@ -33,9 +37,10 @@ async fn main() {
 
     tracing_subscriber::fmt::init();
     let app = Router::new()
-        .route("/new", post(auth::signup::create_user))
+        .route("/new/user", post(auth::signup::create_user))
         .route("/otp", post(auth::signup::send_otp))
         .route("/login", post(auth::login::login))
+        .route("/users/*path", get(user::get_user))
         .with_state(Arc::clone(&state));
 
     println!("Listening on port: {port}");
