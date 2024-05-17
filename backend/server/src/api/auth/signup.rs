@@ -81,19 +81,22 @@ pub async fn create_user(
     Json(payload): Json<NewUser>,
 ) -> StatusCode {
     let mut st = state.write().await;
+
     let new_user: NewUser = payload;
     let user = &new_user;
 
-    if verify_otp(new_user.email.clone(), new_user.otp, &mut st.otp_storage) {
-        sqlx::query!("INSERT INTO USERS(email,username,address,profile_pic_path,contact_no) VALUES ($1,$2,$3,$4,$5)"
-        ,user.email
-        ,user.username
-        ,user.address
-        ,user.profile_pic_path
-        ,user.contact_no)
+    if verify_otp(&new_user.email, new_user.otp, &mut st.otp_storage) {
+        sqlx::query!(
+            "INSERT INTO USERS(email,username,address,contact_no) VALUES ($1,$2,$3,$4)",
+            user.email,
+            user.username,
+            user.address,
+            user.contact_no,
+        )
         .execute(&st.pool)
         .await
         .expect("Cannot create user");
+
         save_passwd(&st.pool, &new_user.email, &new_user.passwd)
             .await
             .expect("Cannot save password");
@@ -104,8 +107,8 @@ pub async fn create_user(
     }
 }
 
-fn verify_otp(email: String, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
-    let stored_otp = &otp_storage.remove(&email);
+fn verify_otp(email: &str, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
+    let stored_otp = &otp_storage.remove(email);
     match stored_otp {
         Some(val) => !val.expired() && val.email == email && val.otp == otp,
         None => false,

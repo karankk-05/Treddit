@@ -22,17 +22,6 @@ pub struct AppState {
     pub otp_storage: HashMap<String, Otp>,
 }
 
-#[derive(Serialize, Deserialize, FromRow)]
-pub struct User {
-    pub email: String,
-    pub username: String,
-    pub passwd: String,
-    pub address: String,
-    pub profile_pic_path: String,
-    pub contact_no: String,
-    pub reports: i32,
-}
-
 #[derive(Serialize, Deserialize)]
 pub struct UserDisp {
     pub email: String,
@@ -42,15 +31,21 @@ pub struct UserDisp {
     pub contact_no: String,
 }
 
+#[derive(Serialize, Deserialize, FromRow)]
+pub struct User {
+    #[serde(flatten)]
+    pub disp: UserDisp,
+    pub contact_no: String,
+    pub reports: i32,
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct NewUser {
     pub email: String,
     pub username: String,
     pub passwd: String,
     pub address: String,
-    pub profile_pic_path: String,
     pub contact_no: String,
-    pub reports: i32,
     pub otp: u16,
 }
 
