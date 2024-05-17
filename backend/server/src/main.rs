@@ -14,7 +14,8 @@ type SharedState = Arc<RwLock<AppState>>;
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    let db_url = env::var("DATABASE_URL").expect("Database url not found");
+    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL not found");
+    let port = env::var("PORT").expect("PORT not found");
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&db_url)
@@ -37,7 +38,9 @@ async fn main() {
         .route("/login", post(auth::login::login))
         .with_state(Arc::clone(&state));
 
-    println!("Listening on port: 3000");
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    println!("Listening on port: {port}");
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}"))
+        .await
+        .unwrap();
     axum::serve(listener, app).await.unwrap();
 }
