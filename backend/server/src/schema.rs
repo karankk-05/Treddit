@@ -21,6 +21,7 @@ pub struct AppState {
     pub pool: PgPool,
     pub mail_pass: String,
     pub otp_storage: HashMap<String, Otp>,
+    pub jwt_secret_key: [u8; 32],
 }
 
 #[derive(Serialize, Deserialize)]
@@ -40,7 +41,7 @@ pub struct User {
     pub reports: i32,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct NewUser {
     pub email: String,
     pub username: String,
@@ -50,7 +51,7 @@ pub struct NewUser {
     pub otp: u16,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct LoginInfo {
     pub email: String,
     pub passwd: String,
@@ -61,13 +62,13 @@ pub struct LoginResponse {
     pub token: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Claims {
     pub email: String,
-    pub exp: DateTime<Utc>,
+    pub exp: usize,
 }
 
-#[derive(Serialize, Deserialize, FromRow)]
+#[derive(Serialize, FromRow)]
 pub struct Post {
     pub post_id: i32,
     pub owner: String,

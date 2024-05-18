@@ -2,7 +2,7 @@ use crate::{schema::*, SharedState};
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{extract::State, http::StatusCode, response::Result, Json};
 use chrono::{Duration, Utc};
-use jsonwebtoken::{encode, EncodingKey, Header};
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use sqlx::PgPool;
 
 pub async fn login(
@@ -13,13 +13,12 @@ pub async fn login(
     if is_passwd_correct(&st.pool, payload.email.clone(), payload.passwd.clone()).await {
         let claims = Claims {
             email: payload.email,
-            exp: Utc::now() + Duration::hours(1),
+            exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
         };
-        // https://www.youtube.com/watch?v=p2ljQrRl0Mg&t=774s
         let token = match encode(
             &Header::default(),
             &claims,
-            &EncodingKey::from_secret("secret".as_ref()),
+            &EncodingKey::from_secret(&st.jwt_secret_key),
         ) {
             Ok(tok) => tok,
             Err(_) => return Err(StatusCode::UNAUTHORIZED),
@@ -45,4 +44,23 @@ async fn is_passwd_correct(pool: &PgPool, email: String, passwd: String) -> bool
     Argon2::default()
         .verify_password(passwd.as_bytes(), &parsed_hash)
         .is_ok()
+}
+
+fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, jsonwebtoken::errors::Error> {
+    let tok = decode::<Claims>(
+        &token,
+        &DecodingKey::from_secret(&key),
+        &Validation::default(),
+    );
+    Ok(tok?.claims)
+}
+
+pub fn is_token_valid(token: String, email: &str, key: [u8; 32]) -> bool {
+    let claims = match decode_token(token, key) {
+        Ok(val) => val,
+        Err(_) => {
+            return false;
+        }
+    };
+    claims.email == email && claims.exp > Utc::now().timestamp() as usize
 }

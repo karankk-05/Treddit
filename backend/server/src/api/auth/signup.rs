@@ -70,7 +70,7 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
             StatusCode::OK
         }
         Err(_) => {
-            println!("Cannot mail");
+            eprintln!("Cannot mail");
             StatusCode::SERVICE_UNAVAILABLE
         }
     }

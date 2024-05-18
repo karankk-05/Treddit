@@ -7,6 +7,7 @@ use axum::{
     Router,
 };
 use dotenv::dotenv;
+use rand::{thread_rng, RngCore};
 use schema::{AppState, Otp};
 use sqlx::postgres::PgPoolOptions;
 use std::{collections::HashMap, env, sync::Arc};
@@ -15,11 +16,9 @@ use tower_http::services::ServeDir;
 
 type SharedState = Arc<RwLock<AppState>>;
 
-#[tokio::main]
-async fn main() {
+async fn create_state() -> AppState {
     dotenv().ok();
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL not found");
-    let port = env::var("PORT").expect("PORT not found");
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&db_url)
@@ -27,13 +26,21 @@ async fn main() {
         .expect("Cannot connect to db");
     let otp_storage: HashMap<String, Otp> = HashMap::new();
     let mail_pass = env::var("MAIL_PASSWD").expect("Mail password not found");
+    let mut jwt_secret_key = [0u8; 32];
+    thread_rng().fill_bytes(&mut jwt_secret_key);
 
-    let st = AppState {
+    AppState {
         pool,
         mail_pass,
         otp_storage,
-    };
-    let state = Arc::new(RwLock::new(st));
+        jwt_secret_key: b"secretsecretsecretsecretsecretse".to_owned(),
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    let state = Arc::new(RwLock::new(create_state().await));
+    let port = env::var("PORT").expect("PORT not found");
 
     tracing_subscriber::fmt::init();
     let app = Router::new()

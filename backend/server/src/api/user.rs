@@ -11,6 +11,8 @@ use tokio::io::AsyncWriteExt;
 
 use crate::SharedState;
 
+use super::auth::login::is_token_valid;
+
 pub async fn get_user(
     State(state): State<SharedState>,
     Path(path): Path<String>,
@@ -41,30 +43,47 @@ pub async fn get_user(
 pub async fn change_profile_pic(
     State(state): State<SharedState>,
     mut multipart: Multipart,
-) -> Result<String, StatusCode> {
+) -> StatusCode {
+    let st = state.write().await;
     let mut fname = String::new();
     let mut email = String::new();
+    let mut fdata: Vec<u8> = vec![];
+    let mut token = String::new();
+
     while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap().to_string();
+        let name = &field.name().unwrap().to_string() as &str;
         let data = field.bytes().await.unwrap();
-        if name == "name" {
-            fname = String::from_utf8(data.to_vec()).unwrap();
-        } else if name == "email" {
-            email = String::from_utf8(data.to_vec()).unwrap();
-        } else {
-            let mut file = File::create(format!("res/{fname}")).await.unwrap();
-            file.write_all(&data).await.unwrap();
+
+        match name {
+            "name" => fname = String::from_utf8(data.to_vec()).unwrap(),
+            "email" => email = String::from_utf8(data.to_vec()).unwrap(),
+            "data" => fdata = data.to_vec(),
+            "token" => token = String::from_utf8(data.to_vec()).unwrap(),
+            &_ => return StatusCode::UNAUTHORIZED,
         }
+    }
+
+    match is_token_valid(token, &email, st.jwt_secret_key) {
+        true => (),
+        false => {
+            return StatusCode::UNAUTHORIZED;
+        }
+    };
+
+    let mut file = File::create(format!("res/{fname}")).await.unwrap();
+    match file.write_all(&fdata).await {
+        Ok(_) => (),
+        Err(_) => return StatusCode::INTERNAL_SERVER_ERROR,
     }
     match sqlx::query!(
         "update users set profile_pic_path = $1 where email = $2",
         fname,
         email
     )
-    .execute(&state.write().await.pool)
+    .execute(&st.pool)
     .await
     {
-        Ok(_) => Ok(fname),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Ok(_) => StatusCode::OK,
+        Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
     }
 }
