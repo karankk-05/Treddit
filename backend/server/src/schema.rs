@@ -1,17 +1,18 @@
+use chrono::DateTime;
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::{prelude::FromRow, PgPool};
 use std::collections::HashMap;
-use std::time::SystemTime;
 
 #[derive(Clone, Debug)]
 pub struct Otp {
     pub otp: u16,
     pub email: String,
-    pub exp: SystemTime,
+    pub exp: DateTime<Utc>,
 }
 impl Otp {
     pub fn expired(&self) -> bool {
-        SystemTime::now() >= self.exp
+        Utc::now() >= self.exp
     }
 }
 
@@ -63,15 +64,16 @@ pub struct LoginResponse {
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
     pub email: String,
-    pub exp: SystemTime,
+    pub exp: DateTime<Utc>,
 }
 
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Post {
-    pub id: i32,
+    pub post_id: i32,
     pub owner: String,
     pub title: String,
     pub body: String,
+    pub opening_timestamp: DateTime<Utc>,
     pub price: i32,
     pub images: Vec<String>,
     pub reports: i32,

@@ -9,7 +9,7 @@ use crate::schema::UserDisp;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-use super::super::SharedState;
+use crate::SharedState;
 
 pub async fn get_user(
     State(state): State<SharedState>,

@@ -1,8 +1,7 @@
 mod api;
 mod schema;
 
-use api::auth;
-use api::user;
+use api::{auth, post, user};
 use axum::{
     routing::{get, post},
     Router,
@@ -43,6 +42,7 @@ async fn main() {
         .route("/login", post(auth::login::login))
         .route("/users/*path", get(user::get_user))
         .route("/pic", post(user::change_profile_pic))
+        .route("/posts/:id", get(post::get_post))
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"));
 

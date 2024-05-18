@@ -23,7 +23,7 @@ create table if not exists posts (
   owner text not null,
   title text not null,
   body text,
-  open_timestamp timestamp default (timezone('utc', now())) not null,
+  open_timestamp timestamptz default (timezone('utc', now())) not null,
   price int not null,
   reports int default 0 not null,
   visible bool default false,

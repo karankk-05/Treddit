@@ -1,16 +1,16 @@
-use super::super::super::{schema::*, SharedState};
+use crate::{schema::*, SharedState};
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHasher,
 };
 use axum::{extract::State, http::StatusCode, response::Result, Json};
+use chrono::{Duration, Utc};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 use rand::Rng;
 use sqlx::PgPool;
 use std::collections::HashMap;
-use std::time::{Duration, SystemTime};
 
 async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
     let salt = SaltString::generate(&mut OsRng);
@@ -57,7 +57,7 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
     // Send the email
     match mailer.send(&email) {
         Ok(_) => {
-            let exp = SystemTime::now() + Duration::from_secs(10 * 60);
+            let exp = Utc::now() + Duration::minutes(10);
             st.otp_storage.insert(
                 payload.clone(),
                 Otp {

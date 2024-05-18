@@ -1,9 +1,9 @@
-use super::super::super::{schema::*, SharedState};
+use crate::{schema::*, SharedState};
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{extract::State, http::StatusCode, response::Result, Json};
+use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use sqlx::PgPool;
-use std::time::{Duration, SystemTime};
 
 pub async fn login(
     State(state): State<SharedState>,
@@ -13,7 +13,7 @@ pub async fn login(
     if is_passwd_correct(&st.pool, payload.email.clone(), payload.passwd.clone()).await {
         let claims = Claims {
             email: payload.email,
-            exp: SystemTime::now() + Duration::from_secs(60 * 60),
+            exp: Utc::now() + Duration::hours(1),
         };
         // https://www.youtube.com/watch?v=p2ljQrRl0Mg&t=774s
         let token = match encode(
