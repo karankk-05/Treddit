@@ -6,7 +6,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use rand::{thread_rng, RngCore};
 use schema::{AppState, Otp};
 use sqlx::postgres::PgPoolOptions;
