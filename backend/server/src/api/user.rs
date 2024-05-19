@@ -51,8 +51,8 @@ pub async fn change_profile_pic(
     let mut token = String::new();
 
     while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = &field.name().unwrap().to_string() as &str;
-        let data = field.bytes().await.unwrap();
+        let name = &field.name().expect("Cannot get name from user").to_string() as &str;
+        let data = field.bytes().await.expect("Cannot get data from user");
 
         match name {
             "name" => fname = String::from_utf8(data.to_vec()).unwrap(),

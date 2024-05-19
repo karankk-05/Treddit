@@ -47,12 +47,12 @@ async fn is_passwd_correct(pool: &PgPool, email: String, passwd: String) -> bool
 }
 
 fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, jsonwebtoken::errors::Error> {
-    let tok = decode::<Claims>(
+    Ok(decode::<Claims>(
         &token,
         &DecodingKey::from_secret(&key),
         &Validation::default(),
-    );
-    Ok(tok?.claims)
+    )?
+    .claims)
 }
 
 pub fn is_token_valid(token: String, email: &str, key: [u8; 32]) -> bool {

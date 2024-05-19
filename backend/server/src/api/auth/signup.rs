@@ -12,26 +12,6 @@ use rand::Rng;
 use sqlx::PgPool;
 use std::collections::HashMap;
 
-async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
-    let salt = SaltString::generate(&mut OsRng);
-    let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
-        Ok(val) => val.to_string(),
-        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
-    };
-
-    match sqlx::query!(
-        "insert into login(email,passwd) values ($1,$2) ",
-        email,
-        hash
-    )
-    .execute(pool)
-    .await
-    {
-        Ok(_) => Ok(()),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
-    }
-}
-
 pub async fn send_otp(State(state): State<SharedState>, payload: String) -> StatusCode {
     // TODO implement wait for second time otp
     let mailid = "kampuskonnect@zohomail.in";
@@ -112,6 +92,26 @@ fn verify_otp(email: &str, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> 
     match stored_otp {
         Some(val) => !val.expired() && val.email == email && val.otp == otp,
         None => false,
+    }
+}
+
+async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
+    let salt = SaltString::generate(&mut OsRng);
+    let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
+        Ok(val) => val.to_string(),
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+
+    match sqlx::query!(
+        "insert into login(email,passwd) values ($1,$2) ",
+        email,
+        hash
+    )
+    .execute(pool)
+    .await
+    {
+        Ok(_) => Ok(()),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
 
