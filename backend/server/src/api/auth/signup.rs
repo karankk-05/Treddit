@@ -27,7 +27,7 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
         .to(payload.to_owned().parse().unwrap())
         .subject(String::from("OTP recieved!"))
         .header(ContentType::TEXT_PLAIN)
-        .body(format!("Your OTP for Kampus Konnect is {}", &otp))
+        .body(format!("Your OTP for Kampus Konnect is {otp}"))
         .unwrap();
 
     let creds = Credentials::new(mailid.to_owned(), st.mail_pass.to_owned());
@@ -99,14 +99,6 @@ pub async fn change_password(
     }
 }
 
-fn verify_otp(email: &str, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
-    let stored_otp = &otp_storage.remove(email);
-    match stored_otp {
-        Some(val) => !val.expired() && val.email == email && val.otp == otp,
-        None => false,
-    }
-}
-
 async fn save_passwd(pool: &PgPool, email: &str, passwd: &str, new: bool) -> StatusCode {
     let salt = SaltString::generate(&mut OsRng);
     let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
@@ -124,7 +116,7 @@ async fn save_passwd(pool: &PgPool, email: &str, passwd: &str, new: bool) -> Sta
             .await
             {
                 Ok(_) => StatusCode::OK,
-                Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                Err(_) => StatusCode::CONFLICT,
             }
         }
         false => {
@@ -133,9 +125,17 @@ async fn save_passwd(pool: &PgPool, email: &str, passwd: &str, new: bool) -> Sta
                 .await
             {
                 Ok(_) => StatusCode::OK,
-                Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                Err(_) => StatusCode::NOT_FOUND,
             }
         }
+    }
+}
+
+fn verify_otp(email: &str, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
+    let stored_otp = &otp_storage.remove(email);
+    match stored_otp {
+        Some(val) => !val.expired() && val.email == email && val.otp == otp,
+        None => false,
     }
 }
 

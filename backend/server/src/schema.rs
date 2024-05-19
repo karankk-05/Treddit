@@ -12,7 +12,7 @@ pub struct Otp {
 }
 impl Otp {
     pub fn expired(&self) -> bool {
-        Utc::now() >= self.exp
+        Utc::now() > self.exp
     }
 }
 
