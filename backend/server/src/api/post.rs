@@ -9,9 +9,9 @@ use axum::{
 
 pub async fn get_post(
     State(state): State<SharedState>,
-    Path(id): Path<String>,
+    Path(id): Path<i32>,
 ) -> Result<Json<Post>, StatusCode> {
-    let row = match sqlx::query!("select * from posts where owner = $1", id)
+    let row = match sqlx::query!("select * from posts where owner = $1", id.to_string())
         .fetch_one(&state.write().await.pool)
         .await
     {

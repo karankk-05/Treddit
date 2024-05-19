@@ -87,3 +87,26 @@ pub async fn change_profile_pic(
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
     }
 }
+
+pub async fn get_posts(
+    State(state): State<SharedState>,
+    Path(path): Path<String>,
+) -> Result<Json<Vec<i32>>, StatusCode> {
+    let pool = &state.read().await.pool;
+    let rows = match sqlx::query!(
+        "select post_id from posts where owner = $1 and visible= $2",
+        path,
+        true
+    )
+    .fetch_all(pool)
+    .await
+    {
+        Ok(val) => val,
+        Err(_) => return Err(StatusCode::NOT_FOUND),
+    };
+    let mut posts: Vec<i32> = vec![];
+    for row in rows.iter() {
+        posts.push(row.post_id);
+    }
+    Ok(Json(posts))
+}
