@@ -52,6 +52,12 @@ pub struct NewUser {
 }
 
 #[derive(Deserialize)]
+pub struct ChPassd {
+    pub otp: u16,
+    pub passwd: String,
+}
+
+#[derive(Deserialize)]
 pub struct LoginInfo {
     pub email: String,
     pub passwd: String,

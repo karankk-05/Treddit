@@ -3,7 +3,11 @@ use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHasher,
 };
-use axum::{extract::State, http::StatusCode, response::Result, Json};
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    Json,
+};
 use chrono::{Duration, Utc};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
@@ -77,13 +81,21 @@ pub async fn create_user(
         .await
         .expect("Cannot create user");
 
-        save_passwd(&st.pool, &new_user.email, &new_user.passwd)
-            .await
-            .expect("Cannot save password");
-
-        StatusCode::CREATED
+        save_passwd(&st.pool, &new_user.email, &new_user.passwd, true).await
     } else {
         StatusCode::EXPECTATION_FAILED
+    }
+}
+
+pub async fn change_password(
+    State(state): State<SharedState>,
+    Path(email): Path<String>,
+    Json(payload): Json<ChPassd>,
+) -> StatusCode {
+    let mut st = state.write().await;
+    match verify_otp(&email, payload.otp, &mut st.otp_storage) {
+        true => save_passwd(&st.pool, &email, &payload.passwd, false).await,
+        false => StatusCode::UNAUTHORIZED,
     }
 }
 
@@ -95,23 +107,35 @@ fn verify_otp(email: &str, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> 
     }
 }
 
-async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
+async fn save_passwd(pool: &PgPool, email: &str, passwd: &str, new: bool) -> StatusCode {
     let salt = SaltString::generate(&mut OsRng);
     let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
         Ok(val) => val.to_string(),
-        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(_) => return StatusCode::INTERNAL_SERVER_ERROR,
     };
-
-    match sqlx::query!(
-        "insert into login(email,passwd) values ($1,$2) ",
-        email,
-        hash
-    )
-    .execute(pool)
-    .await
-    {
-        Ok(_) => Ok(()),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    match new {
+        true => {
+            match sqlx::query!(
+                "insert into login(email,passwd) values ($1,$2) ",
+                email,
+                hash
+            )
+            .execute(pool)
+            .await
+            {
+                Ok(_) => StatusCode::OK,
+                Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            }
+        }
+        false => {
+            match sqlx::query!("update login set passwd = $1 where email = $2", hash, email)
+                .execute(pool)
+                .await
+            {
+                Ok(_) => StatusCode::OK,
+                Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            }
+        }
     }
 }
 
