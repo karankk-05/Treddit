@@ -106,11 +106,11 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
 pub struct ChangePostVis {
     token: String,
     email: String,
-    post_id: i32,
     visible: bool,
 }
 pub async fn change_post_visibility(
     State(state): State<SharedState>,
+    Path(post_id): Path<i32>,
     Json(payload): Json<ChangePostVis>,
 ) -> StatusCode {
     let st = state.read().await;
@@ -124,7 +124,7 @@ pub async fn change_post_visibility(
         "update posts set visible = $1 where owner = $2 and post_id = $3",
         payload.visible,
         payload.email,
-        payload.post_id,
+        post_id,
     )
     .execute(&st.pool)
     .await
