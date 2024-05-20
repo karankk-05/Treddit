@@ -15,10 +15,8 @@ use super::auth::login::is_token_valid;
 
 pub async fn get_user(
     State(state): State<SharedState>,
-    Path(path): Path<String>,
+    email: String,
 ) -> Result<Json<UserDisp>, StatusCode> {
-    let email = path;
-
     let pool = &state.read().await.pool;
     let row = match sqlx::query!("select * from users where email = $1", email)
         .fetch_one(pool)
@@ -90,12 +88,12 @@ pub async fn change_profile_pic(
 
 pub async fn get_posts(
     State(state): State<SharedState>,
-    Path(path): Path<String>,
+    email: String,
 ) -> Result<Json<Vec<i32>>, StatusCode> {
     let pool = &state.read().await.pool;
     let rows = match sqlx::query!(
         "select post_id from posts where owner = $1 and visible= $2",
-        path,
+        email,
         true
     )
     .fetch_all(pool)

@@ -53,6 +53,7 @@ pub struct NewUser {
 
 #[derive(Deserialize)]
 pub struct ChPassd {
+    pub email: String,
     pub otp: u16,
     pub passwd: String,
 }
@@ -82,6 +83,6 @@ pub struct Post {
     pub body: String,
     pub opening_timestamp: DateTime<Utc>,
     pub price: i32,
-    pub images: Vec<String>,
+    pub images: String,
     pub reports: i32,
 }

@@ -89,12 +89,11 @@ pub async fn create_user(
 
 pub async fn change_password(
     State(state): State<SharedState>,
-    Path(email): Path<String>,
     Json(payload): Json<ChPassd>,
 ) -> StatusCode {
     let mut st = state.write().await;
-    match verify_otp(&email, payload.otp, &mut st.otp_storage) {
-        true => save_passwd(&st.pool, &email, &payload.passwd, false).await,
+    match verify_otp(&payload.email, payload.otp, &mut st.otp_storage) {
+        true => save_passwd(&st.pool, &payload.email, &payload.passwd, false).await,
         false => StatusCode::UNAUTHORIZED,
     }
 }

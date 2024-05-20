@@ -27,7 +27,7 @@ create table if not exists posts (
   price int not null,
   reports int default 0 not null,
   visible bool default false,
-  image_paths text[],
+  image_paths text,
 
   primary key(post_id),
   foreign key(owner) references users(email)
