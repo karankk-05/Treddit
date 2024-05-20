@@ -9,6 +9,7 @@ use axum::{
     response::Result,
     Json,
 };
+use serde::Deserialize;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
@@ -43,7 +44,6 @@ pub async fn get_post(
 }
 
 pub async fn create_post(State(state): State<SharedState>, mut multipart: Multipart) -> StatusCode {
-    let st = state.write().await;
     let mut email = String::new();
     let mut token = String::new();
     let mut title = String::new();
@@ -67,6 +67,8 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
             &_ => (),
         }
     }
+
+    let st = state.read().await;
     match is_token_valid(token, &email, st.jwt_secret_key) {
         true => (),
         false => {
@@ -98,4 +100,36 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
     .unwrap();
 
     StatusCode::CREATED
+}
+
+#[derive(Deserialize)]
+pub struct ChangePostVis {
+    token: String,
+    email: String,
+    post_id: i32,
+    visible: bool,
+}
+pub async fn change_post_visibility(
+    State(state): State<SharedState>,
+    Json(payload): Json<ChangePostVis>,
+) -> StatusCode {
+    let st = state.read().await;
+    match is_token_valid(payload.token, &payload.email, st.jwt_secret_key) {
+        true => (),
+        false => {
+            return StatusCode::UNAUTHORIZED;
+        }
+    };
+    match sqlx::query!(
+        "update posts set visible = $1 where owner = $2 and post_id = $3",
+        payload.visible,
+        payload.email,
+        payload.post_id,
+    )
+    .execute(&st.pool)
+    .await
+    {
+        Ok(_) => StatusCode::OK,
+        Err(_) => StatusCode::NOT_FOUND,
+    }
 }

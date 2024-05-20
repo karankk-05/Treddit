@@ -3,7 +3,7 @@ mod schema;
 
 use api::{auth, post, user};
 use axum::{
-    routing::{get, post},
+    routing::{get, post, put},
     Router,
 };
 use dotenvy::dotenv;
@@ -40,8 +40,9 @@ async fn create_router() -> Router {
         .route("/user/info", post(user::get_user))
         .route("/pic", post(user::change_profile_pic))
         .route("/posts/:id", get(post::get_post))
+        .route("/posts/:id", put(post::change_post_visibility))
         .route("/user/posts", post(user::get_posts))
-        .route("/user/passwd", post(auth::signup::change_password))
+        .route("/user/passwd", put(auth::signup::change_password))
         .route("/user/post", post(post::create_post))
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))

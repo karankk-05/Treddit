@@ -3,11 +3,7 @@ use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHasher,
 };
-use axum::{
-    extract::{Path, State},
-    http::StatusCode,
-    Json,
-};
+use axum::{extract::State, http::StatusCode, Json};
 use chrono::{Duration, Utc};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
