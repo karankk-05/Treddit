@@ -68,7 +68,9 @@ pub async fn change_profile_pic(
         }
     };
 
-    let mut file = File::create(format!("res/{fname}")).await.unwrap();
+    let mut file = File::create(format!("res/{email}_profile_{fname}"))
+        .await
+        .unwrap();
     match file.write_all(&fdata).await {
         Ok(_) => (),
         Err(_) => return StatusCode::INTERNAL_SERVER_ERROR,

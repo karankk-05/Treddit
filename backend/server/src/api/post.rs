@@ -9,6 +9,7 @@ use axum::{
     response::Result,
     Json,
 };
+use chrono::Utc;
 use serde::Deserialize;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
@@ -50,6 +51,7 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
     let mut body = String::new();
     let mut price: i32 = 0;
     let mut images: HashMap<String, Vec<u8>> = HashMap::new();
+    let path_prefix = format!("{}{}", Utc::now().format("%Y-%m-%d %H:%M:%S"), email);
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = &field.name().expect("Cannot get name from user").to_string() as &str;
@@ -62,7 +64,7 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
             "body" => body = String::from_utf8(data.to_vec()).unwrap(),
             "price" => price = String::from_utf8(data.to_vec()).unwrap().parse().unwrap(),
             _ if name[..3] == "img".to_string() => {
-                images.insert(name.to_string(), data.to_vec());
+                images.insert(format!("{path_prefix}_{name}"), data.to_vec());
             }
             &_ => (),
         }
