@@ -71,7 +71,7 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
     }
 
     let st = state.read().await;
-    match is_token_valid(token, &email, st.jwt_secret_key) {
+    match is_token_valid(token, &email, st.jwt_secret_key).await {
         true => (),
         false => {
             return StatusCode::UNAUTHORIZED;
@@ -116,7 +116,7 @@ pub async fn change_post_visibility(
     Json(payload): Json<ChangePostVis>,
 ) -> StatusCode {
     let st = state.read().await;
-    match is_token_valid(payload.token, &payload.email, st.jwt_secret_key) {
+    match is_token_valid(payload.token, &payload.email, st.jwt_secret_key).await {
         true => (),
         false => {
             return StatusCode::UNAUTHORIZED;

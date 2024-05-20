@@ -42,7 +42,6 @@ pub async fn change_profile_pic(
     State(state): State<SharedState>,
     mut multipart: Multipart,
 ) -> StatusCode {
-    let st = state.write().await;
     let mut fname = String::new();
     let mut email = String::new();
     let mut fdata: Vec<u8> = vec![];
@@ -61,7 +60,8 @@ pub async fn change_profile_pic(
         }
     }
 
-    match is_token_valid(token, &email, st.jwt_secret_key) {
+    let st = state.read().await;
+    match is_token_valid(token, &email, st.jwt_secret_key).await {
         true => (),
         false => {
             return StatusCode::UNAUTHORIZED;

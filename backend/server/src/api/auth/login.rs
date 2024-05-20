@@ -46,7 +46,7 @@ async fn is_passwd_correct(pool: &PgPool, email: String, passwd: String) -> bool
         .is_ok()
 }
 
-fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, jsonwebtoken::errors::Error> {
+async fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, jsonwebtoken::errors::Error> {
     Ok(decode::<Claims>(
         &token,
         &DecodingKey::from_secret(&key),
@@ -55,8 +55,8 @@ fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, jsonwebtoken::er
     .claims)
 }
 
-pub fn is_token_valid(token: String, email: &str, key: [u8; 32]) -> bool {
-    let claims = match decode_token(token, key) {
+pub async fn is_token_valid(token: String, email: &str, key: [u8; 32]) -> bool {
+    let claims = match decode_token(token, key).await {
         Ok(val) => val,
         Err(_) => {
             return false;
