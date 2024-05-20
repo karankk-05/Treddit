@@ -42,11 +42,11 @@ pub async fn get_user(
 
 pub async fn change_profile_pic(
     State(state): State<SharedState>,
+    Path(email): Path<String>,
     mut multipart: Multipart,
 ) -> StatusCode {
     let st = state.write().await;
     let mut fname = String::new();
-    let mut email = String::new();
     let mut fdata: Vec<u8> = vec![];
     let mut token = String::new();
 
@@ -56,7 +56,6 @@ pub async fn change_profile_pic(
 
         match name {
             "name" => fname = String::from_utf8(data.to_vec()).unwrap(),
-            "email" => email = String::from_utf8(data.to_vec()).unwrap(),
             "data" => fdata = data.to_vec(),
             "token" => token = String::from_utf8(data.to_vec()).unwrap(),
             &_ => return StatusCode::UNAUTHORIZED,

@@ -38,7 +38,7 @@ async fn create_router() -> Router {
         .route("/otp", post(auth::signup::send_otp))
         .route("/login", post(auth::login::login))
         .route("/users/:path/info", get(user::get_user))
-        .route("/pic", post(user::change_profile_pic))
+        .route("/users/:email/pic", post(user::change_profile_pic))
         .route("/posts/:id", get(post::get_post))
         .route("/users/:path/posts", get(user::get_posts))
         .route("/users/:email/passwd", post(auth::signup::change_password))
