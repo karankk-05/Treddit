@@ -1,3 +1,4 @@
+use axum::http::StatusCode;
 use chrono::DateTime;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
@@ -11,8 +12,11 @@ pub struct Otp {
     pub exp: DateTime<Utc>,
 }
 impl Otp {
-    pub fn expired(&self) -> bool {
-        Utc::now() > self.exp
+    pub fn expired(&self) -> Result<bool, StatusCode> {
+        match Utc::now() > self.exp {
+            false => Ok(false),
+            true => Err(StatusCode::UNAUTHORIZED),
+        }
     }
 }
 

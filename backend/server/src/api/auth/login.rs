@@ -2,7 +2,7 @@ use crate::{schema::*, SharedState};
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{extract::State, http::StatusCode, response::Result, Json};
 use chrono::{Duration, Utc};
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use sqlx::PgPool;
 
 pub async fn login(
@@ -10,57 +10,47 @@ pub async fn login(
     Json(payload): Json<LoginInfo>,
 ) -> Result<Json<LoginResponse>, StatusCode> {
     let st = &state.read().await;
-    if is_passwd_correct(&st.pool, payload.email.clone(), payload.passwd.clone()).await {
-        let claims = Claims {
-            email: payload.email,
-            exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
-        };
-        let token = match encode(
-            &Header::default(),
-            &claims,
-            &EncodingKey::from_secret(&st.jwt_secret_key),
-        ) {
-            Ok(tok) => tok,
-            Err(_) => return Err(StatusCode::UNAUTHORIZED),
-        };
-        Ok(Json(LoginResponse { token }))
-    } else {
-        Err(StatusCode::NOT_FOUND)
+    is_passwd_correct(&st.pool, &payload.email, &payload.passwd).await?;
+    let claims = Claims {
+        email: payload.email,
+        exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
+    };
+    let token = generate_token(claims, st.jwt_secret_key).await?;
+    Ok(Json(LoginResponse { token }))
+}
+
+async fn generate_token(claims: Claims, jwt_secret_key: [u8; 32]) -> Result<String, StatusCode> {
+    match encode(
+        &Header::default(),
+        &claims,
+        &EncodingKey::from_secret(&jwt_secret_key),
+    ) {
+        Ok(tok) => Ok(tok),
+        Err(_) => return Err(StatusCode::UNAUTHORIZED),
     }
 }
 
-async fn is_passwd_correct(pool: &PgPool, email: String, passwd: String) -> bool {
+async fn is_passwd_correct(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
     let record = match sqlx::query!("select passwd from login where email = $1", email)
         .fetch_one(pool)
         .await
     {
         Ok(val) => val,
-        Err(_) => return false,
+        Err(_) => return Err(StatusCode::UNAUTHORIZED),
     };
-    let parsed_hash = match PasswordHash::new(&record.passwd) {
+    hash_and_match(passwd, &record.passwd).await
+}
+
+async fn hash_and_match(passwd: &str, saved_pass: &str) -> Result<(), StatusCode> {
+    let parsed_hash = match PasswordHash::new(&saved_pass) {
         Ok(val) => val,
-        Err(_) => return false,
+        Err(_) => return Err(StatusCode::UNAUTHORIZED),
     };
-    Argon2::default()
+    match Argon2::default()
         .verify_password(passwd.as_bytes(), &parsed_hash)
         .is_ok()
-}
-
-async fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, jsonwebtoken::errors::Error> {
-    Ok(decode::<Claims>(
-        &token,
-        &DecodingKey::from_secret(&key),
-        &Validation::default(),
-    )?
-    .claims)
-}
-
-pub async fn is_token_valid(token: String, email: &str, key: [u8; 32]) -> bool {
-    let claims = match decode_token(token, key).await {
-        Ok(val) => val,
-        Err(_) => {
-            return false;
-        }
-    };
-    claims.email == email && claims.exp > Utc::now().timestamp() as usize
+    {
+        true => Ok(()),
+        false => Err(StatusCode::UNAUTHORIZED),
+    }
 }

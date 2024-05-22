@@ -5,13 +5,12 @@ use axum::{
     Json,
 };
 
-use crate::schema::UserDisp;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-use crate::SharedState;
+use crate::{schema::UserDisp, utils::bytes_to_string, SharedState};
 
-use super::auth::login::is_token_valid;
+use super::auth::utils::validate_token;
 
 pub async fn get_user(
     State(state): State<SharedState>,
@@ -41,7 +40,7 @@ pub async fn get_user(
 pub async fn change_profile_pic(
     State(state): State<SharedState>,
     mut multipart: Multipart,
-) -> StatusCode {
+) -> Result<StatusCode, StatusCode> {
     let mut fname = String::new();
     let mut email = String::new();
     let mut fdata: Vec<u8> = vec![];
@@ -52,28 +51,23 @@ pub async fn change_profile_pic(
         let data = field.bytes().await.expect("Cannot get data from user");
 
         match name {
-            "name" => fname = String::from_utf8(data.to_vec()).unwrap(),
-            "email" => email = String::from_utf8(data.to_vec()).unwrap(),
+            "name" => fname = bytes_to_string(data)?,
+            "email" => email = bytes_to_string(data)?,
             "data" => fdata = data.to_vec(),
-            "token" => token = String::from_utf8(data.to_vec()).unwrap(),
-            &_ => return StatusCode::UNAUTHORIZED,
+            "token" => token = bytes_to_string(data)?,
+            &_ => return Err(StatusCode::UNAUTHORIZED),
         }
     }
 
     let st = state.read().await;
-    match is_token_valid(token, &email, st.jwt_secret_key).await {
-        true => (),
-        false => {
-            return StatusCode::UNAUTHORIZED;
-        }
-    };
+    validate_token(token, &email, st.jwt_secret_key).await?;
 
     let mut file = File::create(format!("res/{email}_profile_{fname}"))
         .await
         .unwrap();
     match file.write_all(&fdata).await {
         Ok(_) => (),
-        Err(_) => return StatusCode::INTERNAL_SERVER_ERROR,
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
     match sqlx::query!(
         "update users set profile_pic_path = $1 where email = $2",
@@ -83,8 +77,8 @@ pub async fn change_profile_pic(
     .execute(&st.pool)
     .await
     {
-        Ok(_) => StatusCode::OK,
-        Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
 

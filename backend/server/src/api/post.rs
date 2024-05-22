@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use super::auth::login::is_token_valid;
+use super::auth::utils::validate_token;
 use crate::schema::Post;
-use crate::SharedState;
+use crate::{utils::bytes_to_string, SharedState};
 use axum::{
     extract::{Multipart, Path, State},
     http::StatusCode,
@@ -44,7 +44,10 @@ pub async fn get_post(
     Ok(Json(post))
 }
 
-pub async fn create_post(State(state): State<SharedState>, mut multipart: Multipart) -> StatusCode {
+pub async fn create_post(
+    State(state): State<SharedState>,
+    mut multipart: Multipart,
+) -> Result<StatusCode, StatusCode> {
     let mut email = String::new();
     let mut token = String::new();
     let mut title = String::new();
@@ -58,11 +61,11 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
         let data = field.bytes().await.expect("Cannot get data from user");
 
         match name {
-            "token" => token = String::from_utf8(data.to_vec()).unwrap(),
-            "email" => email = String::from_utf8(data.to_vec()).unwrap(),
-            "title" => title = String::from_utf8(data.to_vec()).unwrap(),
-            "body" => body = String::from_utf8(data.to_vec()).unwrap(),
-            "price" => price = String::from_utf8(data.to_vec()).unwrap().parse().unwrap(),
+            "token" => token = bytes_to_string(data)?,
+            "email" => email = bytes_to_string(data)?,
+            "title" => title = bytes_to_string(data)?,
+            "body" => body = bytes_to_string(data)?,
+            "price" => price = bytes_to_string(data)?.parse().unwrap(),
             _ if name[..3] == "img".to_string() => {
                 images.insert(format!("{path_prefix}_{name}"), data.to_vec());
             }
@@ -71,18 +74,13 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
     }
 
     let st = state.read().await;
-    match is_token_valid(token, &email, st.jwt_secret_key).await {
-        true => (),
-        false => {
-            return StatusCode::UNAUTHORIZED;
-        }
-    };
+    validate_token(token, &email, st.jwt_secret_key).await?;
 
     for (name, img) in &images {
         let mut file = File::create(format!("res/{name}")).await.unwrap();
         match file.write_all(&img).await {
             Ok(_) => (),
-            Err(_) => return StatusCode::INTERNAL_SERVER_ERROR,
+            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
         }
     }
     let img_paths: Vec<String> = images.keys().cloned().collect();
@@ -101,9 +99,8 @@ pub async fn create_post(State(state): State<SharedState>, mut multipart: Multip
     .await
     .unwrap();
 
-    StatusCode::CREATED
+    Ok(StatusCode::CREATED)
 }
-
 #[derive(Deserialize)]
 pub struct ChangePostVis {
     token: String,
@@ -114,14 +111,9 @@ pub async fn change_post_visibility(
     State(state): State<SharedState>,
     Path(post_id): Path<i32>,
     Json(payload): Json<ChangePostVis>,
-) -> StatusCode {
+) -> Result<StatusCode, StatusCode> {
     let st = state.read().await;
-    match is_token_valid(payload.token, &payload.email, st.jwt_secret_key).await {
-        true => (),
-        false => {
-            return StatusCode::UNAUTHORIZED;
-        }
-    };
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
     match sqlx::query!(
         "update posts set visible = $1 where owner = $2 and post_id = $3",
         payload.visible,
@@ -131,7 +123,7 @@ pub async fn change_post_visibility(
     .execute(&st.pool)
     .await
     {
-        Ok(_) => StatusCode::OK,
-        Err(_) => StatusCode::NOT_FOUND,
+        Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::NOT_FOUND),
     }
 }
