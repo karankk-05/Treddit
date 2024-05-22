@@ -54,7 +54,7 @@ async fn create_state() -> AppState {
         .max_connections(5)
         .connect(&db_url)
         .await
-        .expect("Cannot connect to db");
+        .expect("Databse url invalid");
     let otp_storage: HashMap<String, Otp> = HashMap::new();
     let mail_pass = env::var("MAIL_PASSWD").expect("Mail password not found");
     let mut jwt_secret_key = [0u8; 32];
