@@ -13,7 +13,6 @@ use sqlx::PgPool;
 use std::collections::HashMap;
 
 pub async fn send_otp(State(state): State<SharedState>, payload: String) -> StatusCode {
-    // TODO implement wait for second time otp
     let otp_lifetime = Duration::minutes(10);
     let min_resend_time = Duration::minutes(5);
     let mut st = state.write().await;
@@ -58,6 +57,7 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
                     exp,
                 },
             );
+            //Remove in prod.
             println!("{:?}", st.otp_storage);
             StatusCode::OK
         }
@@ -71,46 +71,46 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
 pub async fn create_user(
     State(state): State<SharedState>,
     Json(payload): Json<NewUser>,
-) -> StatusCode {
+) -> Result<StatusCode, StatusCode> {
     let mut st = state.write().await;
 
     let new_user: NewUser = payload;
     let user = &new_user;
 
-    if verify_otp(&new_user.email, new_user.otp, &mut st.otp_storage) {
-        sqlx::query!(
-            "INSERT INTO USERS(email,username,address,contact_no) VALUES ($1,$2,$3,$4)",
-            user.email,
-            user.username,
-            user.address,
-            user.contact_no,
-        )
-        .execute(&st.pool)
-        .await
-        .expect("Cannot create user");
+    verify_otp(&new_user.email, new_user.otp, &mut st.otp_storage)?;
+    sqlx::query!(
+        "INSERT INTO USERS(email,username,address,contact_no) VALUES ($1,$2,$3,$4)",
+        user.email,
+        user.username,
+        user.address,
+        user.contact_no,
+    )
+    .execute(&st.pool)
+    .await
+    .expect("Cannot create user");
 
-        save_passwd(&st.pool, &new_user.email, &new_user.passwd, true).await
-    } else {
-        StatusCode::EXPECTATION_FAILED
-    }
+    save_passwd(&st.pool, &new_user.email, &new_user.passwd, true).await
 }
 
 pub async fn change_password(
     State(state): State<SharedState>,
     Json(payload): Json<ChPassd>,
-) -> StatusCode {
+) -> Result<StatusCode, StatusCode> {
     let mut st = state.write().await;
-    match verify_otp(&payload.email, payload.otp, &mut st.otp_storage) {
-        true => save_passwd(&st.pool, &payload.email, &payload.passwd, false).await,
-        false => StatusCode::UNAUTHORIZED,
-    }
+    verify_otp(&payload.email, payload.otp, &mut st.otp_storage)?;
+    save_passwd(&st.pool, &payload.email, &payload.passwd, false).await
 }
 
-async fn save_passwd(pool: &PgPool, email: &str, passwd: &str, new: bool) -> StatusCode {
+async fn save_passwd(
+    pool: &PgPool,
+    email: &str,
+    passwd: &str,
+    new: bool,
+) -> Result<StatusCode, StatusCode> {
     let salt = SaltString::generate(&mut OsRng);
     let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
         Ok(val) => val.to_string(),
-        Err(_) => return StatusCode::INTERNAL_SERVER_ERROR,
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
     };
     match new {
         true => {
@@ -122,8 +122,8 @@ async fn save_passwd(pool: &PgPool, email: &str, passwd: &str, new: bool) -> Sta
             .execute(pool)
             .await
             {
-                Ok(_) => StatusCode::OK,
-                Err(_) => StatusCode::CONFLICT,
+                Ok(_) => Ok(StatusCode::OK),
+                Err(_) => Err(StatusCode::CONFLICT),
             }
         }
         false => {
@@ -131,18 +131,25 @@ async fn save_passwd(pool: &PgPool, email: &str, passwd: &str, new: bool) -> Sta
                 .execute(pool)
                 .await
             {
-                Ok(_) => StatusCode::OK,
-                Err(_) => StatusCode::NOT_FOUND,
+                Ok(_) => Ok(StatusCode::OK),
+                Err(_) => Err(StatusCode::NOT_FOUND),
             }
         }
     }
 }
 
-fn verify_otp(email: &str, otp: u16, otp_storage: &mut HashMap<String, Otp>) -> bool {
+fn verify_otp(
+    email: &str,
+    otp: u16,
+    otp_storage: &mut HashMap<String, Otp>,
+) -> Result<(), StatusCode> {
     let stored_otp = &otp_storage.remove(email);
     match stored_otp {
-        Some(val) => !val.expired() && val.email == email && val.otp == otp,
-        None => false,
+        Some(val) => match !val.expired()? && val.email == email && val.otp == otp {
+            true => Ok(()),
+            false => Err(StatusCode::UNAUTHORIZED),
+        },
+        None => Err(StatusCode::UNAUTHORIZED),
     }
 }
 

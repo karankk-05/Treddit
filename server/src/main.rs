@@ -1,5 +1,6 @@
 mod api;
 mod schema;
+mod utils;
 
 use api::{auth, post, user};
 use axum::{
