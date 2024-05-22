@@ -13,7 +13,6 @@ use sqlx::PgPool;
 use std::collections::HashMap;
 
 pub async fn send_otp(State(state): State<SharedState>, payload: String) -> StatusCode {
-    // TODO implement wait for second time otp
     let otp_lifetime = Duration::minutes(10);
     let min_resend_time = Duration::minutes(5);
     let mut st = state.write().await;
