@@ -18,7 +18,7 @@ pub async fn get_post(
     State(state): State<SharedState>,
     Path(id): Path<i32>,
 ) -> Result<Json<Post>, StatusCode> {
-    let row = match sqlx::query!("select * from posts where owner = $1", id.to_string())
+    let row = match sqlx::query!("select * from posts where post_id = $1", id)
         .fetch_one(&state.write().await.pool)
         .await
     {
