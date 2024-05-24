@@ -70,7 +70,7 @@ pub async fn create_post(
             "price" => price = bytes_to_string(data)?.parse().unwrap(),
             _ if name[..3] == *"img" => {
                 let path_prefix = format!(
-                    "{}{}",
+                    "{}_{}",
                     Utc::now().format("%Y-%m-%d %H:%M:%S"),
                     random_string(5)
                 );
