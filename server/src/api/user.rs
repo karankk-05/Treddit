@@ -8,7 +8,7 @@ use axum::{
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-use crate::{schema::UserDisp, utils::bytes_to_string, SharedState};
+use crate::{models::UserDisp, utils::bytes_to_string, SharedState};
 
 use super::auth::utils::validate_token;
 

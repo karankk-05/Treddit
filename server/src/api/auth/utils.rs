@@ -1,4 +1,4 @@
-use crate::schema::*;
+use crate::models::*;
 use axum::http::StatusCode;
 use chrono::Utc;
 use jsonwebtoken::{decode, DecodingKey, Validation};

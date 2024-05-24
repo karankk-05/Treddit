@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 
 use super::auth::utils::validate_token;
-use crate::schema::Post;
-use crate::{utils::bytes_to_string, SharedState};
+use crate::{
+    models::Post,
+    utils::{bytes_to_string, random_string},
+    SharedState,
+};
 use axum::{
     extract::{Multipart, Path, State},
     http::StatusCode,
@@ -66,8 +69,11 @@ pub async fn create_post(
             "body" => body = bytes_to_string(data)?,
             "price" => price = bytes_to_string(data)?.parse().unwrap(),
             _ if name[..3] == *"img" => {
-                // It will only work correctly if email is supplied before images
-                let path_prefix = format!("{}{}", Utc::now().format("%Y-%m-%d %H:%M:%S"), email);
+                let path_prefix = format!(
+                    "{}{}",
+                    Utc::now().format("%Y-%m-%d %H:%M:%S"),
+                    random_string(5)
+                );
                 images.insert(format!("{path_prefix}_{name}"), data.to_vec());
             }
             &_ => (),

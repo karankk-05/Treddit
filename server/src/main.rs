@@ -1,5 +1,5 @@
 mod api;
-mod schema;
+mod models;
 mod utils;
 
 use api::{auth, post, user};
@@ -8,8 +8,8 @@ use axum::{
     Router,
 };
 use dotenvy::dotenv;
+use models::{AppState, Otp};
 use rand::{thread_rng, RngCore};
-use schema::{AppState, Otp};
 use sqlx::postgres::PgPoolOptions;
 use std::{collections::HashMap, env, sync::Arc};
 use tokio::sync::RwLock;

@@ -1,4 +1,4 @@
-use crate::{schema::*, SharedState};
+use crate::{models::*, SharedState};
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{extract::State, http::StatusCode, response::Result, Json};
 use chrono::{Duration, Utc};
