@@ -54,19 +54,20 @@ pub async fn create_post(
     let mut body = String::new();
     let mut price: i32 = 0;
     let mut images: HashMap<String, Vec<u8>> = HashMap::new();
-    let path_prefix = format!("{}{}", Utc::now().format("%Y-%m-%d %H:%M:%S"), email);
 
     while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = &field.name().expect("Cannot get name from user").to_string() as &str;
+        let name = &field.name().expect("Cannot get name from user").to_owned();
         let data = field.bytes().await.expect("Cannot get data from user");
 
-        match name {
+        match name as &str {
             "token" => token = bytes_to_string(data)?,
             "email" => email = bytes_to_string(data)?,
             "title" => title = bytes_to_string(data)?,
             "body" => body = bytes_to_string(data)?,
             "price" => price = bytes_to_string(data)?.parse().unwrap(),
-            _ if name[..3] == "img".to_string() => {
+            _ if name[..3] == *"img" => {
+                // It will only work correctly if email is supplied before images
+                let path_prefix = format!("{}{}", Utc::now().format("%Y-%m-%d %H:%M:%S"), email);
                 images.insert(format!("{path_prefix}_{name}"), data.to_vec());
             }
             &_ => (),
@@ -78,7 +79,7 @@ pub async fn create_post(
 
     for (name, img) in &images {
         let mut file = File::create(format!("res/{name}")).await.unwrap();
-        match file.write_all(&img).await {
+        match file.write_all(img).await {
             Ok(_) => (),
             Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
         }

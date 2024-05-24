@@ -10,7 +10,7 @@ pub async fn login(
     Json(payload): Json<LoginInfo>,
 ) -> Result<Json<LoginResponse>, StatusCode> {
     let st = &state.read().await;
-    is_passwd_correct(&st.pool, &payload.email, &payload.passwd).await?;
+    validate_passwd(&st.pool, &payload.email, &payload.passwd).await?;
     let claims = Claims {
         email: payload.email,
         exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
@@ -26,11 +26,11 @@ async fn generate_token(claims: Claims, jwt_secret_key: [u8; 32]) -> Result<Stri
         &EncodingKey::from_secret(&jwt_secret_key),
     ) {
         Ok(tok) => Ok(tok),
-        Err(_) => return Err(StatusCode::UNAUTHORIZED),
+        Err(_) => Err(StatusCode::UNAUTHORIZED),
     }
 }
 
-async fn is_passwd_correct(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
+async fn validate_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
     let record = match sqlx::query!("select passwd from login where email = $1", email)
         .fetch_one(pool)
         .await
@@ -42,7 +42,7 @@ async fn is_passwd_correct(pool: &PgPool, email: &str, passwd: &str) -> Result<(
 }
 
 async fn hash_and_match(passwd: &str, saved_pass: &str) -> Result<(), StatusCode> {
-    let parsed_hash = match PasswordHash::new(&saved_pass) {
+    let parsed_hash = match PasswordHash::new(saved_pass) {
         Ok(val) => val,
         Err(_) => return Err(StatusCode::UNAUTHORIZED),
     };

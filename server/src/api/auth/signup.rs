@@ -23,7 +23,7 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
                 return StatusCode::TEMPORARY_REDIRECT;
             }
         }
-        None => (),
+        None => return StatusCode::INTERNAL_SERVER_ERROR,
     }
 
     let mailid = "kampuskonnect@zohomail.in";
@@ -78,7 +78,7 @@ pub async fn create_user(
     let user = &new_user;
 
     verify_otp(&new_user.email, new_user.otp, &mut st.otp_storage)?;
-    sqlx::query!(
+    match sqlx::query!(
         "INSERT INTO USERS(email,username,address,contact_no) VALUES ($1,$2,$3,$4)",
         user.email,
         user.username,
@@ -87,7 +87,10 @@ pub async fn create_user(
     )
     .execute(&st.pool)
     .await
-    .expect("Cannot create user");
+    {
+        Ok(_) => (),
+        Err(_) => return Err(StatusCode::CONFLICT),
+    }
 
     save_passwd(&st.pool, &new_user.email, &new_user.passwd, true).await
 }

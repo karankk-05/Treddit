@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select * from posts where owner = $1",
+  "query": "select * from posts where post_id = $1",
   "describe": {
     "columns": [
       {
@@ -51,7 +51,7 @@
     ],
     "parameters": {
       "Left": [
-        "Text"
+        "Int4"
       ]
     },
     "nullable": [
@@ -66,5 +66,5 @@
       true
     ]
   },
-  "hash": "0e957e3969974af4e0eb9c6ff083260ec7ef4f3426eaa053407276ef2489728c"
+  "hash": "1213d971deb2a23ac26b24421ee43b7f28314dab2dbab3d50565288a071ab5a3"
 }
