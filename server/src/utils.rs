@@ -12,6 +12,6 @@ pub fn random_string(n: usize) -> String {
     thread_rng()
         .sample_iter(&Alphanumeric)
         .take(n)
-        .map(char::from) // From link above, this is needed in later versions
+        .map(char::from)
         .collect()
 }
