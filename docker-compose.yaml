@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  database:
+  db:
     image: postgres
     container_name: db
     restart: always
@@ -18,3 +18,14 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  server:
+    depends_on:
+      - db
+    restart: always
+    build: ./server/
+    container_name: server
+    env_file:
+        - .env
+    ports:
+      - 3000:3000
