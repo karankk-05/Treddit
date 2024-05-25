@@ -1,0 +1,49 @@
+#+title: Checklist
+
+* User features
+** [ ] Authentication
+** [0/1] HomePage
+*** [ ] New Items
+** [ ] Search Bar
+** [ ] Contact Us
+** [ ] My Ads
+*** [ ] Remove Product
+*** [/] Sell Product
+**** [0/8] Sequential Data Entry
+***** [ ] Product Name
+***** [ ] Seller Name
+***** [ ] Photo Upload
+***** [ ] Price
+***** [ ] Description
+***** [ ] Location
+***** [ ] Upload Date
+***** [ ] Contact Details
+** [ ] Product Listing
+*** [ ] Home Page
+**** [ ] Tile
+***** [ ] Price
+***** [ ] Product Name
+***** [ ] Photo
+
+* Structs
+** User
+*** email (unique string)
+*** passwd (string)
+*** address (string)
+*** profile_picture_path (string)
+*** ContactNo (string)
+** Post
+*** Owner (string(email))
+*** Title (string)
+*** Body (text)
+*** AskPrice (int)
+*** ImagePaths (string(comma seperated))
+
+
+* Backend APIs
+
+** Futures
+*** [ ] Biddding
+*** [ ] Favourite
+*** [ ] Chat
+*** [ ] Report
