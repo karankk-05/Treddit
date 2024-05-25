@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "update posts set visible = $1 where owner = $2 and post_id = $3",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Bool",
+        "Text",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "68f2c013e2eddb8d5b254fb1febca04fb366926773d3dee1053dbabbbc0c5b39"
+}
