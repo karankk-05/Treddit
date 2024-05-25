@@ -16,14 +16,11 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
     let otp_lifetime = Duration::minutes(10);
     let min_resend_time = Duration::minutes(5);
     let mut st = state.write().await;
-    match st.otp_storage.get(&payload) {
-        Some(val) => {
-            let left_time = val.exp - Utc::now();
-            if otp_lifetime - left_time < min_resend_time {
-                return StatusCode::TEMPORARY_REDIRECT;
-            }
+    if let Some(val) = st.otp_storage.get(&payload) {
+        let left_time = val.exp - Utc::now();
+        if otp_lifetime - left_time < min_resend_time {
+            return StatusCode::TEMPORARY_REDIRECT;
         }
-        None => (),
     }
 
     let mailid = "kampuskonnect@zohomail.in";
