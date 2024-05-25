@@ -23,7 +23,7 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
                 return StatusCode::TEMPORARY_REDIRECT;
             }
         }
-        None => return StatusCode::INTERNAL_SERVER_ERROR,
+        None => (),
     }
 
     let mailid = "kampuskonnect@zohomail.in";
@@ -61,8 +61,8 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
             println!("{:?}", st.otp_storage);
             StatusCode::OK
         }
-        Err(_) => {
-            eprintln!("Cannot mail");
+        Err(err) => {
+            eprintln!("Cannot mail {:?}", err);
             StatusCode::SERVICE_UNAVAILABLE
         }
     }
