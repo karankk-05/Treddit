@@ -24,6 +24,8 @@ services:
     restart: always
     build: ./server/
     container_name: server
+    volumes:
+      - ./server/res/:/app/res
     env_file:
         - .env
     ports:
