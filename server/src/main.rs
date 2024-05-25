@@ -35,16 +35,16 @@ async fn main() {
 async fn create_router() -> Router {
     let state = Arc::new(RwLock::new(create_state().await));
     Router::new()
-        .route("/new/user", post(auth::signup::create_user))
-        .route("/otp", post(auth::signup::send_otp))
-        .route("/login", post(auth::login::login))
+        .route("/user/new", post(auth::signup::create_user))
+        .route("/user/otp", post(auth::signup::send_otp))
+        .route("/user/login", post(auth::login::login))
         .route("/user/info", post(user::get_user))
-        .route("/pic", put(user::change_profile_pic))
-        .route("/posts/:id", get(post::get_post))
-        .route("/posts/:id/visible", put(post::change_post_visibility))
+        .route("/user/profile/pic", put(user::change_profile_pic))
         .route("/user/posts", post(user::get_posts))
         .route("/user/passwd", put(auth::signup::change_password))
         .route("/user/post", post(post::create_post))
+        .route("/posts/:id", get(post::get_post))
+        .route("/posts/:id/visible", put(post::change_post_visibility))
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))
 }
