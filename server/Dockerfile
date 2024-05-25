@@ -20,7 +20,7 @@ COPY . .
 RUN cargo build --release --bin server
 
 # We do not need the Rust toolchain to run the binary!
-FROM debian:bookworm AS runtime
+FROM debian:bookworm-slim AS runtime
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install openssl -y
 WORKDIR /app
