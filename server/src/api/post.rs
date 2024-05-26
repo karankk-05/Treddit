@@ -83,7 +83,7 @@ pub async fn report_post(
         "insert into post_reports(email,statement,post_id) values ($1,$2,$3)",
         payload.email,
         payload.statement,
-        payload.post_id
+        post_id
     )
     .execute(&st.pool)
     .await

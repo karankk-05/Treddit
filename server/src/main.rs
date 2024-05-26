@@ -43,6 +43,7 @@ async fn create_router() -> Router {
         .route("/user/posts", post(user::get_posts))
         .route("/user/passwd", put(auth::signup::change_password))
         .route("/user/post", post(post::create_post))
+        .route("/user/report", post(user::report_user))
         .route("/posts/:id", get(post::get_post))
         .route("/posts/:id/visible", put(post::change_post_visibility))
         .route("/posts/:id/report", post(post::report_post))

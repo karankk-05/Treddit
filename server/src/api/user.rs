@@ -8,7 +8,12 @@ use axum::{
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-use crate::{auth::utils::validate_token, models::UserDisp, utils::bytes_to_string, SharedState};
+use crate::{
+    auth::utils::validate_token,
+    models::{ReportUser, UserDisp},
+    utils::bytes_to_string,
+    SharedState,
+};
 
 pub async fn get_user(
     State(state): State<SharedState>,
@@ -101,4 +106,49 @@ pub async fn get_posts(
         posts.push(row.post_id);
     }
     Ok(Json(posts))
+}
+
+pub async fn report_user(
+    State(state): State<SharedState>,
+    Json(payload): Json<ReportUser>,
+) -> Result<StatusCode, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query!(
+        "select exists (
+    select 1
+    from user_reports
+    where accused = $1 and email = $2)",
+        payload.accused,
+        payload.email
+    )
+    .fetch_one(&st.pool)
+    .await
+    {
+        Ok(rec) => match rec.exists {
+            Some(exists) => {
+                if exists {
+                    return Err(StatusCode::ALREADY_REPORTED);
+                }
+            }
+            None => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        },
+        Err(err) => {
+            println!("{:?}", err);
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    };
+
+    match sqlx::query!(
+        "insert into user_reports(email,statement,accused) values ($1,$2,$3)",
+        payload.email,
+        payload.statement,
+        payload.accused
+    )
+    .execute(&st.pool)
+    .await
+    {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
 }
