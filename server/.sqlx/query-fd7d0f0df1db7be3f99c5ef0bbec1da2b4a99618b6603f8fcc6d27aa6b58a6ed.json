@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into post_reports(email,statement,post_id) values ($1,$2,$3)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "fd7d0f0df1db7be3f99c5ef0bbec1da2b4a99618b6603f8fcc6d27aa6b58a6ed"
+}

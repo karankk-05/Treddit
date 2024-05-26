@@ -45,6 +45,7 @@ async fn create_router() -> Router {
         .route("/user/post", post(post::create_post))
         .route("/posts/:id", get(post::get_post))
         .route("/posts/:id/visible", put(post::change_post_visibility))
+        .route("/posts/:id/report", post(post::report_post))
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))
 }

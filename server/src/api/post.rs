@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     auth::utils::validate_token,
-    models::Post,
+    models::{Post, ReportPost},
     utils::{bytes_to_string, random_string},
     SharedState,
 };
@@ -45,6 +45,52 @@ pub async fn get_post(
         reports: row.reports,
     };
     Ok(Json(post))
+}
+
+pub async fn report_post(
+    State(state): State<SharedState>,
+    Path(post_id): Path<i32>,
+    Json(payload): Json<ReportPost>,
+) -> Result<StatusCode, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query!(
+        "select exists (
+    select 1
+    from post_reports
+    where post_id = $1 and email = $2)",
+        post_id,
+        payload.email
+    )
+    .fetch_one(&st.pool)
+    .await
+    {
+        Ok(rec) => match rec.exists {
+            Some(exists) => {
+                if exists {
+                    return Err(StatusCode::ALREADY_REPORTED);
+                }
+            }
+            None => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        },
+        Err(err) => {
+            println!("{:?}", err);
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    };
+
+    match sqlx::query!(
+        "insert into post_reports(email,statement,post_id) values ($1,$2,$3)",
+        payload.email,
+        payload.statement,
+        payload.post_id
+    )
+    .execute(&st.pool)
+    .await
+    {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
 }
 
 pub async fn create_post(

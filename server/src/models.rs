@@ -73,6 +73,14 @@ pub struct LoginResponse {
     pub token: String,
 }
 
+#[derive(Deserialize)]
+pub struct ReportPost {
+    pub email: String,
+    pub token: String,
+    pub post_id: i32,
+    pub statement: String,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Claims {
     pub email: String,

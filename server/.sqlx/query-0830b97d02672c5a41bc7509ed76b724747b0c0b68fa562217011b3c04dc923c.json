@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select exists (\n    select 1\n    from post_reports\n    where post_id = $1 and email = $2)",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "exists",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "0830b97d02672c5a41bc7509ed76b724747b0c0b68fa562217011b3c04dc923c"
+}
