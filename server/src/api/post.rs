@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use super::auth::utils::validate_token;
 use crate::{
+    auth::utils::validate_token,
     models::Post,
     utils::{bytes_to_string, random_string},
     SharedState,

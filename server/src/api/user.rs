@@ -8,9 +8,7 @@ use axum::{
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
-use crate::{models::UserDisp, utils::bytes_to_string, SharedState};
-
-use super::auth::utils::validate_token;
+use crate::{auth::utils::validate_token, models::UserDisp, utils::bytes_to_string, SharedState};
 
 pub async fn get_user(
     State(state): State<SharedState>,
