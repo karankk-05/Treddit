@@ -88,6 +88,13 @@ pub struct ReportUser {
     pub statement: String,
 }
 
+#[derive(Deserialize)]
+pub struct ChangePostVis {
+    pub token: String,
+    pub email: String,
+    pub visible: bool,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Claims {
     pub email: String,

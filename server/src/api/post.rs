@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     auth::utils::validate_token,
-    models::{Post, ReportPost},
+    models::{ChangePostVis, Post, ReportPost},
     utils::{bytes_to_string, random_string},
     SharedState,
 };
@@ -13,7 +13,6 @@ use axum::{
     Json,
 };
 use chrono::Utc;
-use serde::Deserialize;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
@@ -154,12 +153,7 @@ pub async fn create_post(
 
     Ok(StatusCode::CREATED)
 }
-#[derive(Deserialize)]
-pub struct ChangePostVis {
-    token: String,
-    email: String,
-    visible: bool,
-}
+
 pub async fn change_post_visibility(
     State(state): State<SharedState>,
     Path(post_id): Path<i32>,
