@@ -1,1 +1,1 @@
-drop index email_index;
+drop index if exists email_index;
