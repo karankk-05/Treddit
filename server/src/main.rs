@@ -28,8 +28,11 @@ async fn main() {
     println!("Listening on port: {port}");
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}"))
         .await
-        .unwrap();
-    axum::serve(listener, app).await.unwrap();
+        .expect("Cannot bind to port");
+
+    axum::serve(listener, app)
+        .await
+        .expect("Cannot start axum server");
 }
 
 async fn create_router() -> Router {
@@ -57,7 +60,7 @@ async fn create_state() -> AppState {
         .max_connections(5)
         .connect(&db_url)
         .await
-        .expect("Databse url invalid");
+        .expect("Cannot Connect to DB");
     let otp_storage: HashMap<String, Otp> = HashMap::new();
     let mail_pass = env::var("MAIL_PASSWD").expect("Mail password not found");
     let mut jwt_secret_key = [0u8; 32];
