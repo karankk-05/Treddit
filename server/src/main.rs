@@ -61,6 +61,10 @@ async fn create_state() -> AppState {
         .connect(&db_url)
         .await
         .expect("Cannot Connect to DB");
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("Cannot create db structure");
     let otp_storage: HashMap<String, Otp> = HashMap::new();
     let mail_pass = env::var("MAIL_PASSWD").expect("Mail password not found");
     let mut jwt_secret_key = [0u8; 32];
