@@ -2,7 +2,7 @@ mod api;
 mod models;
 mod utils;
 
-use api::{auth, post, user};
+use api::{auth, chat, post, user};
 use axum::{
     routing::{get, post, put},
     Router,
@@ -48,6 +48,7 @@ async fn create_router() -> Router {
         .route("/user/post", post(post::create_post))
         .route("/user/report", post(user::report_user))
         .route("/posts/:id", get(post::get_post))
+        .route("/posts/:id/chat/new", post(chat::postchat::send_chat))
         .route("/posts/:id/visible", put(post::change_post_visibility))
         .route("/posts/:id/report", post(post::report_post))
         .with_state(Arc::clone(&state))

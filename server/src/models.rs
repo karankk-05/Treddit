@@ -37,6 +37,24 @@ pub struct UserDisp {
     pub contact_no: String,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct SendPostChat {
+    pub token: String,
+    pub message: String,
+    pub sender: String,
+    pub reciever: String,
+}
+
+#[derive(Serialize, Deserialize, FromRow)]
+pub struct RecievePostChat {
+    pub token: String,
+    pub chat_id: i32,
+    pub chat: String,
+    pub sender: String,
+    pub reciever: String,
+    pub chat_timestamp: DateTime<Utc>,
+}
+
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct User {
     #[serde(flatten)]
@@ -69,7 +87,7 @@ pub struct LoginInfo {
 }
 
 #[derive(Serialize)]
-pub struct LoginResponse {
+pub struct Token {
     pub token: String,
 }
 

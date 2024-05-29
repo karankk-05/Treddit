@@ -8,7 +8,7 @@ use sqlx::PgPool;
 pub async fn login(
     State(state): State<SharedState>,
     Json(payload): Json<LoginInfo>,
-) -> Result<Json<LoginResponse>, StatusCode> {
+) -> Result<Json<Token>, StatusCode> {
     let st = &state.read().await;
     validate_passwd(&st.pool, &payload.email, &payload.passwd).await?;
     let claims = Claims {
@@ -16,7 +16,7 @@ pub async fn login(
         exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
     };
     let token = generate_token(claims, st.jwt_secret_key).await?;
-    Ok(Json(LoginResponse { token }))
+    Ok(Json(Token { token }))
 }
 
 async fn generate_token(claims: Claims, jwt_secret_key: [u8; 32]) -> Result<String, StatusCode> {
