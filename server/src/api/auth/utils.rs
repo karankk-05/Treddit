@@ -4,23 +4,20 @@ use chrono::Utc;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 
 pub async fn validate_token(token: String, email: &str, key: [u8; 32]) -> Result<(), StatusCode> {
-    let claims = match decode_token(token, key).await {
-        Ok(val) => val,
-        Err(_) => {
-            return Err(StatusCode::UNAUTHORIZED);
-        }
-    };
+    let claims = decode_token(token, key).await?;
     match claims.email == email && claims.exp > Utc::now().timestamp() as usize {
         true => Ok(()),
         false => Err(StatusCode::UNAUTHORIZED),
     }
 }
 
-async fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, jsonwebtoken::errors::Error> {
-    Ok(decode::<Claims>(
+async fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, StatusCode> {
+    match decode::<Claims>(
         &token,
         &DecodingKey::from_secret(&key),
         &Validation::default(),
-    )?
-    .claims)
+    ) {
+        Ok(val) => Ok(val.claims),
+        Err(_) => Err(StatusCode::UNAUTHORIZED),
+    }
 }
