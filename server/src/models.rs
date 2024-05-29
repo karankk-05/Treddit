@@ -86,7 +86,7 @@ pub struct LoginInfo {
     pub passwd: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Token {
     pub token: String,
 }

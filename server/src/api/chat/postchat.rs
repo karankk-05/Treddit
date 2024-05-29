@@ -1,4 +1,4 @@
-use crate::{auth::utils::validate_token, models::SendPostChat, SharedState};
+use crate::{api::auth::utils::*, models::*, SharedState};
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -23,6 +23,26 @@ pub async fn send_chat(
     .await
     {
         Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::NOT_FOUND),
+    }
+}
+pub async fn get_chat_ids(
+    State(state): State<SharedState>,
+    Path(id): Path<i32>,
+    Json(payload): Json<Token>,
+) -> Result<Json<Vec<i32>>, StatusCode> {
+    let st = state.read().await;
+    let claims = decode_token(payload.token.clone(), st.jwt_secret_key).await?;
+    validate_token(payload.token, &claims.email, st.jwt_secret_key).await?;
+    match sqlx::query!(
+        "select chat_id from post_chats where sender = $1 or reciever = $1 and post_id = $2",
+        claims.email,
+        id
+    )
+    .fetch_all(&st.pool)
+    .await
+    {
+        Ok(val) => Ok(Json(val.iter().map(|x| x.chat_id).collect())),
         Err(_) => Err(StatusCode::NOT_FOUND),
     }
 }

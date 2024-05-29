@@ -11,7 +11,7 @@ pub async fn validate_token(token: String, email: &str, key: [u8; 32]) -> Result
     }
 }
 
-async fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, StatusCode> {
+pub async fn decode_token(token: String, key: [u8; 32]) -> Result<Claims, StatusCode> {
     match decode::<Claims>(
         &token,
         &DecodingKey::from_secret(&key),
