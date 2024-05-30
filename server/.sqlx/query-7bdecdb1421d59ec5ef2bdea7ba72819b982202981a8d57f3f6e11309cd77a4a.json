@@ -1,0 +1,41 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select message,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "message",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "sender",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "reciever",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "chat_timestamp",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "7bdecdb1421d59ec5ef2bdea7ba72819b982202981a8d57f3f6e11309cd77a4a"
+}

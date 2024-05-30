@@ -45,10 +45,8 @@ pub struct SendPostChat {
     pub reciever: String,
 }
 
-#[derive(Serialize, Deserialize, FromRow)]
+#[derive(Serialize, Deserialize)]
 pub struct RecievePostChat {
-    pub token: String,
-    pub chat_id: i32,
     pub chat: String,
     pub sender: String,
     pub reciever: String,

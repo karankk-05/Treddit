@@ -23,7 +23,10 @@ pub async fn send_chat(
     .await
     {
         Ok(_) => Ok(StatusCode::OK),
-        Err(_) => Err(StatusCode::NOT_FOUND),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::NOT_FOUND)
+        }
     }
 }
 pub async fn get_chat_ids(
@@ -44,5 +47,27 @@ pub async fn get_chat_ids(
     {
         Ok(val) => Ok(Json(val.iter().map(|x| x.chat_id).collect())),
         Err(_) => Err(StatusCode::NOT_FOUND),
+    }
+}
+
+pub async fn get_chat(
+    State(state): State<SharedState>,
+    Path(chat_id): Path<i32>,
+    Json(payload): Json<Token>,
+) -> Result<Json<RecievePostChat>, StatusCode> {
+    let st = state.read().await;
+    let claims = decode_token(payload.token.clone(), st.jwt_secret_key).await?;
+    validate_token(payload.token, &claims.email, st.jwt_secret_key).await?;
+    match sqlx::query!("select message,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
+        chat_id,
+        claims.email
+    ).fetch_one(&st.pool).await{
+        Ok(val)=>Ok(Json(RecievePostChat{
+            chat: val.message,
+            sender: val.sender,
+            reciever: val.reciever,
+            chat_timestamp:val.chat_timestamp,
+        })),
+            Err(_)=>Err(StatusCode::NOT_FOUND)
     }
 }
