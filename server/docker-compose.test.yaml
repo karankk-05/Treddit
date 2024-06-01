@@ -4,7 +4,7 @@ version: "3"
 services:
   db:
     image: postgres
-    container_name: db
+    container_name: db-backend-test
     restart: always
     environment:
       POSTGRES_PASSWORD: secret
@@ -16,7 +16,7 @@ services:
 
   adminer:
     image: adminer
-    container_name: adminer
+    container_name: adminer-backend-test
     restart: always
     env_file:
         - .env

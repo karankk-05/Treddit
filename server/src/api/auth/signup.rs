@@ -12,35 +12,35 @@ use rand::Rng;
 use sqlx::PgPool;
 use std::collections::HashMap;
 
-pub async fn send_otp(State(state): State<SharedState>, payload: String) -> StatusCode {
+pub async fn send_otp(
+    State(state): State<SharedState>,
+    payload: String,
+) -> Result<StatusCode, StatusCode> {
     let otp_lifetime = Duration::minutes(10);
     let min_resend_time = Duration::minutes(5);
     let mut st = state.write().await;
     if let Some(val) = st.otp_storage.get(&payload) {
         let left_time = val.exp - Utc::now();
         if otp_lifetime - left_time < min_resend_time {
-            return StatusCode::TEMPORARY_REDIRECT;
+            return Err(StatusCode::TEMPORARY_REDIRECT);
         }
     }
 
     let mailid = "kampuskonnect@zohomail.in";
     let otp = generate_otp();
 
-    let email = Message::builder()
-        .from(mailid.to_owned().parse().unwrap())
-        .to(payload.to_owned().parse().unwrap())
-        .subject(String::from("OTP recieved!"))
-        .header(ContentType::TEXT_PLAIN)
-        .body(format!("Your OTP for Kampus Konnect is {otp}"))
-        .unwrap();
+    let email = prepare_mail(mailid, &payload, otp)?;
 
     let creds = Credentials::new(mailid.to_owned(), st.mail_pass.to_owned());
 
     // Open a remote connection to mail
-    let mailer = SmtpTransport::relay("smtp.zoho.in")
-        .unwrap()
-        .credentials(creds)
-        .build();
+    let mailer = match SmtpTransport::relay("smtp.zoho.in") {
+        Ok(val) => val.credentials(creds).build(),
+        Err(err) => {
+            eprintln!("{}", err);
+            return Err(StatusCode::SERVICE_UNAVAILABLE);
+        }
+    };
 
     // Send the email
     match mailer.send(&email) {
@@ -54,13 +54,13 @@ pub async fn send_otp(State(state): State<SharedState>, payload: String) -> Stat
                     exp,
                 },
             );
-            //Remove in prod.
+            // Remove in prod.
             println!("{:?}", st.otp_storage);
-            StatusCode::OK
+            Ok(StatusCode::OK)
         }
         Err(err) => {
             eprintln!("Cannot mail {:?}", err);
-            StatusCode::SERVICE_UNAVAILABLE
+            Err(StatusCode::SERVICE_UNAVAILABLE)
         }
     }
 }
@@ -135,6 +135,25 @@ async fn save_passwd(
                 Err(_) => Err(StatusCode::NOT_FOUND),
             }
         }
+    }
+}
+
+fn prepare_mail(mailid: &str, payload: &str, otp: u16) -> Result<Message, StatusCode> {
+    match Message::builder()
+        .from(match mailid.to_owned().parse() {
+            Ok(val) => val,
+            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        })
+        .to(match payload.to_owned().parse() {
+            Ok(val) => val,
+            Err(_) => return Err(StatusCode::EXPECTATION_FAILED),
+        })
+        .subject(String::from("OTP recieved!"))
+        .header(ContentType::TEXT_PLAIN)
+        .body(format!("Your OTP for Kampus Konnect is {otp}"))
+    {
+        Ok(val) => Ok(val),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
 
