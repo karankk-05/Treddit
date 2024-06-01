@@ -14,12 +14,12 @@ use std::collections::HashMap;
 
 pub async fn send_otp(
     State(state): State<SharedState>,
-    payload: String,
+    Json(payload): Json<GenOTP>,
 ) -> Result<StatusCode, StatusCode> {
     let otp_lifetime = Duration::minutes(10);
     let min_resend_time = Duration::minutes(5);
     let mut st = state.write().await;
-    if let Some(val) = st.otp_storage.get(&payload) {
+    if let Some(val) = st.otp_storage.get(&payload.email) {
         let left_time = val.exp - Utc::now();
         if otp_lifetime - left_time < min_resend_time {
             return Err(StatusCode::TEMPORARY_REDIRECT);
@@ -29,7 +29,7 @@ pub async fn send_otp(
     let mailid = "kampuskonnect@zohomail.in";
     let otp = generate_otp();
 
-    let email = prepare_mail(mailid, &payload, otp)?;
+    let email = prepare_mail(mailid, &payload.email, otp)?;
 
     let creds = Credentials::new(mailid.to_owned(), st.mail_pass.to_owned());
 
@@ -47,10 +47,10 @@ pub async fn send_otp(
         Ok(_) => {
             let exp = Utc::now() + otp_lifetime;
             st.otp_storage.insert(
-                payload.clone(),
+                payload.email.clone(),
                 Otp {
                     otp,
-                    email: payload,
+                    email: payload.email,
                     exp,
                 },
             );
