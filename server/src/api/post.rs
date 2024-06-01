@@ -112,7 +112,12 @@ pub async fn create_post(
             "email" => email = bytes_to_string(data)?,
             "title" => title = bytes_to_string(data)?,
             "body" => body = bytes_to_string(data)?,
-            "price" => price = bytes_to_string(data)?.parse().unwrap(),
+            "price" => {
+                price = match bytes_to_string(data)?.parse() {
+                    Ok(val) => val,
+                    Err(_) => return Err(StatusCode::UNPROCESSABLE_ENTITY),
+                }
+            }
             _ if name[..3] == *"img" => {
                 let path_prefix = format!(
                     "{}_{}",
@@ -128,17 +133,10 @@ pub async fn create_post(
     let st = state.read().await;
     validate_token(token, &email, st.jwt_secret_key).await?;
 
-    for (name, img) in &images {
-        let mut file = File::create(format!("res/{name}")).await.unwrap();
-        match file.write_all(img).await {
-            Ok(_) => (),
-            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
-        }
-    }
     let img_paths: Vec<String> = images.keys().cloned().collect();
     let img_paths = img_paths.join(",");
 
-    sqlx::query!(
+    match sqlx::query!(
         "insert into posts(owner,title,body,price,visible,image_paths) values($1,$2,$3,$4,$5,$6)",
         email,
         title,
@@ -149,8 +147,24 @@ pub async fn create_post(
     )
     .execute(&st.pool)
     .await
-    .unwrap();
+    {
+        Ok(_) => (),
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
 
+    for (name, img) in &images {
+        let mut file = match File::create(format!("res/{name}")).await {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("Cannot save file! {err}");
+                return Err(StatusCode::INTERNAL_SERVER_ERROR);
+            }
+        };
+        match file.write_all(img).await {
+            Ok(_) => (),
+            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        }
+    }
     Ok(StatusCode::CREATED)
 }
 

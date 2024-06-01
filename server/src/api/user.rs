@@ -65,9 +65,13 @@ pub async fn change_profile_pic(
     let st = state.read().await;
     validate_token(token, &email, st.jwt_secret_key).await?;
 
-    let mut file = File::create(format!("res/{email}_profile_{fname}"))
-        .await
-        .unwrap();
+    let mut file = match File::create(format!("res/{email}_profile_{fname}")).await {
+        Ok(val) => val,
+        Err(err) => {
+            eprintln!("{}", err);
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    };
     match file.write_all(&fdata).await {
         Ok(_) => (),
         Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
