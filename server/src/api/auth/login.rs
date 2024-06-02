@@ -38,10 +38,10 @@ async fn validate_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(),
         Ok(val) => val,
         Err(_) => return Err(StatusCode::UNAUTHORIZED),
     };
-    hash_and_match(passwd, &record.passwd).await
+    match_hash(passwd, &record.passwd).await
 }
 
-async fn hash_and_match(passwd: &str, saved_pass: &str) -> Result<(), StatusCode> {
+async fn match_hash(passwd: &str, saved_pass: &str) -> Result<(), StatusCode> {
     let parsed_hash = match PasswordHash::new(saved_pass) {
         Ok(val) => val,
         Err(_) => return Err(StatusCode::UNAUTHORIZED),
