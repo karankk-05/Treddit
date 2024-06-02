@@ -14,7 +14,7 @@ use std::collections::HashMap;
 
 pub async fn send_otp(
     State(state): State<SharedState>,
-    Json(payload): Json<GenOTP>,
+    Json(payload): Json<Email>,
 ) -> Result<StatusCode, StatusCode> {
     let otp_lifetime = Duration::minutes(10);
     let min_resend_time = Duration::minutes(5);
