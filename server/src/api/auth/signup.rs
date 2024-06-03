@@ -14,7 +14,7 @@ use std::collections::HashMap;
 
 pub async fn send_otp(
     State(state): State<SharedState>,
-    Json(payload): Json<GenOTP>,
+    Json(payload): Json<Email>,
 ) -> Result<StatusCode, StatusCode> {
     let otp_lifetime = Duration::minutes(10);
     let min_resend_time = Duration::minutes(5);
@@ -89,7 +89,8 @@ pub async fn create_user(
         Err(_) => return Err(StatusCode::CONFLICT),
     }
 
-    save_passwd(&st.pool, &new_user.email, &new_user.passwd, true).await
+    save_passwd(&st.pool, &new_user.email, &new_user.passwd).await?;
+    Ok(StatusCode::OK)
 }
 
 pub async fn change_password(
@@ -98,53 +99,55 @@ pub async fn change_password(
 ) -> Result<StatusCode, StatusCode> {
     let mut st = state.write().await;
     verify_otp(&payload.email, payload.otp, &mut st.otp_storage)?;
-    save_passwd(&st.pool, &payload.email, &payload.passwd, false).await
+    update_passwd(&st.pool, &payload.email, &payload.passwd).await?;
+    Ok(StatusCode::OK)
 }
 
-async fn save_passwd(
-    pool: &PgPool,
-    email: &str,
-    passwd: &str,
-    new: bool,
-) -> Result<StatusCode, StatusCode> {
-    let salt = SaltString::generate(&mut OsRng);
-    let hash = match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
-        Ok(val) => val.to_string(),
-        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
-    };
-    match new {
-        true => {
-            match sqlx::query!(
-                "insert into login(email,passwd) values ($1,$2) ",
-                email,
-                hash
-            )
-            .execute(pool)
-            .await
-            {
-                Ok(_) => Ok(StatusCode::OK),
-                Err(_) => Err(StatusCode::CONFLICT),
-            }
-        }
-        false => {
-            match sqlx::query!("update login set passwd = $1 where email = $2", hash, email)
-                .execute(pool)
-                .await
-            {
-                Ok(_) => Ok(StatusCode::OK),
-                Err(_) => Err(StatusCode::NOT_FOUND),
-            }
-        }
+async fn update_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
+    let hash = get_hash(passwd).await?;
+    match sqlx::query!("update login set passwd = $1 where email = $2", hash, email)
+        .execute(pool)
+        .await
+    {
+        Ok(_) => Ok(()),
+        Err(_) => Err(StatusCode::NOT_FOUND),
     }
 }
 
-fn prepare_mail(mailid: &str, payload: &str, otp: u16) -> Result<Message, StatusCode> {
+async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
+    let hash = get_hash(passwd).await?;
+    match sqlx::query!(
+        "insert into login(email,passwd) values ($1,$2) ",
+        email,
+        hash
+    )
+    .execute(pool)
+    .await
+    {
+        Ok(_) => Ok(()),
+        Err(_) => Err(StatusCode::CONFLICT),
+    }
+}
+
+async fn get_hash(passwd: &str) -> Result<String, StatusCode> {
+    let salt = SaltString::generate(&mut OsRng);
+    match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
+        Ok(val) => Ok(val.to_string()),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+fn prepare_mail(
+    sender_mailid: &str,
+    reciever_mailid: &str,
+    otp: u16,
+) -> Result<Message, StatusCode> {
     match Message::builder()
-        .from(match mailid.to_owned().parse() {
+        .from(match sender_mailid.to_owned().parse() {
             Ok(val) => val,
             Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
         })
-        .to(match payload.to_owned().parse() {
+        .to(match reciever_mailid.to_owned().parse() {
             Ok(val) => val,
             Err(_) => return Err(StatusCode::EXPECTATION_FAILED),
         })
