@@ -34,7 +34,7 @@ class ProductService {
       var stream = http.ByteStream(image.openRead());
       var length = await image.length();
       var multipartFile = http.MultipartFile(
-        'img_${basename(image.path)}', // Ensure the name starts with 'img'
+        'img_${basename(image.path)}', //Ensure the name starts with 'img'
         stream,
         length,
         filename: basename(image.path),

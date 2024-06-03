@@ -1,7 +1,7 @@
 import '../../widgets/fields.dart';
 import 'package:flutter/material.dart';
 import '../../app/decorations.dart';
-import '../../services/product/add_product_service.dart';
+import '../../services/sell_product/add_product_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 

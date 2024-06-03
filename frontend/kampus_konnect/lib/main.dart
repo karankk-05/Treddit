@@ -8,6 +8,8 @@ import 'screens/pages/chat.dart';
 import 'screens/pages/homepage.dart';
 import 'screens/pages/my_posts_page.dart';
 import 'screens/pages/profile_page.dart';
+import 'package:provider/provider.dart';
+import '../../providers/MyPostsProvider/my_posts_provider.dart';
 
 void main() {
   runApp(
@@ -18,21 +20,25 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mail Client',
-      theme: appthemes.lighttheme,
-      darkTheme: appthemes.darktheme,
-      themeMode: ThemeMode.dark,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => loginpage(), // The entry point of your app
-        '/main': (context) => MainPage(), // The entry point of your app
-        '/home': (context) => HomePage(), // The entry point of your app
-        '/chat': (context) => Chat(),
-        '/addPost': (context) => AddPost(),
-        '/myPosts': (context) => MyPosts(),
-        '/profile': (context) => ProfilePage(),
-      },
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ],
+        child: MaterialApp(
+          title: 'Mail Client',
+          theme: appthemes.lighttheme,
+          darkTheme: appthemes.darktheme,
+          themeMode: ThemeMode.dark,
+          initialRoute: '/',
+          routes: {
+            '/': (context) => loginpage(), // The entry point of your app
+            '/main': (context) => MainPage(), // The entry point of your app
+            '/home': (context) => HomePage(), // The entry point of your app
+            '/chat': (context) => Chat(),
+            '/addPost': (context) => AddPost(),
+            '/myPosts': (context) => MyPosts(),
+            '/profile': (context) => ProfilePage(),
+          },
+        ));
   }
 }
