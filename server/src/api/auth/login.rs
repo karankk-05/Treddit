@@ -5,6 +5,8 @@ use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use sqlx::PgPool;
 
+use super::utils::validate_token;
+
 pub async fn login(
     State(state): State<SharedState>,
     Json(payload): Json<LoginInfo>,
@@ -17,6 +19,15 @@ pub async fn login(
     };
     let token = generate_token(claims, st.jwt_secret_key).await?;
     Ok(Json(Token { token }))
+}
+
+pub async fn is_token_valid(
+    State(state): State<SharedState>,
+    Json(payload): Json<ValidToken>,
+) -> Result<StatusCode, StatusCode> {
+    let st = state.write().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    Ok(StatusCode::OK)
 }
 
 async fn generate_token(claims: Claims, jwt_secret_key: [u8; 32]) -> Result<String, StatusCode> {
