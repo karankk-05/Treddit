@@ -55,6 +55,7 @@ async fn create_router() -> Router {
         .route("/chats/:id", post(chat::postchat::get_chat))
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))
+        .nest_service("/static", ServeDir::new("static"))
 }
 
 async fn create_state() -> AppState {
