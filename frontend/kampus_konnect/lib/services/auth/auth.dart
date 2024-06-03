@@ -55,15 +55,28 @@ class AuthService {
       print('JWT Token: $data[token]');
       await secureStorage.write(key: 'jwt_token', value: data['token']);
       await secureStorage.write(key: 'email', value: email);
+      String? token = await secureStorage.read(key: 'jwt_token');
+      print("The saved Token is ${token}");
       return true;
     } else {
       return false;
     }
   }
 
+  Future<bool> validateToken(String email, String token) async {
+    final url = Uri.parse('$_baseUrl/user/jwt/verify');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'token': token}),
+    );
+    return response.statusCode == 200;
+  }
+
   Future<String?> getToken() async {
     return await secureStorage.read(key: 'jwt_token');
   }
+
   Future<String?> getEmail() async {
     return await secureStorage.read(key: 'email');
   }

@@ -8,12 +8,12 @@ import '../../services/auth/auth_action.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'signup.dart';
 
-class loginpage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  State<loginpage> createState() => _loginpageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _loginpageState extends State<loginpage> {
+class _LoginPageState extends State<LoginPage> {
   // bool? _rememberMe = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
