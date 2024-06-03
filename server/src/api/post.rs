@@ -16,6 +16,21 @@ use chrono::Utc;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
+pub async fn get_all_posts_id(
+    State(state): State<SharedState>,
+) -> Result<Json<Vec<i32>>, StatusCode> {
+    match sqlx::query!("select post_id from posts")
+        .fetch_all(&state.write().await.pool)
+        .await
+    {
+        Ok(val) => Ok(Json(val.iter().map(|x| x.post_id).collect())),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
+}
+
 pub async fn get_post(
     State(state): State<SharedState>,
     Path(id): Path<i32>,

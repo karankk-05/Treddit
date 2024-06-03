@@ -49,6 +49,7 @@ async fn create_router() -> Router {
         .route("/user/post", post(post::create_post))
         .route("/user/report", post(user::report_user))
         .route("/posts/:id", get(post::get_post))
+        .route("/posts/all", get(post::get_all_posts_id))
         .route("/posts/:id/chats/new", post(chat::postchat::send_chat))
         .route("/posts/:id/chats", post(chat::postchat::get_chat_ids))
         .route("/posts/:id/visible", put(post::change_post_visibility))
