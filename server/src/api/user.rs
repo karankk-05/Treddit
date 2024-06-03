@@ -134,7 +134,7 @@ pub async fn report_user(
             None => return Err(StatusCode::INTERNAL_SERVER_ERROR),
         },
         Err(err) => {
-            println!("{:?}", err);
+            eprintln!("{:?}", err);
             return Err(StatusCode::INTERNAL_SERVER_ERROR);
         }
     };

@@ -54,8 +54,6 @@ pub async fn send_otp(
                     exp,
                 },
             );
-            // Remove in prod.
-            println!("{:?}", st.otp_storage);
             Ok(StatusCode::OK)
         }
         Err(err) => {
