@@ -39,6 +39,7 @@ async fn create_router() -> Router {
     let state = Arc::new(RwLock::new(create_state().await));
     Router::new()
         .route("/user/new", post(auth::signup::create_user))
+        .route("/user/jwt/verify", post(auth::login::is_token_valid))
         .route("/user/otp", post(auth::signup::send_otp))
         .route("/user/login", post(auth::login::login))
         .route("/user/info", post(user::get_user))
