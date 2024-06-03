@@ -54,6 +54,7 @@ class AuthService {
       final data = json.decode(response.body);
       print('JWT Token: $data[token]');
       await secureStorage.write(key: 'jwt_token', value: data['token']);
+      await secureStorage.write(key: 'email', value: email);
       return true;
     } else {
       return false;
@@ -63,8 +64,12 @@ class AuthService {
   Future<String?> getToken() async {
     return await secureStorage.read(key: 'jwt_token');
   }
+  Future<String?> getEmail() async {
+    return await secureStorage.read(key: 'email');
+  }
 
   Future<void> logout() async {
     await secureStorage.delete(key: 'jwt_token');
+    await secureStorage.delete(key: 'email');
   }
 }

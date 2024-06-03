@@ -17,42 +17,38 @@ final HeadingStyle = TextStyle(
 );
 
 class mydeco {
-
-  static late BuildContext context;
-  static deco(){
-  return  BoxDecoration(
-  color: Theme.of(context).colorScheme.primaryContainer,
-  borderRadius: BorderRadius.circular(40.0),
-  
-);}
+  static BoxDecoration deco(BuildContext context) {
+    return BoxDecoration(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      borderRadius: BorderRadius.circular(40.0),
+    );
+  }
 }
 
-class mytext {
-  static late BuildContext context;
 
-  static TextStyle headingtext1({required double fontSize}){
+class mytext {
+  static TextStyle headingtext1(BuildContext context, {required double fontSize}) {
     return TextStyle(
-  color: Theme.of(context).colorScheme.onSecondary,
-  fontFamily: 'OpenSans',
-  fontSize: fontSize,
-   );
+      color: Theme.of(context).colorScheme.onSecondary,
+      fontFamily: 'OpenSans',
+      fontSize: fontSize,
+    );
   }
-  static TextStyle headingbold({required double fontSize}){
+
+  static TextStyle headingbold(BuildContext context, {required double fontSize}) {
     return TextStyle(
-  color: Theme.of(context).colorScheme.onPrimary,
-  fontFamily: 'OpenSans',
-  fontSize: fontSize,
-  fontWeight: FontWeight.bold
-   );
+      color: Theme.of(context).colorScheme.onPrimary,
+      fontFamily: 'OpenSans',
+      fontSize: fontSize,
+      fontWeight: FontWeight.bold,
+    );
   }
-  static TextStyle get subheadingtext1{
+
+  static TextStyle  subheadingtext1(BuildContext context, {required double fontSize}) {
     return TextStyle(
-  color: Theme.of(context).colorScheme.onBackground,
-  fontFamily: 'OpenSans',
-  fontSize: 12,
-  
-   );
+      color: Theme.of(context).colorScheme.onBackground,
+      fontFamily: 'OpenSans',
+      fontSize: 12,
+    );
   }
- 
-  
 }

@@ -26,15 +26,15 @@ class _loginpageState extends State<loginpage> {
   }
 
   Widget _email() {
-    mydeco.context = context;
+    
     return fields.TextField(
-        controller: _emailController, label: "Registered Email", secure: false);
+        controller: _emailController, label: "Registered Email", secure: false,context: context);
   }
 
   Widget _password() {
-    mydeco.context = context;
+    
     return fields.TextField(
-        controller: _passwordController, label: "Password", secure: true);
+        controller: _passwordController, label: "Password", secure: true,context: context);
   }
 
   // Widget _ForgotPasswordBtn() {
@@ -78,7 +78,7 @@ class _loginpageState extends State<loginpage> {
   // }
 
   Widget _LoginBtn() {
-    mytext.context = context;
+    
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -92,7 +92,7 @@ class _loginpageState extends State<loginpage> {
           backgroundColor: MaterialStateProperty.all<Color>(
               Theme.of(context).colorScheme.primaryContainer),
         ),
-        child: Text('LOGIN', style: mytext.headingbold(fontSize: 18)),
+        child: Text('LOGIN', style: mytext.headingbold(fontSize: 18,context)),
       ),
     );
   }
@@ -134,7 +134,7 @@ class _loginpageState extends State<loginpage> {
 
   @override
   Widget build(BuildContext context) {
-    mytext.context = context;
+    
     return Scaffold(
         body: Stack(
       children: [
@@ -173,7 +173,7 @@ class _loginpageState extends State<loginpage> {
                 ),
                 Text(
                   'Join The Community Now',
-                  style: mytext.headingbold(fontSize: 30),
+                  style: mytext.headingbold(fontSize: 30,context),
                 ),
                 Expanded(child: SizedBox()),
                 _email(),

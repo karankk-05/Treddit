@@ -34,39 +34,39 @@ class _signuppageState extends State<signuppage> {
   }
 
   Widget _email(BuildContext context) {
-    mydeco.context = context;
+    
     return fields.TextField(
-        label: "Email", controller: _emailController, secure: false);
+        label: "Email", controller: _emailController, secure: false,context: context);
   }
 
   Widget _username(BuildContext context) {
-    mydeco.context = context;
+    
     return fields.TextField(
-        label: "Username", controller: _usernameController, secure: false);
+        label: "Username", controller: _usernameController, secure: false,context: context);
   }
 
   Widget _password(BuildContext context) {
-    mydeco.context = context;
+    
     return fields.TextField(
-        label: "Password", controller: _passwordController, secure: true);
+        label: "Password", controller: _passwordController, secure: true,context: context);
   }
 
   Widget _conf_password(BuildContext context) {
-    mydeco.context = context;
+    
     return fields.TextField(
         label: "Confirm Password",
         controller: _confirmPasswordController,
-        secure: true);
+        secure: true,context: context);
   }
 
   Widget _otp(BuildContext context) {
-    mydeco.context = context;
+    
     return fields.TextField(
-        label: "OTP", controller: _otpController, secure: false);
+        label: "OTP", controller: _otpController, secure: false,context: context);
   }
 
   Widget _RegBtn(BuildContext context) {
-    mytext.context = context;
+    
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -95,7 +95,7 @@ class _signuppageState extends State<signuppage> {
         ),
         child: Text(
           _showAdditionalFields ? 'REGISTER' : 'SEND OTP',
-          style: mytext.headingbold(fontSize: 18),
+          style: mytext.headingbold(fontSize: 18,context),
         ),
       ),
     );
@@ -103,7 +103,7 @@ class _signuppageState extends State<signuppage> {
 
   @override
   Widget build(BuildContext context) {
-    mytext.context = context;
+    
     return Scaffold(
       body: Stack(
         children: [

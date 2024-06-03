@@ -27,7 +27,7 @@ class AuthActions {
           SnackBar(
             content: Text(
               "Passwords do not match",
-              style: mytext.headingtext1(fontSize: 15),
+              style: mytext.headingtext1(fontSize: 15,context),
             ),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
@@ -49,7 +49,7 @@ class AuthActions {
           SnackBar(
             content: Text(
               "User registered successfully",
-              style: mytext.headingtext1(fontSize: 15),
+              style: mytext.headingtext1(fontSize: 15,context),
             ),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
@@ -60,7 +60,7 @@ class AuthActions {
           SnackBar(
             content: Text(
               "User registration failed",
-              style: mytext.headingtext1(fontSize: 15),
+              style: mytext.headingtext1(fontSize: 15,context),
             ),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
@@ -74,7 +74,7 @@ class AuthActions {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "OTP sent successfully",
-            style: mytext.headingtext1(fontSize: 15),
+            style: mytext.headingtext1(fontSize: 15,context),
           ),
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         ));
@@ -83,7 +83,7 @@ class AuthActions {
           SnackBar(
             content: Text(
               "Failed to send OTP",
-              style: mytext.headingtext1(fontSize: 15),
+              style: mytext.headingtext1(fontSize: 15,context),
             ),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),

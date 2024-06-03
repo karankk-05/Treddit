@@ -1,28 +1,30 @@
+
+
 import 'package:flutter/material.dart';
 import '../app/decorations.dart';
 class fields {
   static Widget TextField({
+    required BuildContext context, // Add BuildContext parameter here
     TextEditingController? controller,
-    required label,
-     bool? secure,
-   
+    required String label,
+    bool? secure,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           label,
-          style: kLabelStyle
+          style: kLabelStyle,
         ),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: mydeco.deco(),
+          decoration: mydeco.deco(context), // Pass the context here
           height: 60.0,
           child: TextFormField(
             cursorColor: Colors.white,
             controller: controller,
-            obscureText: secure??false,
+            obscureText: secure ?? false,
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'OpenSans',
@@ -42,5 +44,4 @@ class fields {
       ],
     );
   }
-  
 }
