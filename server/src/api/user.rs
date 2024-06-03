@@ -1,3 +1,4 @@
+use crate::models::Email;
 use axum::{
     extract::{Multipart, State},
     http::StatusCode,
@@ -17,10 +18,10 @@ use crate::{
 
 pub async fn get_user(
     State(state): State<SharedState>,
-    email: String,
+    Json(payload): Json<Email>,
 ) -> Result<Json<UserDisp>, StatusCode> {
     let pool = &state.read().await.pool;
-    let row = match sqlx::query!("select * from users where email = $1", email)
+    let row = match sqlx::query!("select * from users where email = $1", payload.email)
         .fetch_one(pool)
         .await
     {
@@ -91,25 +92,20 @@ pub async fn change_profile_pic(
 
 pub async fn get_posts(
     State(state): State<SharedState>,
-    email: String,
+    Json(payload): Json<Email>,
 ) -> Result<Json<Vec<i32>>, StatusCode> {
     let pool = &state.read().await.pool;
-    let rows = match sqlx::query!(
+    match sqlx::query!(
         "select post_id from posts where owner = $1 and visible= $2",
-        email,
+        payload.email,
         true
     )
     .fetch_all(pool)
     .await
     {
-        Ok(val) => val,
-        Err(_) => return Err(StatusCode::NOT_FOUND),
-    };
-    let mut posts: Vec<i32> = vec![];
-    for row in rows.iter() {
-        posts.push(row.post_id);
+        Ok(val) => Ok(Json(val.iter().map(|x| x.post_id).collect())),
+        Err(_) => Err(StatusCode::NOT_FOUND),
     }
-    Ok(Json(posts))
 }
 
 pub async fn report_user(

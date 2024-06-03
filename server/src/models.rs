@@ -79,7 +79,7 @@ pub struct ChPassd {
 }
 
 #[derive(Deserialize)]
-pub struct GenOTP {
+pub struct Email {
     pub email: String,
 }
 
