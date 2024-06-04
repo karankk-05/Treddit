@@ -41,7 +41,6 @@ pub struct UserDisp {
     pub username: String,
     pub address: String,
     pub profile_pic_path: String,
-    pub contact_no: String,
 }
 
 #[derive(Serialize, Deserialize)]

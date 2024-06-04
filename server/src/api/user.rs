@@ -36,7 +36,6 @@ pub async fn get_user(
             Some(val) => val,
             None => String::from("generic.jpg"),
         },
-        contact_no: row.contact_no,
     };
     Ok(Json(user))
 }
