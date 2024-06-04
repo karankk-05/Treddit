@@ -1,4 +1,4 @@
-use crate::models::Email;
+use crate::models::*;
 use axum::{
     extract::{Multipart, State},
     http::StatusCode,
@@ -6,6 +6,7 @@ use axum::{
     Json,
 };
 
+use sqlx::{Pool, Postgres};
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 
@@ -20,24 +21,43 @@ pub async fn get_user(
     State(state): State<SharedState>,
     Json(payload): Json<Email>,
 ) -> Result<Json<UserDisp>, StatusCode> {
-    let pool = &state.read().await.pool;
-    let row = match sqlx::query!("select * from users where email = $1", payload.email)
+    let st = state.read().await;
+    let user = find_user(payload.email, &st.pool).await?;
+    Ok(Json(user.disp))
+}
+
+pub async fn get_user_private(
+    State(state): State<SharedState>,
+    Json(payload): Json<ValidToken>,
+) -> Result<Json<User>, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    let user = find_user(payload.email, &st.pool).await?;
+    Ok(Json(user))
+}
+
+async fn find_user(email: String, pool: &Pool<Postgres>) -> Result<User, StatusCode> {
+    let row = match sqlx::query!("select * from users where email = $1", email)
         .fetch_one(pool)
         .await
     {
         Ok(val) => val,
         Err(_) => return Err(StatusCode::NOT_FOUND),
     };
-    let user = UserDisp {
-        email: row.email,
-        username: row.username,
-        address: row.address,
-        profile_pic_path: match row.profile_pic_path {
-            Some(val) => val,
-            None => String::from("generic.jpg"),
+
+    Ok(User {
+        disp: UserDisp {
+            email: row.email,
+            username: row.username,
+            address: row.address,
+            profile_pic_path: match row.profile_pic_path {
+                Some(val) => val,
+                None => String::from("generic.jpg"),
+            },
         },
-    };
-    Ok(Json(user))
+        contact_no: row.contact_no,
+        reports: row.reports,
+    })
 }
 
 pub async fn change_profile_pic(
