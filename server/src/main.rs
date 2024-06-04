@@ -2,7 +2,7 @@ mod api;
 mod models;
 mod utils;
 
-use api::{auth, chat, post, user};
+use api::{auth, chat, post, user, wishlist};
 use axum::{
     routing::{get, post, put},
     Router,
@@ -39,6 +39,8 @@ async fn create_router() -> Router {
     let state = Arc::new(RwLock::new(create_state().await));
     Router::new()
         .route("/user/new", post(auth::signup::create_user))
+        .route("/user/wishlist", post(wishlist::get_wishlist))
+        .route("/user/wishlist/new", post(wishlist::add_to_wishlist))
         .route("/user/jwt/verify", post(auth::login::is_token_valid))
         .route("/user/otp", post(auth::signup::send_otp))
         .route("/user/login", post(auth::login::login))

@@ -28,6 +28,13 @@ pub struct AppState {
     pub jwt_secret_key: [u8; 32],
 }
 
+#[derive(Deserialize)]
+pub struct AddWish {
+    pub email: String,
+    pub token: String,
+    pub post_id: i32,
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct UserDisp {
     pub email: String,
