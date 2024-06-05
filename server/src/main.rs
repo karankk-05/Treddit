@@ -1,5 +1,6 @@
 mod api;
 mod models;
+mod storage;
 mod utils;
 
 use api::{auth, chat, post, user, wishlist};
@@ -8,10 +9,10 @@ use axum::{
     Router,
 };
 use dotenvy::dotenv;
-use models::{AppState, Otp};
 use rand::{thread_rng, RngCore};
 use sqlx::postgres::PgPoolOptions;
 use std::{collections::HashMap, env, sync::Arc};
+use storage::{AppState, Otp};
 use tokio::sync::RwLock;
 use tower_http::services::ServeDir;
 
