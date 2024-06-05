@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     auth::utils::validate_token,
-    models::{ChangePostVis, Post, ReportPost},
+    models::{Post, ReportPost, UpdateStatus},
     utils::{bytes_to_string, random_string},
     SharedState,
 };
@@ -20,6 +20,21 @@ pub async fn get_all_posts_id(
     State(state): State<SharedState>,
 ) -> Result<Json<Vec<i32>>, StatusCode> {
     match sqlx::query!("select post_id from posts")
+        .fetch_all(&state.write().await.pool)
+        .await
+    {
+        Ok(val) => Ok(Json(val.iter().map(|x| x.post_id).collect())),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
+}
+
+pub async fn get_all_posts_id_unsold(
+    State(state): State<SharedState>,
+) -> Result<Json<Vec<i32>>, StatusCode> {
+    match sqlx::query!("select post_id from posts where sold = false")
         .fetch_all(&state.write().await.pool)
         .await
     {
@@ -50,6 +65,7 @@ pub async fn get_post(
             Some(val) => val,
             None => String::new(),
         },
+        sold: row.sold,
         opening_timestamp: row.open_timestamp,
         price: row.price,
         images: match row.image_paths {
@@ -186,13 +202,34 @@ pub async fn create_post(
 pub async fn change_post_visibility(
     State(state): State<SharedState>,
     Path(post_id): Path<i32>,
-    Json(payload): Json<ChangePostVis>,
+    Json(payload): Json<UpdateStatus>,
 ) -> Result<StatusCode, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
     match sqlx::query!(
         "update posts set visible = $1 where owner = $2 and post_id = $3",
-        payload.visible,
+        payload.status,
+        payload.email,
+        post_id,
+    )
+    .execute(&st.pool)
+    .await
+    {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::NOT_FOUND),
+    }
+}
+
+pub async fn change_sold_status(
+    State(state): State<SharedState>,
+    Path(post_id): Path<i32>,
+    Json(payload): Json<UpdateStatus>,
+) -> Result<StatusCode, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query!(
+        "update posts set sold = $1 where owner = $2 and post_id = $3",
+        payload.status,
         payload.email,
         post_id,
     )

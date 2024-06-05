@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select post_id from wishlist where email = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "post_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "8fb70bc25e3db164f81833cc6d2f3c3a60f915545a35e90ca2310212b17a98c6"
+}

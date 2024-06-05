@@ -47,6 +47,11 @@
         "ordinal": 8,
         "name": "image_paths",
         "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "sold",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -63,7 +68,8 @@
       false,
       false,
       true,
-      true
+      true,
+      false
     ]
   },
   "hash": "1213d971deb2a23ac26b24421ee43b7f28314dab2dbab3d50565288a071ab5a3"

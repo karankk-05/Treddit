@@ -122,10 +122,10 @@ pub struct ReportUser {
 }
 
 #[derive(Deserialize)]
-pub struct ChangePostVis {
+pub struct UpdateStatus {
     pub token: String,
     pub email: String,
-    pub visible: bool,
+    pub status: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -142,6 +142,7 @@ pub struct Post {
     pub body: String,
     pub opening_timestamp: DateTime<Utc>,
     pub price: i32,
+    pub sold: bool,
     pub images: String,
     pub reports: i32,
 }
