@@ -21,7 +21,10 @@ pub async fn add_to_wishlist(
     .await
     {
         Ok(_) => Ok(StatusCode::OK),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
     }
 }
 
@@ -39,6 +42,9 @@ pub async fn get_wishlist(
     .await
     {
         Ok(val) => Ok(Json(val.iter().map(|x| x.post_id).collect())),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
     }
 }

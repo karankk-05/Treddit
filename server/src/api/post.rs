@@ -119,7 +119,10 @@ pub async fn report_post(
     .await
     {
         Ok(_) => Ok(StatusCode::OK),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
     }
 }
 
@@ -180,7 +183,10 @@ pub async fn create_post(
     .await
     {
         Ok(_) => (),
-        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(err) => {
+            eprintln!("{}", err);
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        }
     }
 
     for (name, img) in &images {
@@ -193,7 +199,10 @@ pub async fn create_post(
         };
         match file.write_all(img).await {
             Ok(_) => (),
-            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+            Err(err) => {
+                eprintln!("{}", err);
+                return Err(StatusCode::INTERNAL_SERVER_ERROR);
+            }
         }
     }
     Ok(StatusCode::CREATED)

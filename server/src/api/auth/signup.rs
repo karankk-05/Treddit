@@ -131,7 +131,10 @@ async fn get_hash(passwd: &str) -> Result<String, StatusCode> {
     let salt = SaltString::generate(&mut OsRng);
     match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
         Ok(val) => Ok(val.to_string()),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
     }
 }
 
@@ -143,18 +146,27 @@ fn prepare_mail(
     match Message::builder()
         .from(match sender_mailid.to_owned().parse() {
             Ok(val) => val,
-            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+            Err(err) => {
+                eprintln!("{}", err);
+                return Err(StatusCode::INTERNAL_SERVER_ERROR);
+            }
         })
         .to(match reciever_mailid.to_owned().parse() {
             Ok(val) => val,
-            Err(_) => return Err(StatusCode::EXPECTATION_FAILED),
+            Err(err) => {
+                eprintln!("{}", err);
+                return Err(StatusCode::EXPECTATION_FAILED);
+            }
         })
         .subject(String::from("OTP recieved!"))
         .header(ContentType::TEXT_PLAIN)
         .body(format!("Your OTP for Kampus Konnect is {otp}"))
     {
         Ok(val) => Ok(val),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
     }
 }
 
