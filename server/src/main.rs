@@ -5,6 +5,7 @@ mod utils;
 
 use api::{auth, chat, post, user, wishlist};
 use axum::{
+    http::Method,
     routing::{get, post, put},
     Router,
 };
@@ -14,7 +15,10 @@ use sqlx::postgres::PgPoolOptions;
 use std::{collections::HashMap, env, sync::Arc};
 use storage::{AppState, Otp};
 use tokio::sync::RwLock;
-use tower_http::services::ServeDir;
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::ServeDir,
+};
 
 type SharedState = Arc<RwLock<AppState>>;
 
@@ -37,6 +41,11 @@ async fn main() {
 }
 
 async fn create_router() -> Router {
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST, Method::PUT])
+        .allow_origin(Any)
+        .allow_headers(Any);
+
     let state = Arc::new(RwLock::new(create_state().await));
     Router::new()
         .route("/user/new", post(auth::signup::create_user))
@@ -61,6 +70,7 @@ async fn create_router() -> Router {
         .route("/posts/:id/report", post(post::report_post))
         .route("/posts/:id/sold", put(post::change_sold_status))
         .route("/chats/:id", post(chat::postchat::get_chat))
+        .layer(cors)
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))
         .nest_service("/static", ServeDir::new("static"))
