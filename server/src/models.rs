@@ -108,6 +108,13 @@ pub struct Claims {
     pub exp: usize,
 }
 
+#[derive(Serialize)]
+pub struct PostCard {
+    pub title: String,
+    pub price: i32,
+    pub image: String,
+}
+
 #[derive(Serialize, FromRow)]
 pub struct Post {
     pub post_id: i32,

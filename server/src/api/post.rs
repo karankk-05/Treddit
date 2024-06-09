@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     auth::utils::validate_token,
-    models::{Post, ReportPost, UpdateStatus},
+    models::*,
     utils::{bytes_to_string, random_string},
     SharedState,
 };
@@ -75,6 +75,30 @@ pub async fn get_post(
         reports: row.reports,
     };
     Ok(Json(post))
+}
+
+pub async fn get_post_cards(
+    State(state): State<SharedState>,
+    Json(payload): Json<Vec<i32>>,
+) -> Result<Json<Vec<PostCard>>, StatusCode> {
+    match sqlx::query!(
+        "select title,price,image_paths from posts where post_id = any($1)",
+        &payload,
+    )
+    .fetch_all(&state.read().await.pool)
+    .await
+    {
+        Ok(val) => Ok(Json(
+            val.iter()
+                .map(|row| PostCard {
+                    title: row.title.clone(),
+                    price: row.price,
+                    image: row.image_paths.clone().unwrap_or(String::from("empty.jpg")),
+                })
+                .collect(),
+        )),
+        Err(_) => Err(StatusCode::NOT_FOUND),
+    }
 }
 
 pub async fn report_post(
