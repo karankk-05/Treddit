@@ -182,7 +182,11 @@ pub async fn create_post(
                     Utc::now().format("%Y-%m-%d %H:%M:%S"),
                     random_string(5)
                 );
-                images.insert(format!("{path_prefix}_{name}"), data.to_vec());
+                let ext = &name[&name.len() - 4..];
+                if !(ext == ".png" || ext == ".jpg") {
+                    return Err(StatusCode::UNSUPPORTED_MEDIA_TYPE);
+                }
+                images.insert(format!("{path_prefix}_{ext}"), data.to_vec());
             }
             &_ => (),
         }
