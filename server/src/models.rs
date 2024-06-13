@@ -9,6 +9,13 @@ pub struct AddWish {
     pub post_id: i32,
 }
 
+#[derive(Deserialize)]
+pub struct RemoveWish {
+    pub email: String,
+    pub token: String,
+    pub wish_id: i32,
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct UserDisp {
     pub email: String,

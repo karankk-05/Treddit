@@ -28,6 +28,27 @@ pub async fn add_to_wishlist(
     }
 }
 
+pub async fn remove_from_wishlist(
+    State(state): State<SharedState>,
+    Json(payload): Json<RemoveWish>,
+) -> Result<StatusCode, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query!(
+        "delete from wishlist where wishlist_id = $1",
+        payload.wish_id
+    )
+    .execute(&st.pool)
+    .await
+    {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::NOT_MODIFIED)
+        }
+    }
+}
+
 pub async fn get_wishlist(
     State(state): State<SharedState>,
     Json(payload): Json<ValidToken>,

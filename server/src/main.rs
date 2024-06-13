@@ -6,7 +6,7 @@ mod utils;
 use api::{auth, chat, post, user, wishlist};
 use axum::{
     http::Method,
-    routing::{get, post, put},
+    routing::{delete, get, post, put},
     Router,
 };
 use dotenvy::dotenv;
@@ -42,7 +42,7 @@ async fn main() {
 
 async fn create_router() -> Router {
     let cors = CorsLayer::new()
-        .allow_methods([Method::GET, Method::POST, Method::PUT])
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
         .allow_origin(Any)
         .allow_headers(Any);
 
@@ -50,7 +50,8 @@ async fn create_router() -> Router {
     Router::new()
         .route("/user/new", post(auth::signup::create_user))
         .route("/user/wishlist", post(wishlist::get_wishlist))
-        .route("/user/wishlist/new", post(wishlist::add_to_wishlist))
+        .route("/user/wishlist/add", post(wishlist::add_to_wishlist))
+        .route("/user/wishlist/rm", delete(wishlist::remove_from_wishlist))
         .route("/user/jwt/verify", post(auth::login::is_token_valid))
         .route("/user/otp", post(auth::signup::send_otp))
         .route("/user/login", post(auth::login::login))
