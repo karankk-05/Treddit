@@ -7,8 +7,7 @@ use axum::{
 };
 
 use sqlx::{Pool, Postgres};
-use tokio::fs::File;
-use tokio::io::AsyncWriteExt;
+use tokio::{fs::File, io::AsyncWriteExt};
 
 use crate::{
     auth::utils::validate_token,
@@ -50,10 +49,7 @@ async fn find_user(email: String, pool: &Pool<Postgres>) -> Result<User, StatusC
             email: row.email,
             username: row.username,
             address: row.address,
-            profile_pic_path: match row.profile_pic_path {
-                Some(val) => val,
-                None => String::from("generic.jpg"),
-            },
+            profile_pic_path: row.profile_pic_path.unwrap_or(String::from("generic.jpg")),
         },
         contact_no: row.contact_no,
         reports: row.reports,

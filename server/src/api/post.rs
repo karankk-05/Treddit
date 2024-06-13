@@ -13,8 +13,7 @@ use axum::{
     Json,
 };
 use chrono::Utc;
-use tokio::fs::File;
-use tokio::io::AsyncWriteExt;
+use tokio::{fs::File, io::AsyncWriteExt};
 
 pub async fn get_all_posts_id(
     State(state): State<SharedState>,
