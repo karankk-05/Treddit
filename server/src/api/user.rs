@@ -1,4 +1,4 @@
-use crate::models::*;
+use crate::{models::*, utils::write_file};
 use axum::{
     extract::{Multipart, State},
     http::StatusCode,
@@ -7,7 +7,6 @@ use axum::{
 };
 
 use sqlx::{Pool, Postgres};
-use tokio::{fs::File, io::AsyncWriteExt};
 
 use crate::{
     auth::utils::validate_token,
@@ -81,20 +80,8 @@ pub async fn change_profile_pic(
     let st = state.read().await;
     validate_token(token, &email, st.jwt_secret_key).await?;
 
-    let mut file = match File::create(format!("res/{email}_profile_{fname}")).await {
-        Ok(val) => val,
-        Err(err) => {
-            eprintln!("{}", err);
-            return Err(StatusCode::INTERNAL_SERVER_ERROR);
-        }
-    };
-    match file.write_all(&fdata).await {
-        Ok(_) => (),
-        Err(err) => {
-            eprintln!("{}", err);
-            return Err(StatusCode::INTERNAL_SERVER_ERROR);
-        }
-    }
+    write_file(&format!("res/{email}_profile_{fname}"), &fdata).await?;
+
     match sqlx::query!(
         "update users set profile_pic_path = $1 where email = $2",
         fname,

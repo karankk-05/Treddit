@@ -4,7 +4,7 @@ use chrono::Utc;
 use sqlx::PgPool;
 use std::collections::HashMap;
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct Otp {
     pub otp: u16,
     pub email: String,

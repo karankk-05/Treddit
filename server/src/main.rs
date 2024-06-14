@@ -63,6 +63,7 @@ async fn create_router() -> Router {
         .route("/user/post", post(post::create_post))
         .route("/user/report", post(user::report_user))
         .route("/posts/:id", get(post::get_post))
+        .route("/posts/:id/owned", get(post::get_post_as_owner))
         .route("/posts/cards", post(post::get_post_cards))
         .route("/posts/all", get(post::get_all_posts_id))
         .route("/posts/unsold", get(post::get_all_posts_id_unsold))

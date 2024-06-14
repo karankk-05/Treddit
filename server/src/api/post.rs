@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::{
     auth::utils::validate_token,
     models::*,
-    utils::{bytes_to_string, random_string},
+    utils::{bytes_to_string, random_string, write_file},
     SharedState,
 };
 use axum::{
@@ -13,7 +13,7 @@ use axum::{
     Json,
 };
 use chrono::Utc;
-use tokio::{fs::File, io::AsyncWriteExt};
+use sqlx::{Pool, Postgres};
 
 pub async fn get_all_posts_id(
     State(state): State<SharedState>,
@@ -45,34 +45,51 @@ pub async fn get_all_posts_id_unsold(
     }
 }
 
-pub async fn get_post(
-    State(state): State<SharedState>,
-    Path(id): Path<i32>,
-) -> Result<Json<Post>, StatusCode> {
-    let row = match sqlx::query!("select * from posts where post_id = $1", id)
-        .fetch_one(&state.write().await.pool)
-        .await
+async fn fetch_post(
+    id: i32,
+    post_owner: Option<String>,
+    pool: &Pool<Postgres>,
+) -> Result<Post, StatusCode> {
+    let row = match sqlx::query!(
+        "select * from posts where post_id = $1 and (visible or owner = $2)",
+        id,
+        post_owner
+    )
+    .fetch_one(pool)
+    .await
     {
         Ok(val) => val,
         Err(_) => return Err(StatusCode::NOT_FOUND),
     };
-    let post = Post {
+    Ok(Post {
         post_id: row.post_id,
         owner: row.owner,
         title: row.title,
-        body: match row.body {
-            Some(val) => val,
-            None => String::new(),
-        },
+        body: row.body.unwrap_or(String::new()),
         sold: row.sold,
         opening_timestamp: row.open_timestamp,
         price: row.price,
-        images: match row.image_paths {
-            Some(val) => val,
-            None => String::new(),
-        },
+        images: row.image_paths.unwrap_or(String::new()),
         reports: row.reports,
-    };
+    })
+}
+
+pub async fn get_post(
+    State(state): State<SharedState>,
+    Path(id): Path<i32>,
+) -> Result<Json<Post>, StatusCode> {
+    let post = fetch_post(id, None, &state.read().await.pool).await?;
+    Ok(Json(post))
+}
+
+pub async fn get_post_as_owner(
+    State(state): State<SharedState>,
+    Path(id): Path<i32>,
+    Json(payload): Json<ValidToken>,
+) -> Result<Json<Post>, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    let post = fetch_post(id, Some(payload.email), &st.pool).await?;
     Ok(Json(post))
 }
 
@@ -81,8 +98,9 @@ pub async fn get_post_cards(
     Json(payload): Json<Vec<i32>>,
 ) -> Result<Json<Vec<PostCard>>, StatusCode> {
     match sqlx::query!(
-        "select title,price,image_paths from posts where post_id = any($1)",
+        "select title,price,image_paths from posts where post_id = any($1) and visible = $2",
         &payload,
+        true
     )
     .fetch_all(&state.read().await.pool)
     .await
@@ -194,8 +212,7 @@ pub async fn create_post(
     let st = state.read().await;
     validate_token(token, &email, st.jwt_secret_key).await?;
 
-    let img_paths: Vec<String> = images.keys().cloned().collect();
-    let img_paths = img_paths.join(",");
+    let img_paths = images.keys().cloned().collect::<Vec<String>>().join(",");
 
     match sqlx::query!(
         "insert into posts(owner,title,body,price,visible,image_paths) values($1,$2,$3,$4,$5,$6)",
@@ -217,20 +234,7 @@ pub async fn create_post(
     }
 
     for (name, img) in &images {
-        let mut file = match File::create(format!("res/{name}")).await {
-            Ok(val) => val,
-            Err(err) => {
-                eprintln!("Cannot save file! {err}");
-                return Err(StatusCode::INTERNAL_SERVER_ERROR);
-            }
-        };
-        match file.write_all(img).await {
-            Ok(_) => (),
-            Err(err) => {
-                eprintln!("{}", err);
-                return Err(StatusCode::INTERNAL_SERVER_ERROR);
-            }
-        }
+        write_file(name, img).await?;
     }
     Ok(StatusCode::CREATED)
 }
