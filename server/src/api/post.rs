@@ -78,8 +78,7 @@ pub async fn get_post(
     State(state): State<SharedState>,
     Path(id): Path<i32>,
 ) -> Result<Json<Post>, StatusCode> {
-    let post = fetch_post(id, None, &state.read().await.pool).await?;
-    Ok(Json(post))
+    Ok(Json(fetch_post(id, None, &state.read().await.pool).await?))
 }
 
 pub async fn get_post_as_owner(
@@ -89,8 +88,7 @@ pub async fn get_post_as_owner(
 ) -> Result<Json<Post>, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    let post = fetch_post(id, Some(payload.email), &st.pool).await?;
-    Ok(Json(post))
+    Ok(Json(fetch_post(id, None, &st.pool).await?))
 }
 
 pub async fn get_post_cards(
