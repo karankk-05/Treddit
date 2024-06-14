@@ -25,7 +25,7 @@ pub async fn is_token_valid(
     State(state): State<SharedState>,
     Json(payload): Json<ValidToken>,
 ) -> Result<StatusCode, StatusCode> {
-    let st = state.write().await;
+    let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
     Ok(StatusCode::OK)
 }
