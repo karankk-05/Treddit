@@ -3,7 +3,7 @@ version: "3"
 
 services:
   db:
-    image: postgres
+    image: docker.io/postgres
     container_name: db-backend-test
     restart: always
     environment:
@@ -15,7 +15,7 @@ services:
       - ./pgdata/:/var/lib/postgresql/data
 
   adminer:
-    image: adminer
+    image: docker.io/adminer
     container_name: adminer-backend-test
     restart: always
     env_file:

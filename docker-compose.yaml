@@ -3,7 +3,7 @@ version: "3"
 
 services:
   db:
-    image: postgres
+    image: docker.io/postgres
     container_name: db
     restart: always
     environment:
@@ -13,7 +13,7 @@ services:
       - ./server/pgdata/:/var/lib/postgresql/data
 
   adminer:
-    image: adminer
+    image: docker.io/adminer
     container_name: adminer
     restart: always
     ports:
