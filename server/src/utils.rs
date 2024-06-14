@@ -2,7 +2,7 @@ use axum::{body::Bytes, http::StatusCode};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use tokio::{
     fs::{create_dir, File},
-    io::AsyncWriteExt,
+    io::{self, AsyncWriteExt},
 };
 
 pub async fn write_file(name: &str, data: &[u8]) -> Result<(), StatusCode> {
@@ -41,7 +41,7 @@ pub async fn mkdir(path: &str) {
     match create_dir(path).await {
         Ok(_) => println!("created directory {}", path),
         Err(err) => match err.kind() {
-            std::io::ErrorKind::AlreadyExists => println!("{} already exists", path),
+            io::ErrorKind::AlreadyExists => println!("{} already exists", path),
             _ => panic!("Cannot create directory"),
         },
     }

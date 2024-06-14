@@ -44,7 +44,9 @@ async fn main() {
 async fn create_dir_str() {
     println!("Creating directory structure!");
     utils::mkdir("res").await;
+    println!("Directory structure completed!")
 }
+
 async fn create_router() -> Router {
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
