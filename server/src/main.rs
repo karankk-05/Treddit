@@ -27,6 +27,7 @@ async fn main() {
     dotenv().ok();
     tracing_subscriber::fmt::init();
 
+    create_dir_str().await;
     let app = create_router().await;
 
     let port = env::var("PORT").expect("PORT not found");
@@ -40,6 +41,10 @@ async fn main() {
         .expect("Cannot start axum server");
 }
 
+async fn create_dir_str() {
+    println!("Creating directory structure!");
+    utils::mkdir("res").await;
+}
 async fn create_router() -> Router {
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
@@ -76,7 +81,6 @@ async fn create_router() -> Router {
         .layer(cors)
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))
-        .nest_service("/static", ServeDir::new("static"))
 }
 
 async fn create_state() -> AppState {

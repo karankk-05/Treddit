@@ -1,6 +1,9 @@
 use axum::{body::Bytes, http::StatusCode};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use tokio::{fs::File, io::AsyncWriteExt};
+use tokio::{
+    fs::{create_dir, File},
+    io::AsyncWriteExt,
+};
 
 pub async fn write_file(name: &str, data: &[u8]) -> Result<(), StatusCode> {
     let mut file = match File::create(format!("res/{name}")).await {
@@ -32,4 +35,14 @@ pub fn random_string(n: usize) -> String {
         .take(n)
         .map(char::from)
         .collect()
+}
+
+pub async fn mkdir(path: &str) {
+    match create_dir(path).await {
+        Ok(_) => println!("created directory {}", path),
+        Err(err) => match err.kind() {
+            std::io::ErrorKind::AlreadyExists => println!("{} already exists", path),
+            _ => panic!("Cannot create directory"),
+        },
+    }
 }
