@@ -37,7 +37,7 @@ pub fn random_string(n: usize) -> String {
         .collect()
 }
 
-pub async fn mkdir(path: &str) {
+pub async fn mkdir_or_panic(path: &str) {
     match create_dir(path).await {
         Ok(_) => println!("created directory {}", path),
         Err(err) => match err.kind() {
