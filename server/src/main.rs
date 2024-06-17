@@ -3,7 +3,7 @@ mod models;
 mod storage;
 mod utils;
 
-use api::{auth, chat, post, user, wishlist};
+use api::{auth, chat, posts, user, wishlist};
 use axum::{
     http::Method,
     routing::{delete, get, post, put},
@@ -67,18 +67,18 @@ async fn create_router() -> Router {
         .route("/user/profile/pic", put(user::change_profile_pic))
         .route("/user/posts", post(user::get_posts))
         .route("/user/passwd", put(auth::signup::change_password))
-        .route("/user/post", post(post::create_post))
+        .route("/user/post", post(posts::create_post))
         .route("/user/report", post(user::report_user))
-        .route("/posts/:id", get(post::get_post))
-        .route("/posts/:id/owned", get(post::get_post_as_owner))
-        .route("/posts/cards", post(post::get_post_cards))
-        .route("/posts/all", get(post::get_all_posts_id))
-        .route("/posts/unsold", get(post::get_all_posts_id_unsold))
+        .route("/posts/:id", get(posts::get_post))
+        .route("/posts/:id/owned", get(posts::get_post_as_owner))
+        .route("/posts/cards", post(posts::get_post_cards))
+        .route("/posts/all", get(posts::get_all_posts_id))
+        .route("/posts/unsold", get(posts::get_all_posts_id_unsold))
         .route("/posts/:id/chats/new", post(chat::postchat::send_chat))
         .route("/posts/:id/chats", post(chat::postchat::get_chat_ids))
-        .route("/posts/:id/visible", put(post::change_post_visibility))
-        .route("/posts/:id/report", post(post::report_post))
-        .route("/posts/:id/sold", put(post::change_sold_status))
+        .route("/posts/:id/visible", put(posts::change_post_visibility))
+        .route("/posts/:id/report", post(posts::report_post))
+        .route("/posts/:id/sold", put(posts::change_sold_status))
         .route("/chats/:id", post(chat::postchat::get_chat))
         .layer(cors)
         .with_state(Arc::clone(&state))
