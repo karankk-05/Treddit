@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select * from posts where post_id = $1",
+  "query": "select * from posts where post_id = $1 and (visible or owner = $2)",
   "describe": {
     "columns": [
       {
@@ -56,7 +56,8 @@
     ],
     "parameters": {
       "Left": [
-        "Int4"
+        "Int4",
+        "Text"
       ]
     },
     "nullable": [
@@ -72,5 +73,5 @@
       false
     ]
   },
-  "hash": "1213d971deb2a23ac26b24421ee43b7f28314dab2dbab3d50565288a071ab5a3"
+  "hash": "811c1f9fe227d5983324e662e29c6a6d975b4339768df3afc74acd0a35638f48"
 }

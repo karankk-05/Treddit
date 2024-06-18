@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select title,price,image_paths from posts where post_id = any($1)",
+  "query": "select title,price,image_paths from posts where post_id = any($1) and visible = $2",
   "describe": {
     "columns": [
       {
@@ -21,7 +21,8 @@
     ],
     "parameters": {
       "Left": [
-        "Int4Array"
+        "Int4Array",
+        "Bool"
       ]
     },
     "nullable": [
@@ -30,5 +31,5 @@
       true
     ]
   },
-  "hash": "8516b255b50d9eb95541ca9244fe461e69a78e2317a9ff2384ff199125c25696"
+  "hash": "a19148c1d29d0f7a2e422c96bda6faa6355db30863542dda58295ef281e142d7"
 }
