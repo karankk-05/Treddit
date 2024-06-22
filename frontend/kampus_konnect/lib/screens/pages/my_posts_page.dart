@@ -11,7 +11,7 @@ class MyPosts extends StatefulWidget {
   _MyPostsState createState() => _MyPostsState();
 }
 
-class _MyPostsState extends State<MyPosts> {  
+class _MyPostsState extends State<MyPosts> {
   @override
   void initState() {
     super.initState();

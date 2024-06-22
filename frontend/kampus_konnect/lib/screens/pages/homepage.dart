@@ -4,6 +4,7 @@ import 'dart:math';
 import '../../app/decorations.dart';
 import '../../providers/post_card_provider.dart';
 import 'package:provider/provider.dart';
+import '../pages/product_details.dart';
 
 
 
@@ -169,19 +170,15 @@ class _ProductTileState extends State<ProductTile> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => ProductDetailsPage(
-        //       productName: widget.productname,
-        //       productDesc: widget.productdesc,
-        //       productImg: widget.productimg,
-        //       productPrice: widget.productprice,
-        //       seller: widget.seller,
-        //       address: widget.address,
-        //     ),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailsPage(
+              id:
+             widget.postCard.postId
+            ),
+          ),
+        );
       },
       child: Stack(
         children: [

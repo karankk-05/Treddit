@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_konnect/models/unsold_post_card.dart';
 import 'package:kampus_konnect/providers/post_card_provider.dart';
-import 'package:kampus_konnect/providers/unsold_posts_provider.dart';
+import 'package:kampus_konnect/providers/product_details_provider.dart';
 import 'screens/auth/signup.dart';
 import 'screens/auth/login.dart';
 import 'app/appcolors.dart';
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MyPostsProvider()),
-        ChangeNotifierProvider(create: (_) => UnsoldPostsProvider()),
+        ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
         ChangeNotifierProvider(create: (_) => PostCardProvider()),
       ],
       child: FutureBuilder<bool>(

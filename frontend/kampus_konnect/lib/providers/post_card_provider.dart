@@ -32,12 +32,15 @@ class PostCardProvider with ChangeNotifier {
         if (responseCards.statusCode == 200) {
           final List<dynamic> postJsonList = jsonDecode(responseCards.body);
           print("Fetched post cards successfully");
-
-          List<PostCard> fetchedProducts = [];
-          for (var postJson in postJsonList) {
-            fetchedProducts.add(PostCard.fromJson(postJson));
-            print(postJson);
+ List<PostCard> fetchedProducts = [];
+          for (int i = 0; i < postJsonList.length; i++) {
+            // Use postIds[i] to get the postId
+            int postId = postIds[i];
+            // Create PostCard object and store the postId
+            PostCard postCard = PostCard.fromJson(postJsonList[i], postId);
+            fetchedProducts.add(postCard);
           }
+          print(fetchedProducts);
 
           _productCard = fetchedProducts;
           notifyListeners();
