@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../main.dart';
 
 class AuthService {
-  static const String _baseUrl = 'http://10.0.2.2:3000';
+  static const String _baseUrl = MyApp.baseUrl;
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
   Future<bool> sendOtp(String email) async {

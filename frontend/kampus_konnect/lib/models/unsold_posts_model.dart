@@ -1,5 +1,6 @@
 // models/product.dart
 import '../main.dart';
+
 class Product {
   final int id;
   final String owner;
@@ -7,9 +8,10 @@ class Product {
   final String body;
   final DateTime openingTimestamp;
   final int price;
+  final bool isSold;
   final List<String> imageUrls;
   final int reports;
-  final bool isSold;
+  bool? isWishlisted;
 
   Product({
     required this.id,
@@ -18,27 +20,27 @@ class Product {
     required this.body,
     required this.openingTimestamp,
     required this.price,
+    required this.isSold,
     required this.imageUrls,
     required this.reports,
-    required this.isSold
+    this.isWishlisted,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     const String baseUrl = MyApp.baseUrl;
     return Product(
-      
       id: json['post_id'],
       owner: json['owner'],
       title: json['title'],
       body: json['body'],
       openingTimestamp: DateTime.parse(json['opening_timestamp']),
       price: json['price'],
+      isSold: json['sold'],
       imageUrls: (json['images'] as String)
           .split(',')
-          .map((imagePath) => '$baseUrl/res/$imagePath')
+          .map((imagePath) => '${baseUrl}/res$imagePath')
           .toList(),
       reports: json['reports'],
-      isSold: json['sold']
     );
   }
 }

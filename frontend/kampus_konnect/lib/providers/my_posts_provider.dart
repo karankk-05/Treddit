@@ -1,10 +1,9 @@
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../models/my_posts_model.dart';
+import '../models/my_posts_model.dart';
 import 'package:http/http.dart' as http;
 
-class ProductProvider with ChangeNotifier {
+class MyPostsProvider with ChangeNotifier {
   List<Product> _products = [];
 
   List<Product> get products => _products;
@@ -13,7 +12,9 @@ class ProductProvider with ChangeNotifier {
     // Fetch post IDs
     final response = await http.post(
       Uri.parse('http://10.0.2.2:3000/user/posts'),
-      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
       body: jsonEncode(<String, String>{'email': email}),
     );
 
@@ -23,7 +24,8 @@ class ProductProvider with ChangeNotifier {
       // Fetch post details for each ID
       List<Product> fetchedProducts = [];
       for (var postId in postIds) {
-        final postResponse = await http.get(Uri.parse('http://10.0.2.2:3000/posts/$postId'));
+        final postResponse =
+            await http.get(Uri.parse('http://10.0.2.2:3000/posts/$postId'));
         if (postResponse.statusCode == 200) {
           final postJson = jsonDecode(postResponse.body);
           fetchedProducts.add(Product.fromJson(postJson));

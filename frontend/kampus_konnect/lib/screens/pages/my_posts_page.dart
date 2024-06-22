@@ -1,17 +1,17 @@
 // screens/my_posts.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/MyPostsProvider/my_posts_provider.dart';
+import '../../providers/my_posts_provider.dart';
+import '../../services/auth/auth.dart';
 import '../../models/my_posts_model.dart';
 import '../../app/decorations.dart';
-
 
 class MyPosts extends StatefulWidget {
   @override
   _MyPostsState createState() => _MyPostsState();
 }
 
-class _MyPostsState extends State<MyPosts> {
+class _MyPostsState extends State<MyPosts> {  
   @override
   void initState() {
     super.initState();
@@ -19,13 +19,14 @@ class _MyPostsState extends State<MyPosts> {
   }
 
   void _fetchPosts() {
-    final productProvider = Provider.of<ProductProvider>(context, listen: false);
-    productProvider.fetchUserPosts('sushikeer@gmail.com');
+    final productProvider =
+        Provider.of<MyPostsProvider>(context, listen: false);
+    productProvider.fetchUserPosts('keerkaran64@gmail.com');
   }
 
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductProvider>(context);
+    final productProvider = Provider.of<MyPostsProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -33,6 +34,7 @@ class _MyPostsState extends State<MyPosts> {
       ),
       body: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisExtent: 300,
           crossAxisCount: 2,
           crossAxisSpacing: 10.0,
           mainAxisSpacing: 10.0,
@@ -55,7 +57,6 @@ class _MyPostsState extends State<MyPosts> {
 }
 
 // widgets/product_tile.dart
-
 
 class ProductTile extends StatefulWidget {
   final Product product;

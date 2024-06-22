@@ -2,9 +2,10 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import '../auth/auth.dart';
+import '../../main.dart';
 
 class ProductService {
-  static const String _baseUrl = 'http://10.0.2.2:3000';
+  static const String _baseUrl = MyApp.baseUrl;
   final AuthService _authService = AuthService();
 
   Future<bool> addProduct({

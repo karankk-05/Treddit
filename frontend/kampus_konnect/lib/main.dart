@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/models/unsold_post_card.dart';
+import 'package:kampus_konnect/providers/post_card_provider.dart';
+import 'package:kampus_konnect/providers/unsold_posts_provider.dart';
 import 'screens/auth/signup.dart';
 import 'screens/auth/login.dart';
 import 'app/appcolors.dart';
@@ -9,7 +12,7 @@ import 'screens/pages/homepage.dart';
 import 'screens/pages/my_posts_page.dart';
 import 'screens/pages/profile_page.dart';
 import 'package:provider/provider.dart';
-import '../../providers/MyPostsProvider/my_posts_provider.dart';
+import 'providers/my_posts_provider.dart';
 import 'services/auth/auth.dart';
 
 void main() async {
@@ -18,6 +21,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
+  static const String baseUrl = 'http://10.0.2.2:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -46,7 +50,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => MyPostsProvider()),
+        ChangeNotifierProvider(create: (_) => UnsoldPostsProvider()),
+        ChangeNotifierProvider(create: (_) => PostCardProvider()),
       ],
       child: FutureBuilder<bool>(
         future: _isTokenValid,
@@ -58,18 +64,18 @@ class _MyAppState extends State<MyApp> {
                 body: Center(child: CircularProgressIndicator()),
               ),
             );
-          } else if (snapshot.connectionState==ConnectionState.done && snapshot.data==false) {
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data == false) {
             print(snapshot.data);
-            
-             return MaterialApp(
+
+            return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
               darkTheme: appthemes.darktheme,
               themeMode: ThemeMode.dark,
               home: LoginPage(),
-              
-             routes: {
-                
+              routes: {
+                '/login': (context) => LoginPage(),
                 '/main': (context) => MainPage(),
                 '/home': (context) => HomePage(),
                 '/chat': (context) => Chat(),
@@ -77,9 +83,8 @@ class _MyAppState extends State<MyApp> {
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
               },
-             );
+            );
           } else {
-            
             return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
@@ -87,8 +92,7 @@ class _MyAppState extends State<MyApp> {
               themeMode: ThemeMode.dark,
               home: MainPage(),
               routes: {
-                
-                
+                '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),
                 '/chat': (context) => Chat(),
                 '/addPost': (context) => AddPost(),
