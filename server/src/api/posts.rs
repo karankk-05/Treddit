@@ -47,13 +47,13 @@ pub async fn get_all_posts_id_unsold(
 
 async fn fetch_post(
     id: i32,
-    post_owner: Option<String>,
+    seeker: Option<String>,
     pool: &Pool<Postgres>,
 ) -> Result<Post, StatusCode> {
     let row = match sqlx::query!(
         "select * from posts where post_id = $1 and (visible or owner = $2)",
         id,
-        post_owner
+        seeker
     )
     .fetch_one(pool)
     .await

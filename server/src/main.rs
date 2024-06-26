@@ -44,6 +44,7 @@ async fn main() {
 async fn create_dir_str() {
     println!("Creating directory structure!");
     utils::mkdir_or_panic("res").await;
+    utils::mkdir_or_panic("pgdata").await;
     println!("Directory structure completed!")
 }
 
