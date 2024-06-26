@@ -1,8 +1,9 @@
 // screens/my_posts.dart
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/services/auth/auth.dart';
 import 'package:provider/provider.dart';
 import '../../providers/my_posts_provider.dart';
-import '../../services/auth/auth.dart';
+import '../auth/login.dart';
 import '../../models/my_posts_model.dart';
 import '../../app/decorations.dart';
 
@@ -15,13 +16,18 @@ class _MyPostsState extends State<MyPosts> {
   @override
   void initState() {
     super.initState();
+    
     _fetchPosts();
   }
+  final authService=AuthService();
 
-  void _fetchPosts() {
+  Future<void> _fetchPosts() async{
+    final email = await authService.getEmail();
     final productProvider =
         Provider.of<MyPostsProvider>(context, listen: false);
-    productProvider.fetchUserPosts('keerkaran64@gmail.com');
+        if(email!=null)
+    productProvider.fetchUserPosts(email);
+    else print("email not found");
   }
 
   @override

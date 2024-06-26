@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_konnect/models/unsold_post_card.dart';
+import 'package:kampus_konnect/providers/app_user_provider.dart';
 import 'package:kampus_konnect/providers/post_card_provider.dart';
 import 'package:kampus_konnect/providers/product_details_provider.dart';
 import 'screens/auth/signup.dart';
@@ -53,6 +54,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => MyPostsProvider()),
         ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
         ChangeNotifierProvider(create: (_) => PostCardProvider()),
+        ChangeNotifierProvider(create: (_) => AppUserProvider()),
       ],
       child: FutureBuilder<bool>(
         future: _isTokenValid,
