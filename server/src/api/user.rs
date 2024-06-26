@@ -34,7 +34,7 @@ pub async fn get_user_private(
     Ok(Json(user))
 }
 
-pub async fn ch_user_info(
+pub async fn change_user_info(
     State(state): State<SharedState>,
     Json(payload): Json<ChUser>,
 ) -> Result<StatusCode, StatusCode> {
@@ -54,7 +54,7 @@ pub async fn ch_user_info(
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
             eprintln!("{}", err);
-            Err(StatusCode::NOT_FOUND)
+            Err(StatusCode::NOT_MODIFIED)
         }
     }
 }
@@ -118,7 +118,7 @@ pub async fn change_profile_pic(
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
             eprintln!("{}", err);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            Err(StatusCode::NOT_MODIFIED)
         }
     }
 }

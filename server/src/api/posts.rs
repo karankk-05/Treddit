@@ -195,7 +195,7 @@ pub async fn change_post(
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
             eprintln!("{}", err);
-            Err(StatusCode::NOT_FOUND)
+            Err(StatusCode::NOT_MODIFIED)
         }
     }
 }
