@@ -95,6 +95,7 @@ pub async fn get_post_cards(
     State(state): State<SharedState>,
     Json(payload): Json<Vec<i32>>,
 ) -> Result<Json<Vec<PostCard>>, StatusCode> {
+    let empty_card_img = String::from("empty.jpg");
     match sqlx::query!(
         "select title,price,image_paths from posts where post_id = any($1) and visible = $2",
         &payload,
@@ -104,11 +105,17 @@ pub async fn get_post_cards(
     .await
     {
         Ok(val) => Ok(Json(
-            val.iter()
+            val.into_iter()
                 .map(|row| PostCard {
-                    title: row.title.clone(),
+                    title: row.title,
                     price: row.price,
-                    image: row.image_paths.clone().unwrap_or(String::from("empty.jpg")),
+                    image: match row.image_paths {
+                        Some(paths) => match paths.split_once(',') {
+                            Some(path) => path.0.to_owned(),
+                            None => empty_card_img.to_owned(),
+                        },
+                        None => empty_card_img.to_owned(),
+                    },
                 })
                 .collect(),
         )),
