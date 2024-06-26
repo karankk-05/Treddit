@@ -56,6 +56,7 @@ async fn create_router() -> Router {
     let state = Arc::new(RwLock::new(create_state().await));
     Router::new()
         .route("/user/new", post(auth::signup::create_user))
+        .route("/user/update", put(user::ch_user_info))
         .route("/user/wishlist", post(wishlist::get_wishlist))
         .route("/user/wishlist/add", post(wishlist::add_to_wishlist))
         .route("/user/wishlist/rm", delete(wishlist::remove_from_wishlist))

@@ -49,6 +49,15 @@ pub struct User {
 }
 
 #[derive(Deserialize)]
+pub struct ChUser {
+    pub token: String,
+    pub email: String,
+    pub username: Option<String>,
+    pub address: Option<String>,
+    pub contact_no: Option<String>,
+}
+
+#[derive(Deserialize)]
 pub struct NewUser {
     pub email: String,
     pub username: String,
