@@ -25,6 +25,7 @@ type SharedState = Arc<RwLock<AppState>>;
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    docs_setup();
     tracing_subscriber::fmt::init();
 
     create_dir_str().await;
@@ -39,6 +40,12 @@ async fn main() {
     axum::serve(listener, app)
         .await
         .expect("Cannot start axum server");
+}
+
+fn docs_setup() {
+    if std::env::var_os("DOCS_RS").is_some() {
+        println!("cargo:rustc-env=SQLX_OFFLINE=true");
+    }
 }
 
 async fn create_dir_str() {
