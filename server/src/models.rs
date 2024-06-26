@@ -111,13 +111,6 @@ pub struct ReportUser {
     pub statement: String,
 }
 
-#[derive(Deserialize)]
-pub struct UpdateStatus {
-    pub token: String,
-    pub email: String,
-    pub status: bool,
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Claims {
     pub email: String,
@@ -142,4 +135,15 @@ pub struct Post {
     pub sold: bool,
     pub images: String,
     pub reports: i32,
+}
+
+#[derive(Deserialize)]
+pub struct ChPost {
+    pub email: String,
+    pub token: String,
+
+    pub title: Option<String>,
+    pub body: Option<String>,
+    pub price: Option<i32>,
+    pub sold: Option<bool>,
 }

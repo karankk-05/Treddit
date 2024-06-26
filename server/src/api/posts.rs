@@ -172,6 +172,34 @@ pub async fn report_post(
     }
 }
 
+pub async fn change_post(
+    State(state): State<SharedState>,
+    Path(post_id): Path<i32>,
+    Json(payload): Json<ChPost>,
+) -> Result<StatusCode, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    let post = fetch_post(post_id, Some(payload.email.clone()), &st.pool).await?;
+    match sqlx::query!(
+        "update posts set title = $1, body = $2,price = $3,sold = $4 where post_id = $5 and owner = $6",
+        payload.title.unwrap_or(post.title),
+        payload.body.unwrap_or(post.body),
+        payload.price.unwrap_or(post.price),
+        payload.sold.unwrap_or(post.sold),
+        post_id,
+        payload.email
+    )
+    .execute(&st.pool)
+    .await
+    {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(err) => {
+            eprintln!("{}", err);
+            Err(StatusCode::NOT_FOUND)
+        }
+    }
+}
+
 pub async fn create_post(
     State(state): State<SharedState>,
     mut multipart: Multipart,
@@ -242,46 +270,4 @@ pub async fn create_post(
         write_file(name, img).await?;
     }
     Ok(StatusCode::CREATED)
-}
-
-pub async fn change_post_visibility(
-    State(state): State<SharedState>,
-    Path(post_id): Path<i32>,
-    Json(payload): Json<UpdateStatus>,
-) -> Result<StatusCode, StatusCode> {
-    let st = state.read().await;
-    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    match sqlx::query!(
-        "update posts set visible = $1 where owner = $2 and post_id = $3",
-        payload.status,
-        payload.email,
-        post_id,
-    )
-    .execute(&st.pool)
-    .await
-    {
-        Ok(_) => Ok(StatusCode::OK),
-        Err(_) => Err(StatusCode::NOT_FOUND),
-    }
-}
-
-pub async fn change_sold_status(
-    State(state): State<SharedState>,
-    Path(post_id): Path<i32>,
-    Json(payload): Json<UpdateStatus>,
-) -> Result<StatusCode, StatusCode> {
-    let st = state.read().await;
-    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    match sqlx::query!(
-        "update posts set sold = $1 where owner = $2 and post_id = $3",
-        payload.status,
-        payload.email,
-        post_id,
-    )
-    .execute(&st.pool)
-    .await
-    {
-        Ok(_) => Ok(StatusCode::OK),
-        Err(_) => Err(StatusCode::NOT_FOUND),
-    }
 }
