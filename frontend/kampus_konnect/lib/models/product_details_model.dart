@@ -1,4 +1,5 @@
 import '../main.dart';
+
 class ProductDetails {
   final int postId;
   final String owner;
@@ -23,7 +24,7 @@ class ProductDetails {
   });
 
   factory ProductDetails.fromJson(Map<String, dynamic> json) {
-    const String baseUrl=MyApp.baseUrl;
+    const String baseUrl = MyApp.baseUrl;
     return ProductDetails(
       postId: json['post_id'],
       owner: json['owner'],
@@ -32,7 +33,7 @@ class ProductDetails {
       sold: json['sold'],
       openingTimestamp: json['opening_timestamp'],
       price: json['price'],
-       imageUrls: (json['images'] as String)
+      imageUrls: (json['images'] as String)
           .split(',')
           .map((imagePath) => '$baseUrl/res/$imagePath')
           .toList(),
