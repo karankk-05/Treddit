@@ -1,9 +1,3 @@
-# FROM rust:latest
-# WORKDIR /usr/src/server
-# COPY . .
-# RUN cargo install --path .
-# CMD ["server"]
-
 FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
 WORKDIR /app
 
