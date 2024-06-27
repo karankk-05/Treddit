@@ -113,7 +113,7 @@ pub async fn get_post_cards(
                     image: match row.image_paths {
                         Some(paths) => match paths.split_once(',') {
                             Some(path) => path.0.to_owned(),
-                            None => empty_card_img.to_owned(),
+                            None => paths,
                         },
                         None => empty_card_img.to_owned(),
                     },
