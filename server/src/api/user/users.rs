@@ -1,4 +1,6 @@
-use crate::{models::*, utils::write_file};
+use super::models::*;
+use crate::models::ValidToken;
+use crate::utils::write_file;
 use axum::{
     extract::{Multipart, State},
     http::StatusCode,
@@ -8,12 +10,7 @@ use axum::{
 
 use sqlx::{Pool, Postgres};
 
-use crate::{
-    auth::utils::validate_token,
-    models::{ReportUser, UserDisp},
-    utils::bytes_to_string,
-    SharedState,
-};
+use crate::{auth::utils::validate_token, utils::bytes_to_string, SharedState};
 
 pub async fn get_user(
     State(state): State<SharedState>,

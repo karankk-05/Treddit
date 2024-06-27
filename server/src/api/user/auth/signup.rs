@@ -1,4 +1,5 @@
-use crate::{models::*, Otp, SharedState};
+use super::super::models::*;
+use crate::{Otp, SharedState};
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
     Argon2, PasswordHasher,

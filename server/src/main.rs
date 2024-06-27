@@ -3,7 +3,11 @@ mod models;
 mod storage;
 mod utils;
 
-use api::{auth, chat, posts, user, wishlist};
+use api::{
+    chat,
+    post::{posts, wishlist},
+    user::{auth, users},
+};
 use axum::{
     http::Method,
     routing::{delete, get, post, put},
@@ -64,20 +68,20 @@ async fn create_router() -> Router {
     let state = Arc::new(RwLock::new(create_state().await));
     Router::new()
         .route("/user/new", post(auth::signup::create_user))
-        .route("/user/update", put(user::change_user_info))
+        .route("/user/update", put(users::change_user_info))
         .route("/user/wishlist", post(wishlist::get_wishlist))
         .route("/user/wishlist/add", post(wishlist::add_to_wishlist))
         .route("/user/wishlist/rm", delete(wishlist::remove_from_wishlist))
         .route("/user/jwt/verify", post(auth::login::is_token_valid))
         .route("/user/otp", post(auth::signup::send_otp))
         .route("/user/login", post(auth::login::login))
-        .route("/user/info", post(user::get_user))
-        .route("/user/info/private", post(user::get_user_private))
-        .route("/user/profile/pic", put(user::change_profile_pic))
-        .route("/user/posts", post(user::get_posts))
+        .route("/user/info", post(users::get_user))
+        .route("/user/info/private", post(users::get_user_private))
+        .route("/user/profile/pic", put(users::change_profile_pic))
+        .route("/user/posts", post(users::get_posts))
         .route("/user/passwd", put(auth::signup::change_password))
         .route("/user/post", post(posts::create_post))
-        .route("/user/report", post(user::report_user))
+        .route("/user/report", post(users::report_user))
         .route("/posts/:id", get(posts::get_post))
         .route("/posts/:id", put(posts::change_post))
         .route("/posts/:id/owned", get(posts::get_post_as_owner))
@@ -85,9 +89,9 @@ async fn create_router() -> Router {
         .route("/posts/all", get(posts::get_all_posts_id))
         .route("/posts/unsold", get(posts::get_all_posts_id_unsold))
         .route("/posts/:id/chats/new", post(chat::postchat::send_chat))
-        .route("/posts/:id/chats", post(chat::postchat::get_chat_ids))
+        .route("/posts/:id/chats", get(chat::postchat::get_chat_ids))
         .route("/posts/:id/report", post(posts::report_post))
-        .route("/chats/:id", post(chat::postchat::get_chat))
+        .route("/chats/:id", get(chat::postchat::get_chat))
         .layer(cors)
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))

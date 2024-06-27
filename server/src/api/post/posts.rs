@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use super::models::*;
 use crate::{
     auth::utils::validate_token,
     models::*,
