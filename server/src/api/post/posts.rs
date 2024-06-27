@@ -51,6 +51,7 @@ async fn fetch_post(
     seeker: Option<String>,
     pool: &Pool<Postgres>,
 ) -> Result<Post, StatusCode> {
+    let empty_full_img = String::from("empty.jpg");
     let row = match sqlx::query!(
         "select * from posts where post_id = $1 and (visible or owner = $2)",
         id,
@@ -70,7 +71,13 @@ async fn fetch_post(
         sold: row.sold,
         opening_timestamp: row.open_timestamp,
         price: row.price,
-        images: row.image_paths.unwrap_or(String::new()),
+        images: match row.image_paths {
+            Some(val) => match val.is_empty() {
+                true => empty_full_img,
+                false => val,
+            },
+            None => empty_full_img,
+        },
         reports: row.reports,
     })
 }
@@ -89,7 +96,7 @@ pub async fn get_post_as_owner(
 ) -> Result<Json<Post>, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    Ok(Json(fetch_post(id, None, &st.pool).await?))
+    Ok(Json(fetch_post(id, Some(payload.email), &st.pool).await?))
 }
 
 pub async fn get_post_cards(
