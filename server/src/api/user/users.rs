@@ -99,6 +99,11 @@ pub async fn change_profile_pic(
         }
     }
 
+    let ext = &fname[&fname.len() - 4..];
+    if !(ext == ".png" || ext == ".jpg") {
+        return Err(StatusCode::UNSUPPORTED_MEDIA_TYPE);
+    }
+
     let st = state.read().await;
     validate_token(token, &email, st.jwt_secret_key).await?;
 
