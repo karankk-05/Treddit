@@ -15,6 +15,7 @@ use axum::{
 };
 use chrono::Utc;
 use sqlx::{Pool, Postgres};
+use tokio::fs::remove_file;
 
 pub async fn get_all_posts_id(
     State(state): State<SharedState>,
@@ -208,6 +209,45 @@ pub async fn change_post(
             eprintln!("{}", err);
             Err(StatusCode::NOT_MODIFIED)
         }
+    }
+}
+
+pub async fn delete_post(
+    State(state): State<SharedState>,
+    Path(post_id): Path<i32>,
+    Json(payload): Json<ValidToken>,
+) -> Result<StatusCode, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    let img_paths = match sqlx::query!(
+        "select image_paths from posts where post_id = $1 and owner = $2",
+        post_id,
+        payload.email
+    )
+    .fetch_one(&st.pool)
+    .await
+    {
+        Ok(val) => val.image_paths,
+        Err(_) => return Err(StatusCode::NOT_FOUND),
+    };
+    if let Some(img_paths) = img_paths {
+        for f_path in img_paths.split(',').into_iter() {
+            if let Err(err) = remove_file(format!("res/{}", f_path)).await {
+                eprintln!("{}", err);
+            }
+        }
+    }
+
+    match sqlx::query!(
+        "delete from posts where post_id = $1 and owner = $2",
+        post_id,
+        payload.email
+    )
+    .execute(&st.pool)
+    .await
+    {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(_) => Err(StatusCode::NOT_MODIFIED),
     }
 }
 

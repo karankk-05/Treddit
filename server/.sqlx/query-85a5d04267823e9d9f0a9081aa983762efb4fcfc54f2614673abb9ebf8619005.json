@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select image_paths from posts where post_id = $1 and owner = $2",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "image_paths",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text"
+      ]
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "85a5d04267823e9d9f0a9081aa983762efb4fcfc54f2614673abb9ebf8619005"
+}
