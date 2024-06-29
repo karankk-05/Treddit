@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 pub struct UserDisp {
     pub email: String,
     pub username: String,
@@ -8,7 +8,7 @@ pub struct UserDisp {
     pub profile_pic_path: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 pub struct User {
     #[serde(flatten)]
     pub disp: UserDisp,

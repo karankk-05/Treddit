@@ -231,7 +231,7 @@ pub async fn delete_post(
         Err(_) => return Err(StatusCode::NOT_FOUND),
     };
     if let Some(img_paths) = img_paths {
-        for f_path in img_paths.split(',').into_iter() {
+        for f_path in img_paths.split(',') {
             if let Err(err) = remove_file(format!("res/{}", f_path)).await {
                 eprintln!("{}", err);
             }
@@ -298,7 +298,7 @@ pub async fn create_post(
 
     let img_paths = images.keys().cloned().collect::<Vec<String>>().join(",");
 
-    match sqlx::query!(
+    if let Err(err) = sqlx::query!(
         "insert into posts(owner,title,body,price,visible,image_paths) values($1,$2,$3,$4,$5,$6)",
         email,
         title,
@@ -310,11 +310,8 @@ pub async fn create_post(
     .execute(&st.pool)
     .await
     {
-        Ok(_) => (),
-        Err(err) => {
-            eprintln!("{}", err);
-            return Err(StatusCode::INTERNAL_SERVER_ERROR);
-        }
+        eprintln!("{}", err);
+        return Err(StatusCode::INTERNAL_SERVER_ERROR);
     }
 
     for (name, img) in &images {
