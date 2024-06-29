@@ -1,3 +1,3 @@
+mod models;
 pub mod auth;
-pub mod models;
 pub mod users;

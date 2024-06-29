@@ -37,8 +37,9 @@ pub async fn remove_from_wishlist(
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
     match sqlx::query!(
-        "delete from wishlist where wishlist_id = $1",
-        payload.wish_id
+        "delete from wishlist where wishlist_id = $1 and email = $2",
+        payload.wish_id,
+        payload.email
     )
     .execute(&st.pool)
     .await

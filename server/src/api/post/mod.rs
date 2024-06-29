@@ -1,3 +1,3 @@
-pub mod models;
+mod models;
 pub mod posts;
 pub mod wishlist;
