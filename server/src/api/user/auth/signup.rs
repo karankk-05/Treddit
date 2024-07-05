@@ -27,12 +27,12 @@ pub async fn send_otp(
         }
     }
 
-    let mailid = "kampuskonnect@zohomail.in";
+    let mailid = st.mail_id.to_owned();
     let otp = generate_otp();
 
-    let email = prepare_mail(mailid, &payload.email, otp)?;
+    let email = prepare_mail(&mailid, &payload.email, otp)?;
 
-    let creds = Credentials::new(mailid.to_owned(), st.mail_pass.to_owned());
+    let creds = Credentials::new(mailid, st.mail_pass.to_owned());
 
     // Open a remote connection to mail
     let mailer = match SmtpTransport::relay("smtp.zoho.in") {

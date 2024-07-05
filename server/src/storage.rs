@@ -22,6 +22,7 @@ impl Otp {
 #[derive(Clone)]
 pub struct AppState {
     pub pool: PgPool,
+    pub mail_id: String,
     pub mail_pass: String,
     pub otp_storage: HashMap<String, Otp>,
     pub jwt_secret_key: [u8; 32],

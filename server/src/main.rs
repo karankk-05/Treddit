@@ -116,6 +116,7 @@ async fn create_state() -> AppState {
 
     AppState {
         pool,
+        mail_id: env::var("MAIL_ID").unwrap_or("kampuskonnect@zohomail.in".to_owned()),
         mail_pass,
         otp_storage,
         jwt_secret_key: b"secretsecretsecretsecretsecretse".to_owned(), //Just for Testing
