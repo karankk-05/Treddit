@@ -111,12 +111,14 @@ async fn create_state() -> AppState {
         .expect("Cannot create db structure");
     let otp_storage: HashMap<String, Otp> = HashMap::new();
     let mail_pass = env::var("MAIL_PASSWD").expect("Mail password not found");
+    let mail_id = env::var("MAIL_ID").unwrap_or("kampuskonnect@zohomail.in".to_owned());
+
     let mut jwt_secret_key = [0u8; 32];
     thread_rng().fill_bytes(&mut jwt_secret_key);
 
     AppState {
         pool,
-        mail_id: env::var("MAIL_ID").unwrap_or("kampuskonnect@zohomail.in".to_owned()),
+        mail_id,
         mail_pass,
         otp_storage,
         jwt_secret_key: b"secretsecretsecretsecretsecretse".to_owned(), //Just for Testing

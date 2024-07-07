@@ -70,7 +70,7 @@ pub async fn create_user(
 ) -> Result<StatusCode, StatusCode> {
     let mut st = state.write().await;
 
-    let new_user: NewUser = payload;
+    let new_user = payload;
     let user = &new_user;
 
     verify_otp(&new_user.email, new_user.otp, &mut st.otp_storage)?;

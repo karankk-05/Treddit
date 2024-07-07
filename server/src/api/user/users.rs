@@ -17,7 +17,7 @@ pub async fn get_user(
     Json(payload): Json<Email>,
 ) -> Result<Json<UserDisp>, StatusCode> {
     let st = state.read().await;
-    let user = find_user(payload.email, &st.pool).await?;
+    let user = find_user(&payload.email, &st.pool).await?;
     Ok(Json(user.disp))
 }
 
@@ -27,7 +27,7 @@ pub async fn get_user_private(
 ) -> Result<Json<User>, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    let user = find_user(payload.email, &st.pool).await?;
+    let user = find_user(&payload.email, &st.pool).await?;
     Ok(Json(user))
 }
 
@@ -37,7 +37,7 @@ pub async fn change_user_info(
 ) -> Result<StatusCode, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    let user = find_user(payload.email.clone(), &st.pool).await?;
+    let user = find_user(&payload.email, &st.pool).await?;
     match sqlx::query!(
         "update users set username = $1,contact_no = $2,address = $3 where email = $4",
         payload.username.unwrap_or(user.disp.username),
@@ -56,7 +56,7 @@ pub async fn change_user_info(
     }
 }
 
-async fn find_user(email: String, pool: &Pool<Postgres>) -> Result<User, StatusCode> {
+async fn find_user(email: &str, pool: &Pool<Postgres>) -> Result<User, StatusCode> {
     let row = match sqlx::query!("select * from users where email = $1", email)
         .fetch_one(pool)
         .await

@@ -68,7 +68,7 @@ async fn fetch_post(
         post_id: row.post_id,
         owner: row.owner,
         title: row.title,
-        body: row.body.unwrap_or(String::new()),
+        body: row.body.unwrap_or_default(),
         sold: row.sold,
         opening_timestamp: row.open_timestamp,
         price: row.price,
