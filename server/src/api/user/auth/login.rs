@@ -1,5 +1,6 @@
 use super::super::models::*;
 use crate::models::{Token, ValidToken};
+use crate::utils::sanitize_check_email;
 use crate::SharedState;
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{extract::State, http::StatusCode, response::Result, Json};
@@ -14,9 +15,11 @@ pub async fn login(
     Json(payload): Json<LoginInfo>,
 ) -> Result<Json<Token>, StatusCode> {
     let st = &state.read().await;
-    validate_passwd(&st.pool, &payload.email, &payload.passwd).await?;
+    let email = sanitize_check_email(payload.email)?;
+    validate_passwd(&st.pool, &email, &payload.passwd).await?;
+
     let claims = Claims {
-        email: payload.email,
+        email,
         exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
     };
     let token = generate_token(claims, st.jwt_secret_key).await?;

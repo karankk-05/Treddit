@@ -1,4 +1,5 @@
 use super::super::models::*;
+use crate::utils::sanitize_check_email;
 use crate::{Otp, SharedState};
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
@@ -70,16 +71,16 @@ pub async fn create_user(
 ) -> Result<StatusCode, StatusCode> {
     let mut st = state.write().await;
 
-    let new_user = payload;
-    let user = &new_user;
+    let mut new_user = payload;
+    new_user.email = sanitize_check_email(new_user.email)?;
 
     verify_otp(&new_user.email, new_user.otp, &mut st.otp_storage)?;
     match sqlx::query!(
         "INSERT INTO USERS(email,username,address,contact_no) VALUES ($1,$2,$3,$4)",
-        user.email,
-        user.username,
-        user.address,
-        user.contact_no,
+        new_user.email,
+        new_user.username,
+        new_user.address,
+        new_user.contact_no,
     )
     .execute(&st.pool)
     .await
