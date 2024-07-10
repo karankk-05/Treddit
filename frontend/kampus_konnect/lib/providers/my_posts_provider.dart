@@ -11,7 +11,7 @@ class MyPostsProvider with ChangeNotifier {
 
   Future<void> fetchUserPosts(String email) async {
     // Fetch post IDs
-    const baseUrl=MyApp.baseUrl;
+    const baseUrl = MyApp.baseUrl;
     final response = await http.post(
       Uri.parse('$baseUrl/user/posts'),
       headers: <String, String>{
@@ -41,6 +41,29 @@ class MyPostsProvider with ChangeNotifier {
     }
   }
 
+  Future<void> editProduct(int productId, String title, String body, int price,
+      bool isSold, String email, String token) async {
+    const baseUrl = MyApp.baseUrl;
+    final response = await http.put(
+      Uri.parse('$baseUrl/posts/$productId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      
+      },
+      body: jsonEncode({
+        'token': token,
+        'title': title,
+        'body': body,
+        'price': price,
+        'sold': isSold,
+        'email': email
+      }),
+    );
+
+   if (response.statusCode == 200) {
+    print("product updated successfully");
+    } 
+  }
   void deleteProduct(int productId) {
     _products.removeWhere((product) => product.id == productId);
     notifyListeners();

@@ -16,10 +16,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _fetchPosts();
+    _fetchUser();
   }
 
-  Future<void> _fetchPosts() async {
+  Future<void> _fetchUser() async {
     final email = await _authService.getEmail();
     final token = await _authService.getToken();
     final appUser = Provider.of<AppUserProvider>(context, listen: false);

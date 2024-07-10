@@ -6,6 +6,7 @@ import '../../providers/my_posts_provider.dart';
 import '../auth/login.dart';
 import '../../models/my_posts_model.dart';
 import '../../app/decorations.dart';
+import 'edit_post_details.dart';
 
 class MyPosts extends StatefulWidget {
   @override
@@ -53,7 +54,10 @@ class _MyPostsState extends State<MyPosts> {
               productProvider.deleteProduct(productProvider.products[index].id);
             },
             onEditPressed: () {
-              // Handle edit action
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EditPostDetailsPage(product: productProvider.products[index]),
+              ));
+
             },
           );
         },
