@@ -12,7 +12,7 @@ pub struct AddWish {
 pub struct RemoveWish {
     pub email: String,
     pub token: String,
-    pub wish_id: i32,
+    pub post_id: i32,
 }
 
 #[derive(Serialize)]
