@@ -10,7 +10,7 @@ class PostCardProvider with ChangeNotifier {
   final String baseUrl = MyApp.baseUrl;
 
   List<PostCard> get productCard => _productCard;
-
+  List<int> get wishlistedPostIds=> _wishlistedPostIds;
   Future<void> fetchPostCards() async {
     try {
       // Step 1: Fetch post IDs from /posts/unsold
@@ -63,12 +63,13 @@ class PostCardProvider with ChangeNotifier {
       print("Error fetching data: $e");
       throw e; // Rethrow the exception for handling in UI or higher levels
     }
+    
   }
 
   Future<void> fetchWishlistPostIds(String email,String token) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/user/posts'),
+        Uri.parse('$baseUrl/user/wishlist'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -88,6 +89,7 @@ class PostCardProvider with ChangeNotifier {
       print("Error fetching wishlist data: $e");
       throw e;
     }
+    notifyListeners();
   }
   void updateWishlistStatus(int postId, bool isWishlisted) {
     final index = _productCard.indexWhere((post) => post.postId == postId);

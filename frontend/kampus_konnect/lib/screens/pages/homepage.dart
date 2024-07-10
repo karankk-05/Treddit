@@ -21,17 +21,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
+    _wishlistService = WishlistService(
+      postCardProvider: Provider.of<PostCardProvider>(context, listen: false),
+      productDetailsProvider:
+          Provider.of<ProductDetailsProvider>(context, listen: false),
+    );
     _fetchPosts();
   }
 
   Future<void> _fetchPosts() async {
     print('Its working');
-        _wishlistService = WishlistService(
-      postCardProvider: Provider.of<PostCardProvider>(context, listen: false),
-      productDetailsProvider:
-          Provider.of<ProductDetailsProvider>(context, listen: false),
-    );
     final email = await _authService.getEmail();
     final token = await _authService.getToken();
     final postCardProvider =

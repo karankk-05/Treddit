@@ -56,7 +56,7 @@ class WishlistService {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode({'email': email, 'wish_id': postId, 'token': token}),
+        body: jsonEncode({'email': email, 'post_id': postId, 'token': token}),
       );
 
       if (response.statusCode == 200) {
