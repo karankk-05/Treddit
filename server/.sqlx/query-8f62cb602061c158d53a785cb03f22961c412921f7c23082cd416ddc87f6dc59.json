@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "delete from wishlist where wishlist_id = $1 and email = $2",
+  "query": "delete from wishlist where post_id = $1 and email = $2",
   "describe": {
     "columns": [],
     "parameters": {
@@ -11,5 +11,5 @@
     },
     "nullable": []
   },
-  "hash": "d238a1bd4c40ea2a174a68878d511d5c2e775491c00ff6844e0b10f66ba311a3"
+  "hash": "8f62cb602061c158d53a785cb03f22961c412921f7c23082cd416ddc87f6dc59"
 }

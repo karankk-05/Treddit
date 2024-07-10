@@ -25,7 +25,7 @@ pub async fn add_to_wishlist(
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
             eprintln!("{}", err);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            Err(StatusCode::NOT_ACCEPTABLE)
         }
     }
 }
@@ -37,8 +37,8 @@ pub async fn remove_from_wishlist(
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
     match sqlx::query!(
-        "delete from wishlist where wishlist_id = $1 and email = $2",
-        payload.wish_id,
+        "delete from wishlist where post_id = $1 and email = $2",
+        payload.post_id,
         payload.email
     )
     .execute(&st.pool)
@@ -47,7 +47,7 @@ pub async fn remove_from_wishlist(
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
             eprintln!("{}", err);
-            Err(StatusCode::NOT_MODIFIED)
+            Err(StatusCode::NOT_FOUND)
         }
     }
 }
