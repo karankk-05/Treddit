@@ -27,4 +27,34 @@ class AppUserProvider with ChangeNotifier {
       throw Exception('Failed to load user data');
     }
   }
+
+  Future<void> editUser(
+    String email,
+    String token,
+    String username,
+    String address,
+    String contactNo,
+  ) async {
+    const baseUrl = MyApp.baseUrl;
+    final response = await http.put(
+      Uri.parse('$baseUrl/user/update'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'token': token,
+        'contact_no': contactNo,
+        'address': address,
+        'email': email,
+        'username': username
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("User updated successfully");
+    } else {
+      print("Failed to update user");
+      throw Exception('Failed to load user');
+    }
+  }
 }

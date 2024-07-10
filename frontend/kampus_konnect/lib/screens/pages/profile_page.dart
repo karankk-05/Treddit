@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/screens/auth/login.dart';
 import '../../services/auth/auth.dart';
 import '../../providers/app_user_provider.dart';
 import 'package:provider/provider.dart';
+import 'edit_user_details.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -48,6 +50,21 @@ class _ProfilePageState extends State<ProfilePage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
+                  // Center(
+                  //   child: user.profilePicPath.isNotEmpty
+                  //       ? Image.network(
+                  //           user.profilePicPath,
+                  //           width: 150,
+                  //           height: 150,
+                  //           fit: BoxFit.cover,
+                  //         )
+                  //       :
+                  //    Icon(
+                  //     Icons.person,
+                  //     size: 150,
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
                   // Container(
                   //   width: 200,
                   //   height: 200,
@@ -107,10 +124,35 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: TextButton(
                       onPressed: () {
-                        // Navigate to Edit Details Page
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => EditUserDetailsPage(
+                            user: user,
+                          ),
+                        ));
                       },
                       child: Text(
                         'Edit Details',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onBackground,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        _authService.logout();
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      child: Text(
+                        'Logout',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onBackground,
                           fontSize: 16,

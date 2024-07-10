@@ -100,6 +100,7 @@ class _MyAppState extends State<MyApp> {
                 '/addPost': (context) => AddPost(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
+                '/main': (context) => MainPage(),
               },
             );
           }

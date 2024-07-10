@@ -18,6 +18,30 @@ class AuthService {
     return response.statusCode == 200;
   }
 
+  Future<bool> changePassword(String email,String password,int otp) async{
+     const baseUrl = MyApp.baseUrl;
+    final response = await http.put(
+      Uri.parse('$baseUrl/user/passwd'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'passwd': password,
+        'otp':otp,
+        'email': email,
+        
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("User updated successfully");
+    } else {
+      print("Failed to update user");
+      throw Exception('Failed to load user');
+    }
+    return response.statusCode == 200;
+  }
+
   Future<bool> createUser({
     required String email,
     required String username,

@@ -17,18 +17,20 @@ class _MyPostsState extends State<MyPosts> {
   @override
   void initState() {
     super.initState();
-    
+
     _fetchPosts();
   }
-  final authService=AuthService();
 
-  Future<void> _fetchPosts() async{
+  final authService = AuthService();
+
+  Future<void> _fetchPosts() async {
     final email = await authService.getEmail();
     final productProvider =
         Provider.of<MyPostsProvider>(context, listen: false);
-        if(email!=null)
-    productProvider.fetchUserPosts(email);
-    else print("email not found");
+    if (email != null)
+      productProvider.fetchUserPosts(email);
+    else
+      print("email not found");
   }
 
   @override
@@ -55,9 +57,9 @@ class _MyPostsState extends State<MyPosts> {
             },
             onEditPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => EditPostDetailsPage(product: productProvider.products[index]),
+                builder: (context) => EditPostDetailsPage(
+                    product: productProvider.products[index]),
               ));
-
             },
           );
         },
