@@ -3,10 +3,11 @@ import 'package:kampus_konnect/models/unsold_post_card.dart';
 import 'dart:math';
 import '../../app/decorations.dart';
 import '../../providers/post_card_provider.dart';
+import '../../providers/product_details_provider.dart';
 import 'package:provider/provider.dart';
 import '../pages/product_details.dart';
-
-
+import '../../services/auth/auth.dart';
+import '../../services/wishlist_service.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,17 +15,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-   void initState() {
+  final AuthService _authService = AuthService();
+  late WishlistService _wishlistService;
+
+  @override
+  void initState() {
     super.initState();
+
     _fetchPosts();
   }
-   void _fetchPosts() {
-    final postCard =
+
+  Future<void> _fetchPosts() async {
+    print('Its working');
+        _wishlistService = WishlistService(
+      postCardProvider: Provider.of<PostCardProvider>(context, listen: false),
+      productDetailsProvider:
+          Provider.of<ProductDetailsProvider>(context, listen: false),
+    );
+    final email = await _authService.getEmail();
+    final token = await _authService.getToken();
+    final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
-    postCard.fetchPostCards();
-    
+    if (email != null && token != null) {
+      await postCardProvider.fetchWishlistPostIds(email, token);
+      await postCardProvider.fetchPostCards();
+    }
   }
+
   bool displayAll = false;
+bool isRefreshing = false;
 
   Widget _appbar(BuildContext context) {
     return Padding(
@@ -43,10 +62,9 @@ class _HomePageState extends State<HomePage> {
             Row(
               children: [
                 SizedBox(width: 8),
-                Icon(Icons.search, color: Theme.of(context).colorScheme.onBackground),
-                Text('Search for products', 
-               // style: mytext.headingtext1(fontSize: 15,)
-                ),
+                Icon(Icons.search,
+                    color: Theme.of(context).colorScheme.onBackground),
+                Text('Search for products'),
               ],
             ),
           ],
@@ -55,93 +73,109 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _handleRefresh() async {
+    setState(() {
+      isRefreshing = true;
+    });
+    await _fetchPosts();
+    setState(() {
+      isRefreshing = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-      final postCardProvider = Provider.of<PostCardProvider>(context);
-     
+    final postCardProvider = Provider.of<PostCardProvider>(context);
 
     return Scaffold(
       appBar: null,
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.only(top: 10),
-            sliver: SliverAppBar(
-              pinned: true,
-              floating: true,
-              snap: true,
-              elevation: 0,
-              collapsedHeight: 60,
-              flexibleSpace: _appbar(context),
-              expandedHeight: 40,
-              foregroundColor: Theme.of(context).colorScheme.primaryContainer,
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.only(top: 10),
+              sliver: SliverAppBar(
+                pinned: true,
+                floating: true,
+                snap: true,
+                elevation: 0,
+                collapsedHeight: 60,
+                flexibleSpace: _appbar(context),
+                expandedHeight: 40,
+                foregroundColor: Theme.of(context).colorScheme.primaryContainer,
+              ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 10, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, top: 0),
-                    child: Text('Newly Arrived', style: mytext.headingbold(fontSize:17,context)),
-                  ),
-                  Expanded(child: SizedBox()),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0, right: 20),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          displayAll = !displayAll;
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: displayAll
-                              ? Theme.of(context).colorScheme.background
-                              : Theme.of(context).colorScheme.primaryContainer,
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10, top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20, top: 0),
+                      child: Text('Newly Arrived',
+                          style: mytext.headingbold(fontSize: 17, context)),
+                    ),
+                    Expanded(child: SizedBox()),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 0, right: 20),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            displayAll = !displayAll;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: displayAll
+                                ? Theme.of(context).colorScheme.background
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                          ),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: Text(displayAll ? 'View Less' : 'View All',
+                              style:
+                                  mytext.headingtext1(fontSize: 15, context)),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Text(displayAll ? 'View Less' : 'View All', style: mytext.headingtext1(fontSize: 15,context)),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            sliver: SliverGrid(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220.0,
-                mainAxisSpacing: 20.0,
-                crossAxisSpacing: 20.0,
-                childAspectRatio: 0.8,
-                mainAxisExtent: 250,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (!displayAll && index >= 7) {
-                    return Container();
-                  }
-                  return ProductTile(
-                    postCard: postCardProvider.productCard[index],
-                    onFavoritePressed: () {
-                      
-                    },
-                  );
-                },
-                childCount: displayAll
-                    ? postCardProvider.productCard.length
-                    : min(7, postCardProvider.productCard.length),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 220.0,
+                  mainAxisSpacing: 20.0,
+                  crossAxisSpacing: 20.0,
+                  childAspectRatio: 0.8,
+                  mainAxisExtent: 250,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (!displayAll && index >= 7) {
+                      return Container();
+                    }
+                    return ProductTile(
+                      postCard: postCardProvider.productCard[index],
+                      wishlistService: _wishlistService,
+                    );
+                  },
+                  childCount: displayAll
+                      ? postCardProvider.productCard.length
+                      : min(7, postCardProvider.productCard.length),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -149,14 +183,12 @@ class _HomePageState extends State<HomePage> {
 
 class ProductTile extends StatefulWidget {
   final PostCard postCard;
-  final VoidCallback? onFavoritePressed;
-
+  final WishlistService wishlistService;
 
   const ProductTile({
     Key? key,
     required this.postCard,
-    
-    this.onFavoritePressed,
+    required this.wishlistService,
   }) : super(key: key);
 
   @override
@@ -164,8 +196,30 @@ class ProductTile extends StatefulWidget {
 }
 
 class _ProductTileState extends State<ProductTile> {
-  bool isFavorite = false;
- 
+  late bool isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.postCard.isWishlisted ?? false;
+  }
+
+  void _toggleFavorite() async {
+    try {
+      if (isFavorite) {
+        await widget.wishlistService.removeFromWishlist(widget.postCard.postId);
+      } else {
+        await widget.wishlistService.addToWishlist(widget.postCard.postId);
+      }
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    } catch (e) {
+      print('Error toggling wishlist: $e');
+      // Handle error or show a snackbar
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -174,8 +228,8 @@ class _ProductTileState extends State<ProductTile> {
           context,
           MaterialPageRoute(
             builder: (context) => ProductDetailsPage(
-              id:
-             widget.postCard.postId
+              id: widget.postCard.postId,
+              isWishlisted: widget.postCard.isWishlisted,
             ),
           ),
         );
@@ -197,23 +251,23 @@ class _ProductTileState extends State<ProductTile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                  child: widget.postCard.image.isNotEmpty
-                      ? Image.network(
-                          widget.postCard.image,
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.cover,
-                        )
-                      : Icon(
-                          Icons.person,
-                          size: 150,
-                          color: Colors.white,
-                        ),
-                ),
+                        child: widget.postCard.image.isNotEmpty
+                            ? Image.network(
+                                widget.postCard.image,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(
+                                Icons.person,
+                                size: 150,
+                                color: Colors.white,
+                              ),
+                      ),
                       SizedBox(height: 10),
                       Text(
                         widget.postCard.title,
-                        style: mytext.headingtext1(fontSize: 13,context),
+                        style: mytext.headingtext1(fontSize: 13, context),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -221,31 +275,21 @@ class _ProductTileState extends State<ProductTile> {
                         children: [
                           Text(
                             '₹${widget.postCard.price}',
-                            style: mytext.headingbold(fontSize: 15,context),
+                            style: mytext.headingbold(fontSize: 15, context),
                             textAlign: TextAlign.left,
                           ),
                           Expanded(child: SizedBox()),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    isFavorite = !isFavorite;
-                                  });
-                                  if (widget.onFavoritePressed != null) {
-                                    widget.onFavoritePressed!();
-                                  }
-                                },
-                                child: Icon(
-                                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                                  color: isFavorite ? Colors.red : Colors.grey,
-                                  size: 25,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                            ],
+                          GestureDetector(
+                            onTap: _toggleFavorite,
+                            child: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: isFavorite ? Colors.red : Colors.grey,
+                              size: 25,
+                            ),
                           ),
+                          SizedBox(width: 10),
                         ],
                       ),
                     ],

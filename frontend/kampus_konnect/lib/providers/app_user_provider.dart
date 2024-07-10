@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:kampus_konnect/main.dart';
@@ -46,7 +47,7 @@ class AppUserProvider with ChangeNotifier {
         'contact_no': contactNo,
         'address': address,
         'email': email,
-        'username': username
+        'username': username,
       }),
     );
 
@@ -55,6 +56,37 @@ class AppUserProvider with ChangeNotifier {
     } else {
       print("Failed to update user");
       throw Exception('Failed to load user');
+    }
+  }
+
+  Future<void> updateProfilePic(
+    String email,
+    String token,
+    File profileImage,
+  ) async {
+    final request = http.MultipartRequest(
+      'PUT',
+      Uri.parse('${MyApp.baseUrl}/user/profile/pic'),
+    );
+
+    final fileName = profileImage.path.split('/').last;
+
+    request.fields['email'] = email;
+    request.fields['token'] = token;
+    request.fields['fname'] = fileName;
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'data',
+      profileImage.path,
+    ));
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      print("Profile picture updated successfully");
+    } else {
+      print("Failed to update profile picture");
+      throw Exception('Failed to update profile picture');
     }
   }
 }

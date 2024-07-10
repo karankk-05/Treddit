@@ -10,7 +10,7 @@ class ProductDetails {
   final int price;
   final List<String> imageUrls;
   final int reports;
-
+  bool? isWishlisted;
   ProductDetails({
     required this.postId,
     required this.owner,

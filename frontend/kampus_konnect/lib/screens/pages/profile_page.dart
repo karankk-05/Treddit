@@ -50,55 +50,22 @@ class _ProfilePageState extends State<ProfilePage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  // Center(
-                  //   child: user.profilePicPath.isNotEmpty
-                  //       ? Image.network(
-                  //           user.profilePicPath,
-                  //           width: 150,
-                  //           height: 150,
-                  //           fit: BoxFit.cover,
-                  //         )
-                  //       :
-                  //    Icon(
-                  //     Icons.person,
-                  //     size: 150,
-                  //     color: Colors.white,
-                  //   ),
-                  // ),
-                  // Container(
-                  //   width: 200,
-                  //   height: 200,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey[350], // Placeholder color
-                  //     borderRadius:
-                  //         BorderRadius.circular(100), // Circular shape
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Colors.grey.withOpacity(0.5),
-                  //         spreadRadius: 2,
-                  //         blurRadius: 5,
-                  //         offset: Offset(0, 3), // changes position of shadow
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   child: user.profilePicPath != null
-                  //       ? ClipOval(
-                  //           child: Image.network(
-                  //             user.profilePicPath,
-                  //             width: 200,
-                  //             height: 200,
-                  //             fit: BoxFit.cover,
-                  //           ),
-                  //         )
-                  //       : ClipOval(
-                  //           child: Image.asset(
-                  //             '', // Path to initial image
-                  //             width: 200,
-                  //             height: 200,
-                  //             fit: BoxFit.cover,
-                  //           ),
-                  //         ),
-                  // ),
+                  Center(
+                    child: user.profilePicPath.isNotEmpty
+                        ? Image.network(
+                            user.profilePicPath,
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          )
+                        :
+                     Icon(
+                      Icons.person,
+                      size: 150,
+                      color: Colors.white,
+                    ),
+                  ),
+                  
                   SizedBox(height: 16),
                   ProfileDetailCard2(
                     title: user.username,

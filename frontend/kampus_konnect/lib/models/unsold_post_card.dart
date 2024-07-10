@@ -5,7 +5,7 @@ class PostCard {
   final String title;
   final int price;
   final String image;
-  final bool? isWishlisted;
+  bool? isWishlisted;
   static String _baseUrl = MyApp.baseUrl;
 
   PostCard({

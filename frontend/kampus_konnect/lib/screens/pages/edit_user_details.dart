@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kampus_konnect/models/app_user_model.dart';
 import 'package:kampus_konnect/providers/app_user_provider.dart';
 import 'package:kampus_konnect/screens/nav/mainpage.dart';
@@ -27,6 +29,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
   late TextEditingController _contactNoController;
   late String? _email;
   late String? _token;
+  File? _profileImage;
 
   @override
   void initState() {
@@ -50,6 +53,17 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
     _token = (await _authService.getToken());
   }
 
+  Future<void> _changeProfilePic() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
       Provider.of<AppUserProvider>(context, listen: false)
@@ -60,7 +74,13 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
         _addressController.text,
         _contactNoController.text,
       )
-          .then((_) {
+          .then((_) async {
+        if (_profileImage != null) {
+          await Provider.of<AppUserProvider>(context, listen: false)
+              .updateProfilePic(_email ?? "", _token ?? "", _profileImage!);
+        }
+        await Provider.of<AppUserProvider>(context, listen: false)
+            .fetchUser(_email ?? "", _token ?? "");
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => MainPage()));
       });
@@ -92,7 +112,10 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       child: ElevatedButton(
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => ChangePasswordPage(email: _email,)),
+            MaterialPageRoute(
+                builder: (context) => ChangePasswordPage(
+                      email: _email,
+                    )),
           );
         },
         style: ButtonStyle(
@@ -105,11 +128,30 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
     );
   }
 
+  Widget _profileImageWidget() {
+    return GestureDetector(
+      onTap: _changeProfilePic,
+      child: CircleAvatar(
+        radius: 50,
+        backgroundImage: _profileImage != null
+            ? FileImage(_profileImage!)
+            : NetworkImage(widget.user.profilePicPath) as ImageProvider,
+        child: _profileImage == null
+            ? Icon(
+                Icons.camera_alt,
+                size: 50,
+                color: Colors.white,
+              )
+            : null,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Post Details'),
+        title: Text('Edit User Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -117,6 +159,8 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              _profileImageWidget(),
+              SizedBox(height: 20),
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(labelText: 'Username'),

@@ -143,19 +143,7 @@ class _ProductTileState extends State<ProductTile> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                            // Handle favorite action
-                          },
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite ? Colors.red : Colors.grey,
-                            size: 25,
-                          ),
-                        ),
+                        
                         SizedBox(width: 10),
                         GestureDetector(
                           onTap: () {

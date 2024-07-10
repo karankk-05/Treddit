@@ -91,7 +91,7 @@ pub async fn change_profile_pic(
         let data = field.bytes().await.expect("Cannot get data from user");
 
         match name as &str {
-            "name" => fname = bytes_to_string(data)?,
+            "fname" => fname = bytes_to_string(data)?,
             "email" => email = bytes_to_string(data)?,
             "data" => fdata = data.to_vec(),
             "token" => token = bytes_to_string(data)?,
@@ -107,7 +107,7 @@ pub async fn change_profile_pic(
     let st = state.read().await;
     validate_token(token, &email, st.jwt_secret_key).await?;
 
-    write_file(&format!("res/{email}_profile_{fname}"), &fdata).await?;
+    write_file(&format!("{email}_profile_{fname}"), &fdata).await?;
 
     match sqlx::query!(
         "update users set profile_pic_path = $1 where email = $2",

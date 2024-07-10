@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/product_details_provider.dart'; // Import the provider
-
+import '../../services/wishlist_service.dart'; // Import WishlistService
+import '../../providers/post_card_provider.dart';
 class ProductDetailsPage extends StatefulWidget {
   final int id;
+  final bool? isWishlisted;
 
   const ProductDetailsPage({
     Key? key,
     required this.id,
+    required this.isWishlisted,
   }) : super(key: key);
 
   @override
@@ -16,13 +19,38 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool dealInitiated = false;
+  late bool isWishlisted;
+
+  late WishlistService _wishlistService;
 
   @override
   void initState() {
     super.initState();
+    _wishlistService = WishlistService(
+      postCardProvider: Provider.of<PostCardProvider>(context, listen: false),
+      productDetailsProvider:
+          Provider.of<ProductDetailsProvider>(context, listen: false),
+    );
+    isWishlisted = widget.isWishlisted ?? false;
     print(widget.id);
-    
-    Provider.of<ProductDetailsProvider>(context, listen: false).fetchPost(widget.id);
+    Provider.of<ProductDetailsProvider>(context, listen: false)
+        .fetchPost(widget.id);
+  }
+
+  void _toggleWishlist() async {
+    try {
+      if (isWishlisted) {
+        await _wishlistService.removeFromWishlist(widget.id);
+      } else {
+        await _wishlistService.addToWishlist(widget.id);
+      }
+      setState(() {
+        isWishlisted = !isWishlisted;
+      });
+    } catch (e) {
+      print('Error toggling wishlist: $e');
+      // Handle error, e.g., show a Snackbar
+    }
   }
 
   @override
@@ -40,70 +68,81 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       body: post == null
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-            child: Column(
-              children: [
-                Card(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                         Center(
-                  child: post.imageUrls.isNotEmpty
-                      ? Image.network(
-                          post.imageUrls[0],
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.cover,
-                        )
-                      : Icon(
-                          Icons.person,
-                          size: 150,
-                          color: Colors.white,
-                        ),
-                ),
-                        SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                minimumSize: MaterialStateProperty.all(Size(100, 60)),
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.red,
+              child: Column(
+                children: [
+                  Card(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Center(
+                            child: post.imageUrls.isNotEmpty
+                                ? Image.network(
+                                    post.imageUrls[0],
+                                    width: 150,
+                                    height: 150,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Icon(
+                                    Icons.person,
+                                    size: 150,
+                                    color: Colors.white,
+                                  ),
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  minimumSize:
+                                      MaterialStateProperty.all(Size(100, 60)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    isWishlisted ? Colors.red : Colors.white,
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                'Add To Favorites',
-                              ),
-                              onPressed: () {
-                                // Add to favorites action
-                              },
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                minimumSize: MaterialStateProperty.all(Size(100, 60)),
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                  dealInitiated ? Color.fromARGB(255, 12, 69, 7) : Colors.green,
+                                child: Text(
+                                  isWishlisted
+                                      ? 'Remove From Favorites'
+                                      : 'Add To favourites',
+                                  style: TextStyle(
+                                    color: isWishlisted
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
                                 ),
+                                onPressed: _toggleWishlist,
                               ),
-                              child: Text(
-                                dealInitiated ? 'Chat Now' : 'Make a Deal',
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  minimumSize:
+                                      MaterialStateProperty.all(Size(100, 60)),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    dealInitiated
+                                        ? Color.fromARGB(255, 12, 69, 7)
+                                        : Colors.green,
+                                  ),
+                                ),
+                                child: Text(
+                                  dealInitiated ? 'Chat Now' : 'Make a Deal',
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    dealInitiated = !dealInitiated;
+                                  });
+                                  // Handle chat or deal initiation action
+                                },
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  dealInitiated = !dealInitiated;
-                                });
-                                // Handle chat or deal initiation action
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                 Card(
+                  Card(
                     color: Theme.of(context).colorScheme.primaryContainer,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -187,7 +226,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         SizedBox(
                           child: ElevatedButton(
                             style: ButtonStyle(
-                              minimumSize: MaterialStateProperty.all(Size(120, 60)),
+                              minimumSize:
+                                  MaterialStateProperty.all(Size(120, 60)),
                               backgroundColor: MaterialStateProperty.all<Color>(
                                 Colors.blue,
                               ),
@@ -203,10 +243,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       ],
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
-            
-          ),
       backgroundColor: Theme.of(context).colorScheme.primary,
     );
   }
