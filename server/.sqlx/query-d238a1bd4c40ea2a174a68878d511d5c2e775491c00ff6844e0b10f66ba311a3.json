@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "delete from wishlist where wishlist_id = $1 and email = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "d238a1bd4c40ea2a174a68878d511d5c2e775491c00ff6844e0b10f66ba311a3"
+}

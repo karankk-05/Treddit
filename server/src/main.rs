@@ -32,7 +32,6 @@ async fn main() {
     docs_setup();
     tracing_subscriber::fmt::init();
 
-    create_dir_str().await;
     let app = create_router().await;
 
     let port = env::var("PORT").expect("PORT not found");
@@ -50,13 +49,6 @@ fn docs_setup() {
     if std::env::var_os("DOCS_RS").is_some() {
         println!("cargo:rustc-env=SQLX_OFFLINE=true");
     }
-}
-
-async fn create_dir_str() {
-    println!("Creating directory structure!");
-    utils::mkdir_or_panic("res").await;
-    utils::mkdir_or_panic("pgdata").await;
-    println!("Directory structure completed!")
 }
 
 async fn create_router() -> Router {
