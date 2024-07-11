@@ -1,4 +1,4 @@
 target/
-pgdata/
 res/
 .env
+.gitignore
