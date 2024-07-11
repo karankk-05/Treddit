@@ -34,39 +34,46 @@ class _signuppageState extends State<signuppage> {
   }
 
   Widget _email(BuildContext context) {
-    
     return fields.TextField(
-        label: "Email", controller: _emailController, secure: false,context: context);
+        label: "Email",
+        controller: _emailController,
+        secure: false,
+        context: context);
   }
 
   Widget _username(BuildContext context) {
-    
     return fields.TextField(
-        label: "Username", controller: _usernameController, secure: false,context: context);
+        label: "Username",
+        controller: _usernameController,
+        secure: false,
+        context: context);
   }
 
   Widget _password(BuildContext context) {
-    
     return fields.TextField(
-        label: "Password", controller: _passwordController, secure: true,context: context);
+        label: "Password",
+        controller: _passwordController,
+        secure: true,
+        context: context);
   }
 
   Widget _conf_password(BuildContext context) {
-    
     return fields.TextField(
         label: "Confirm Password",
         controller: _confirmPasswordController,
-        secure: true,context: context);
+        secure: true,
+        context: context);
   }
 
   Widget _otp(BuildContext context) {
-    
     return fields.TextField(
-        label: "OTP", controller: _otpController, secure: false,context: context);
+        label: "OTP",
+        controller: _otpController,
+        secure: false,
+        context: context);
   }
 
   Widget _RegBtn(BuildContext context) {
-    
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -95,7 +102,7 @@ class _signuppageState extends State<signuppage> {
         ),
         child: Text(
           _showAdditionalFields ? 'REGISTER' : 'SEND OTP',
-          style: mytext.headingbold(fontSize: 18,context),
+          style: mytext.headingbold(fontSize: 18, context),
         ),
       ),
     );
@@ -103,42 +110,31 @@ class _signuppageState extends State<signuppage> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(gradient: gradients.login),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height * 1.1,
+          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+          decoration: BoxDecoration(gradient: gradients.login),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              _email(context),
+              SizedBox(height: 30.0),
+              if (_showAdditionalFields) ...[
+                _username(context),
+                SizedBox(height: 30.0),
+                _password(context),
+                SizedBox(height: 30.0),
+                _conf_password(context),
+                SizedBox(height: 30.0),
+                _otp(context),
+                SizedBox(height: 30.0),
+              ],
+              _RegBtn(context), // extra space at the bottom if needed
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-            child: Center(
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Expanded(child: SizedBox()),
-                    _email(context),
-                    SizedBox(height: 30.0),
-                    if (_showAdditionalFields) ...[
-                      _username(context),
-                      SizedBox(height: 30.0),
-                      _password(context),
-                      SizedBox(height: 30.0),
-                      _conf_password(context),
-                      SizedBox(height: 30.0),
-                      _otp(context),
-                      SizedBox(height: 30.0),
-                    ],
-                    _RegBtn(context),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
