@@ -35,6 +35,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     print(widget.id);
     Provider.of<ProductDetailsProvider>(context, listen: false)
         .fetchPost(widget.id);
+        
   }
 
   void _toggleWishlist() async {
@@ -57,7 +58,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     final postProvider = Provider.of<ProductDetailsProvider>(context);
     final post = postProvider.post;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -76,20 +76,27 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Center(
-                            child: post.imageUrls.isNotEmpty
-                                ? Image.network(
-                                    post.imageUrls[0],
-                                    width: 150,
-                                    height: 150,
+                          if (post.imageUrls.isNotEmpty)
+                            Container(
+                              height: 250, // Adjust height as necessary
+                              child: PageView.builder(
+                                itemCount: post.imageUrls.length,
+                                itemBuilder: (context, index) {
+                                  return Image.network(
+                                    post.imageUrls[index],
                                     fit: BoxFit.cover,
-                                  )
-                                : Icon(
-                                    Icons.person,
-                                    size: 150,
-                                    color: Colors.white,
-                                  ),
-                          ),
+                                  );
+                                },
+                              ),
+                            )
+                          else
+                            Center(
+                              child: Icon(
+                                Icons.person,
+                                size: 150,
+                                color: Colors.white,
+                              ),
+                            ),
                           SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
