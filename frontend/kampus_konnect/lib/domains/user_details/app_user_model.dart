@@ -26,7 +26,8 @@ class AppUser {
       reports: json['reports'],
       address: json['address'],
       contactNo: json['contact_no'],
-      profilePicPath: '$_baseUrl/res/${json['email']}_profile_${json['profile_pic_path']}',
+      profilePicPath:
+          '$_baseUrl/res/${json['email']}_profile_${json['profile_pic_path']}',
     );
   }
 
