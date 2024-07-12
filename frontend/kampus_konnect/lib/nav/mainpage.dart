@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/domains/chat/chat_list_screen.dart';
-
-import '../domains/chat/chat_list_screen.dart';
 import '../domains/homepage/homepage.dart';
 import '../domains/addpost/add_post_page.dart';
 import '../domains/myposts/my_posts_page.dart';
@@ -87,29 +84,29 @@ class _MainPageState extends State<MainPage> {
                   isSelected: _selectedIndex == 0,
                   onTap: () => onItemTapped(0),
                 ),
-                DrawerItem(
-                  icon: Icons.chat,
-                  label: 'Chat',
-                  isSelected: _selectedIndex == 1,
-                  onTap: () => onItemTapped(1),
-                ),
+                // DrawerItem(
+                //   icon: Icons.chat,
+                //   label: 'Chat',
+                //   isSelected: _selectedIndex == 1,
+                //   onTap: () => onItemTapped(1),
+                // ),
                 DrawerItemadd(
                   icon: Icons.add,
                   label: 'Add',
-                  isSelected: _selectedIndex == 2,
-                  onTap: () => onItemTapped(2),
+                  isSelected: _selectedIndex == 1,
+                  onTap: () => onItemTapped(1),
                 ),
                 DrawerItem(
                   icon: Icons.list,
                   label: 'My Ads',
-                  isSelected: _selectedIndex == 3,
-                  onTap: () => onItemTapped(3),
+                  isSelected: _selectedIndex == 2,
+                  onTap: () => onItemTapped(2),
                 ),
                 DrawerItem(
                   icon: Icons.person,
                   label: 'Profile',
-                  isSelected: _selectedIndex == 4,
-                  onTap: () => onItemTapped(4),
+                  isSelected: _selectedIndex == 3,
+                  onTap: () => onItemTapped(3),
                 ),
               ],
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kampus_konnect/domains/chat/chat_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'product_details_provider.dart'; 
+import '../../auth/services/auth.dart';
 class ProductDetailsPage extends StatefulWidget {
   final int id;
 
@@ -15,18 +16,27 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  bool dealInitiated = false;
+  
   bool isWishlisted=false;
+  late String? _sender;
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
+
+    _fetchSenderEmail(); // Fetch sender's email asynchronously
+ 
     print(widget.id);
     Provider.of<ProductDetailsProvider>(context, listen: false)
         .fetchPost(widget.id);
         
   }
 
+  Future<void> _fetchSenderEmail() async {
+    _sender = await _authService.getEmail();
+    setState(() {}); // Update the UI after fetching the sender's email
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,22 +112,20 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                       MaterialStateProperty.all(Size(100, 60)),
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
-                                    dealInitiated
-                                        ? Color.fromARGB(255, 12, 69, 7)
-                                        : Colors.green,
+                                    
+                                         Colors.green,
                                   ),
                                 ),
                                 child: Text(
-                                  dealInitiated ? 'Chat Now' : 'Make a Deal',
+                                 'Chat Now' 
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    dealInitiated = !dealInitiated;
                                      Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                           ChatDetailScreen(postId: post.postId)
+                                           ChatDetailScreen(postId: post.postId,reciever: post.owner,sender: _sender,)
                                       ),
                                     );
                                   });

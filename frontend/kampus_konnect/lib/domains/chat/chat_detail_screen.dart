@@ -1,13 +1,17 @@
 // lib/screens/chat_detail_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/domains/auth/services/auth.dart';
+import 'package:kampus_konnect/domains/auth/services/auth_action.dart';
+import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
 import 'package:provider/provider.dart';
 import 'chat_provider.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   final int postId;
-
-  ChatDetailScreen({required this.postId});
+  final String reciever;
+  final String? sender;
+  ChatDetailScreen({required this.postId, required this.reciever,required this.sender});
 
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
@@ -15,20 +19,19 @@ class ChatDetailScreen extends StatefulWidget {
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final _messageController = TextEditingController();
-  String _receiverEmail = 'keerkaran64@gmail.com';
-
+  
   @override
   void initState() {
     super.initState();
     Provider.of<ChatProvider>(context, listen: false)
         .fetchMessages(widget.postId);
-    print("fecthing messages.");
+    print(widget.reciever);
   }
+
 
   @override
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatProvider>(context);
-    print(chatProvider.messages);
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat Details'),
@@ -39,14 +42,42 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             child: ListView.builder(
               itemCount: chatProvider.messages.length,
               itemBuilder: (ctx, index) {
-                return ListTile(
-                  title: Text(
-                    chatProvider.messages[index]['chat'],
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    'From: ${chatProvider.messages[index]['sender']} To: ${chatProvider.messages[index]['reciever']}',
-                    style: TextStyle(color: Colors.white70),
+                final message = chatProvider.messages[index];
+                final isSentByUser = message['sender'] == widget.sender;
+                return Align(
+                  alignment: isSentByUser
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.7),
+                    decoration: BoxDecoration(
+                      color:
+                          isSentByUser ? Colors.blueAccent : Colors.grey[700],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: isSentByUser
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          message['chat'],
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          'From: ${message['sender']}',
+                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                        ),
+                        Text(
+                          'To: ${message['reciever']}',
+                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -63,17 +94,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       labelText: 'Message',
                       fillColor: Colors.white,
                       filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: Icon(Icons.send, color: Colors.blueAccent),
                   onPressed: () {
                     if (_messageController.text.isNotEmpty &&
-                        _receiverEmail.isNotEmpty) {
+                        widget.reciever.isNotEmpty) {
                       chatProvider.sendMessage(
                         widget.postId,
-                        _receiverEmail,
+                        widget.reciever,
                         _messageController.text,
                       );
                       _messageController.clear();

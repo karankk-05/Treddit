@@ -15,7 +15,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final AuthService _authService = AuthService();
-  late WishlistService _wishlistService;
 
   @override
   void initState() {
@@ -35,7 +34,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool displayAll = false;
-bool isRefreshing = false;
+  bool isRefreshing = false;
 
   Widget _appbar(BuildContext context) {
     return Padding(
@@ -157,7 +156,6 @@ bool isRefreshing = false;
                     }
                     return ProductTile(
                       postCard: postCardProvider.productCard[index],
-                      wishlistService: _wishlistService,
                     );
                   },
                   childCount: displayAll
@@ -175,12 +173,10 @@ bool isRefreshing = false;
 
 class ProductTile extends StatefulWidget {
   final PostCard postCard;
-  final WishlistService wishlistService;
 
   const ProductTile({
     Key? key,
     required this.postCard,
-    required this.wishlistService,
   }) : super(key: key);
 
   @override
@@ -188,28 +184,28 @@ class ProductTile extends StatefulWidget {
 }
 
 class _ProductTileState extends State<ProductTile> {
-  late bool isFavorite;
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _toggleFavorite() async {
-    try {
-      if (isFavorite) {
-        await widget.wishlistService.removeFromWishlist(widget.postCard.postId);
-      } else {
-        await widget.wishlistService.addToWishlist(widget.postCard.postId);
-      }
-      setState(() {
-        isFavorite = !isFavorite;
-      });
-    } catch (e) {
-      print('Error toggling wishlist: $e');
-      // Handle error or show a snackbar
-    }
-  }
+  // void _toggleFavorite() async {
+  //   try {
+  //     if (isFavorite) {
+  //       await widget.wishlistService.removeFromWishlist(widget.postCard.postId);
+  //     } else {
+  //       await widget.wishlistService.addToWishlist(widget.postCard.postId);
+  //     }
+  //     setState(() {
+  //       isFavorite = !isFavorite;
+  //     });
+  //   } catch (e) {
+  //     print('Error toggling wishlist: $e');
+  //     // Handle error or show a snackbar
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +266,7 @@ class _ProductTileState extends State<ProductTile> {
                           ),
                           Expanded(child: SizedBox()),
                           GestureDetector(
-                            onTap: _toggleFavorite,
+                            //onTap: _toggleFavorite,
                             child: Icon(
                               isFavorite
                                   ? Icons.favorite
