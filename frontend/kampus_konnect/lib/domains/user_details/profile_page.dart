@@ -50,22 +50,20 @@ class _ProfilePageState extends State<ProfilePage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  // Center(
-                  //   child: user.profilePicPath.isNotEmpty
-                  //       ? Image.network(
-                  //           user.profilePicPath,
-                  //           width: 150,
-                  //           height: 150,
-                  //           fit: BoxFit.cover,
-                  //         )
-                  //       :
-                  //    Icon(
-                  //     Icons.person,
-                  //     size: 150,
-                  //     color: Colors.white,
-                  //   ),
-                  // ),
-                  
+                  Center(
+                    child: user.profilePicPath.isNotEmpty
+                        ? Image.network(
+                            user.profilePicPath,
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(
+                            Icons.person,
+                            size: 150,
+                            color: Colors.white,
+                          ),
+                  ),
                   SizedBox(height: 16),
                   ProfileDetailCard2(
                     title: user.username,

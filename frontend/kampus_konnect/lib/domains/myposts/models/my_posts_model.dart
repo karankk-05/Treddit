@@ -1,5 +1,5 @@
 // models/product.dart
-import '../../main.dart';
+import '../../../main.dart';
 class Product {
   final int id;
   final String owner;

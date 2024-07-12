@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../domains/homepage/homepage.dart';
 import '../domains/addpost/add_post_page.dart';
-import '../domains/myposts/my_posts_page.dart';
+import '../domains/myposts/screens/my_posts_page.dart';
 import '../domains/user_details/profile_page.dart';
 
 class MainPage extends StatefulWidget {
