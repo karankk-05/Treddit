@@ -59,16 +59,26 @@ pub async fn get_chat(
     let st = state.read().await;
     let claims = decode_token(payload.token.clone(), st.jwt_secret_key).await?;
     validate_token(payload.token, &claims.email, st.jwt_secret_key).await?;
-    match sqlx::query!("select message,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
+    match sqlx::query_as!(RecievePostChat,"select message as chat,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
         chat_id,
         claims.email
     ).fetch_one(&st.pool).await{
-        Ok(val)=>Ok(Json(RecievePostChat{
-            chat: val.message,
-            sender: val.sender,
-            reciever: val.reciever,
-            chat_timestamp:val.chat_timestamp,
-        })),
+        Ok(val)=>Ok(Json(val)),
             Err(_)=>Err(StatusCode::NOT_FOUND)
+    }
+}
+
+pub async fn get_chats(
+    State(state): State<SharedState>,
+    Json(payload): Json<BulkGet>,
+) -> Result<Json<Vec<RecievePostChat>>, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query_as!(RecievePostChat,"select message as chat,sender,reciever,chat_timestamp from post_chats where chat_id = any($1) and (sender = $2 or reciever = $2)",
+        &payload.chats,
+        payload.email
+    ).fetch_all(&st.pool).await{
+        Ok(val)=> Ok(Json(val)),
+        Err(_)=> return Err(StatusCode::INTERNAL_SERVER_ERROR)
     }
 }

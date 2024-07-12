@@ -85,6 +85,7 @@ async fn create_router() -> Router {
         .route("/posts/:id/chats", post(chat::postchat::get_chat_ids))
         .route("/posts/:id/report", post(posts::report_post))
         .route("/chats/:id", post(chat::postchat::get_chat))
+        .route("/chats/bulk", post(chat::postchat::get_chats))
         .layer(cors)
         .with_state(Arc::clone(&state))
         .nest_service("/res", ServeDir::new("res"))
