@@ -83,6 +83,7 @@ async fn create_router() -> Router {
         .route("/posts/unsold", get(posts::get_all_posts_id_unsold))
         .route("/posts/:id/chats/new", post(chat::postchat::send_chat))
         .route("/posts/:id/chats", post(chat::postchat::get_chat_ids))
+        .route("/posts/:id/chatters", post(chat::postchat::get_chatters))
         .route("/posts/:id/report", post(posts::report_post))
         .route("/chats/:id", post(chat::postchat::get_chat))
         .route("/chats/bulk", post(chat::postchat::get_chats))
