@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/models/unsold_post_card.dart';
-import 'package:kampus_konnect/providers/app_user_provider.dart';
-import 'package:kampus_konnect/providers/post_card_provider.dart';
-import 'package:kampus_konnect/providers/product_details_provider.dart';
-import 'screens/auth/signup.dart';
-import 'screens/auth/login.dart';
+import 'package:kampus_konnect/domains/chat/chat_provider.dart';
+import 'package:kampus_konnect/domains/homepage/unsold_post_card.dart';
+import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
+import 'package:kampus_konnect/domains/homepage/post_card_provider.dart';
+import 'package:kampus_konnect/domains/homepage/product_details/product_details_provider.dart';
+import 'domains/auth/screens/signup.dart';
+import 'domains/auth/screens/login.dart';
 import 'app/appcolors.dart';
-import 'screens/nav/mainpage.dart';
-import 'screens/pages/add_post_page.dart';
-import 'screens/pages/chat.dart';
-import 'screens/pages/homepage.dart';
-import 'screens/pages/my_posts_page.dart';
-import 'screens/pages/profile_page.dart';
+import 'nav/mainpage.dart';
+import 'domains/addpost/add_post_page.dart';
+import 'domains/chat/chat_detail_screen.dart';
+import 'domains/homepage/homepage.dart';
+import 'domains/myposts/my_posts_page.dart';
+import 'domains/user_details/profile_page.dart';
 import 'package:provider/provider.dart';
-import 'providers/my_posts_provider.dart';
-import 'services/auth/auth.dart';
+import 'domains/myposts/my_posts_provider.dart';
+import 'domains/auth/services/auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://192.168.29.121:80';
+  static const String baseUrl = 'http://192.168.46.64:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -55,6 +56,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
         ChangeNotifierProvider(create: (_) => PostCardProvider()),
         ChangeNotifierProvider(create: (_) => AppUserProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider(1))
       ],
       child: FutureBuilder<bool>(
         future: _isTokenValid,
@@ -80,7 +82,7 @@ class _MyAppState extends State<MyApp> {
                 '/login': (context) => LoginPage(),
                 '/main': (context) => MainPage(),
                 '/home': (context) => HomePage(),
-                '/chat': (context) => Chat(),
+                // '/chat': (context) => Chat(),
                 '/addPost': (context) => AddPost(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
@@ -96,7 +98,7 @@ class _MyAppState extends State<MyApp> {
               routes: {
                 '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),
-                '/chat': (context) => Chat(),
+                // '/chat': (context) => Chat(),
                 '/addPost': (context) => AddPost(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
