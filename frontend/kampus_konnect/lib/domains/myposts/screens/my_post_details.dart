@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../my_posts_model.dart';
-import '../my_posts_provider.dart';
+import '../models/my_posts_model.dart';
+import '../services&providers/my_posts_provider.dart';
 import '../../auth/services/auth.dart';
-import '../editpost/edit_post_details.dart';
-import '../editpost/fetch_chatters_service.dart';
+import 'edit_post_details.dart';
+import '../services&providers/fetch_chatters_service.dart';
 import '../../chat/chat_detail_screen.dart';
 
 class MyPostDetailsPage extends StatefulWidget {

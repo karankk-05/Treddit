@@ -11,10 +11,10 @@ import 'nav/mainpage.dart';
 import 'domains/addpost/add_post_page.dart';
 import 'domains/chat/chat_detail_screen.dart';
 import 'domains/homepage/homepage.dart';
-import 'domains/myposts/my_posts_page.dart';
+import 'domains/myposts/screens/my_posts_page.dart';
 import 'domains/user_details/profile_page.dart';
 import 'package:provider/provider.dart';
-import 'domains/myposts/my_posts_provider.dart';
+import 'domains/myposts/services&providers/my_posts_provider.dart';
 import 'domains/auth/services/auth.dart';
 
 void main() async {

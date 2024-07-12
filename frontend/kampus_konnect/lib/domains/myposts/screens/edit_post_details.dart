@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kampus_konnect/nav/mainpage.dart';
 import 'package:provider/provider.dart';
-import '../my_posts_model.dart';
-import '../my_posts_provider.dart';
+import '../models/my_posts_model.dart';
+import '../services&providers/my_posts_provider.dart';
 import '../../auth/services/auth.dart';
 
 class EditPostDetailsPage extends StatefulWidget {

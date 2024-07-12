@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_konnect/domains/auth/services/auth.dart';
 import 'package:provider/provider.dart';
-import 'my_posts_provider.dart';
-import '../auth/screens/login.dart';
-import 'my_posts_model.dart';
-import '../../app/decorations.dart';
-import '../myposts/editpost/my_post_details.dart';
+import '../services&providers/my_posts_provider.dart';
+import '../../auth/screens/login.dart';
+import '../models/my_posts_model.dart';
+import '../../../app/decorations.dart';
+import 'my_post_details.dart';
 
 class MyPosts extends StatefulWidget {
   @override
