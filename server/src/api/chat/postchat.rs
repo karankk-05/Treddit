@@ -1,10 +1,15 @@
 use super::models::*;
-use crate::{api::user::auth::utils::*, models::Token, SharedState};
+use crate::{
+    api::user::auth::utils::*,
+    models::{Token, ValidToken},
+    SharedState,
+};
 use axum::{
     extract::{Path, State},
     http::StatusCode,
     Json,
 };
+use serde::Serialize;
 
 pub async fn send_chat(
     State(state): State<SharedState>,
@@ -59,16 +64,52 @@ pub async fn get_chat(
     let st = state.read().await;
     let claims = decode_token(payload.token.clone(), st.jwt_secret_key).await?;
     validate_token(payload.token, &claims.email, st.jwt_secret_key).await?;
-    match sqlx::query!("select message,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
+    match sqlx::query_as!(RecievePostChat,"select message as chat,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
         chat_id,
         claims.email
     ).fetch_one(&st.pool).await{
-        Ok(val)=>Ok(Json(RecievePostChat{
-            chat: val.message,
-            sender: val.sender,
-            reciever: val.reciever,
-            chat_timestamp:val.chat_timestamp,
-        })),
+        Ok(val)=>Ok(Json(val)),
             Err(_)=>Err(StatusCode::NOT_FOUND)
+    }
+}
+
+pub async fn get_chats(
+    State(state): State<SharedState>,
+    Json(payload): Json<BulkGet>,
+) -> Result<Json<Vec<RecievePostChat>>, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query_as!(RecievePostChat,"select message as chat,sender,reciever,chat_timestamp from post_chats where chat_id = any($1) and (sender = $2 or reciever = $2)",
+        &payload.chats,
+        payload.email
+    ).fetch_all(&st.pool).await{
+        Ok(val)=> Ok(Json(val)),
+        Err(_)=> return Err(StatusCode::INTERNAL_SERVER_ERROR)
+    }
+}
+
+#[derive(Serialize)]
+struct Chatter {
+    chatter: String,
+}
+
+pub async fn get_chatters(
+    State(state): State<SharedState>,
+    Path(post_id): Path<i32>,
+    Json(payload): Json<ValidToken>,
+) -> Result<Json<Vec<String>>, StatusCode> {
+    let st = state.read().await;
+    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query_as!(
+        Chatter,
+        "select distinct sender as chatter from post_chats where post_id = $1 and reciever = $2",
+        post_id,
+        payload.email
+    )
+    .fetch_all(&st.pool)
+    .await
+    {
+        Ok(val) => Ok(Json(val.into_iter().map(|x| x.chatter).collect())),
+        Err(_) => Err(StatusCode::NOT_FOUND),
     }
 }

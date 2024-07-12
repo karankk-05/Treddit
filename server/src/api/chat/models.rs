@@ -16,3 +16,10 @@ pub struct RecievePostChat {
     pub reciever: String,
     pub chat_timestamp: DateTime<Utc>,
 }
+
+#[derive(Deserialize)]
+pub struct BulkGet {
+    pub email: String,
+    pub token: String,
+    pub chats: Vec<i32>,
+}
