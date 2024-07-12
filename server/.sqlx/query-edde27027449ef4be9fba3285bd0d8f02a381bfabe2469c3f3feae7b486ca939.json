@@ -1,11 +1,11 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select message,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
+  "query": "select message as chat,sender,reciever,chat_timestamp from post_chats where chat_id = $1 and (sender = $2 or reciever = $2)",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
-        "name": "message",
+        "name": "chat",
         "type_info": "Text"
       },
       {
@@ -37,5 +37,5 @@
       false
     ]
   },
-  "hash": "7bdecdb1421d59ec5ef2bdea7ba72819b982202981a8d57f3f6e11309cd77a4a"
+  "hash": "edde27027449ef4be9fba3285bd0d8f02a381bfabe2469c3f3feae7b486ca939"
 }

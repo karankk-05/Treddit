@@ -1,0 +1,23 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select distinct sender as chatter from post_chats where post_id = $1 and reciever = $2",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "chatter",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "b8ebd44c3ad9f1ea7b84f4e8ee62649d96d655ce8565677014934a9350ca6c9f"
+}

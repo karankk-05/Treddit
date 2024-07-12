@@ -9,7 +9,6 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use serde::Serialize;
 
 pub async fn send_chat(
     State(state): State<SharedState>,
@@ -88,11 +87,6 @@ pub async fn get_chats(
     }
 }
 
-#[derive(Serialize)]
-struct Chatter {
-    chatter: String,
-}
-
 pub async fn get_chatters(
     State(state): State<SharedState>,
     Path(post_id): Path<i32>,
@@ -100,8 +94,7 @@ pub async fn get_chatters(
 ) -> Result<Json<Vec<String>>, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    match sqlx::query_as!(
-        Chatter,
+    match sqlx::query!(
         "select distinct sender as chatter from post_chats where post_id = $1 and reciever = $2",
         post_id,
         payload.email
