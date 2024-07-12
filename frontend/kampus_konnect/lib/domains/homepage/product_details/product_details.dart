@@ -3,6 +3,7 @@ import 'package:kampus_konnect/domains/chat/chat_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'product_details_provider.dart'; 
 import '../../auth/services/auth.dart';
+import '../../chat/chat_provider.dart';
 class ProductDetailsPage extends StatefulWidget {
   final int id;
 
@@ -120,6 +121,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                  'Chat Now' 
                                 ),
                                 onPressed: () {
+                                   Provider.of<ChatProvider>(context,
+                                          listen: false)
+                                      .updatePostId(post.postId);
                                   setState(() {
                                      Navigator.push(
                                       context,
