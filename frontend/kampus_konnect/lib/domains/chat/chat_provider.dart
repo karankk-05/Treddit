@@ -4,28 +4,36 @@ import 'package:flutter/material.dart';
 import 'chat_service.dart';
 
 class ChatProvider with ChangeNotifier {
-  final ChatService chatService = ChatService();
-  List<int> _chatIds = [];
-  Map<String, dynamic> _selectedChat = {};
+  final ChatService _chatService = ChatService();
+  List<Map<String, dynamic>> _messages = [];
 
-  List<int> get chatIds => _chatIds;
-  Map<String, dynamic> get selectedChat => _selectedChat;
+  List<Map<String, dynamic>> get messages => _messages;
 
-  Future<void> fetchChatIds(int postId) async {
-    _chatIds = await chatService.getChatIds(postId);
-    print(_chatIds);
-    print("in provider");
-    notifyListeners();
+  Future<void> fetchMessages(int postId) async {
+    try {
+      List<int> chatIds = await _chatService.getChatIds(postId);
+      _messages = [];
+
+      for (int id in chatIds) {
+        Map<String, dynamic> messageData = await _chatService.getChat(id);
+        _messages.add(messageData);
+      }
+
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
   }
 
-  Future<void> fetchChat(int chatId) async {
-    _selectedChat = await chatService.getChat(chatId);
-    notifyListeners();
-  }
-
-  Future<void> sendChat(
-      int postId, String sender, String receiver, String message) async {
-    await chatService.sendChat(postId, sender, receiver, message);
-    fetchChatIds(postId); // Refresh chat list after sending a message
+  Future<void> sendMessage(
+      int postId, String receiver, String message) async {
+    try {
+      print('trying');
+      await _chatService.sendChat(postId, receiver, message);
+      
+      await fetchMessages(postId);
+    } catch (error) {
+      throw error;
+    }
   }
 }

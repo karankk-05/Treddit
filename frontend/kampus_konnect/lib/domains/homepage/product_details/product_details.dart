@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/domains/chat/chat_list_screen.dart';
+import 'package:kampus_konnect/domains/chat/chat_detail_screen.dart';
 import 'package:provider/provider.dart';
-import 'product_details_provider.dart'; // Import the provider
-import '../../../wishlist/wishlist_service.dart'; // Import WishlistService
-import '../post_card_provider.dart';
+import 'product_details_provider.dart'; 
 class ProductDetailsPage extends StatefulWidget {
   final int id;
-  final bool? isWishlisted;
 
   const ProductDetailsPage({
     Key? key,
     required this.id,
-    required this.isWishlisted,
   }) : super(key: key);
 
   @override
@@ -20,40 +16,17 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool dealInitiated = false;
-  late bool isWishlisted;
-
-  late WishlistService _wishlistService;
+  bool isWishlisted=false;
 
   @override
   void initState() {
     super.initState();
-    _wishlistService = WishlistService(
-      postCardProvider: Provider.of<PostCardProvider>(context, listen: false),
-      productDetailsProvider:
-          Provider.of<ProductDetailsProvider>(context, listen: false),
-    );
-    isWishlisted = widget.isWishlisted ?? false;
     print(widget.id);
     Provider.of<ProductDetailsProvider>(context, listen: false)
         .fetchPost(widget.id);
         
   }
 
-  void _toggleWishlist() async {
-    try {
-      if (isWishlisted) {
-        await _wishlistService.removeFromWishlist(widget.id);
-      } else {
-        await _wishlistService.addToWishlist(widget.id);
-      }
-      setState(() {
-        isWishlisted = !isWishlisted;
-      });
-    } catch (e) {
-      print('Error toggling wishlist: $e');
-      // Handle error, e.g., show a Snackbar
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +94,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         : Colors.black,
                                   ),
                                 ),
-                                onPressed: _toggleWishlist,
+                                onPressed: null
                               ),
                               ElevatedButton(
                                 style: ButtonStyle(
@@ -144,7 +117,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                           ChatListScreen(postId: post.postId)
+                                           ChatDetailScreen(postId: post.postId)
                                       ),
                                     );
                                   });

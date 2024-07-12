@@ -3,7 +3,6 @@ import 'package:kampus_konnect/domains/homepage/unsold_post_card.dart';
 import 'dart:math';
 import '../../app/decorations.dart';
 import 'post_card_provider.dart';
-import 'product_details/product_details_provider.dart';
 import 'package:provider/provider.dart';
 import 'product_details/product_details.dart';
 import '../auth/services/auth.dart';
@@ -21,11 +20,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _wishlistService = WishlistService(
-      postCardProvider: Provider.of<PostCardProvider>(context, listen: false),
-      productDetailsProvider:
-          Provider.of<ProductDetailsProvider>(context, listen: false),
-    );
     _fetchPosts();
   }
 
@@ -36,7 +30,6 @@ class _HomePageState extends State<HomePage> {
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
     if (email != null && token != null) {
-      await postCardProvider.fetchWishlistPostIds(email, token);
       await postCardProvider.fetchPostCards();
     }
   }
@@ -200,7 +193,6 @@ class _ProductTileState extends State<ProductTile> {
   @override
   void initState() {
     super.initState();
-    isFavorite = widget.postCard.isWishlisted ?? false;
   }
 
   void _toggleFavorite() async {
@@ -228,7 +220,6 @@ class _ProductTileState extends State<ProductTile> {
           MaterialPageRoute(
             builder: (context) => ProductDetailsPage(
               id: widget.postCard.postId,
-              isWishlisted: widget.postCard.isWishlisted,
             ),
           ),
         );

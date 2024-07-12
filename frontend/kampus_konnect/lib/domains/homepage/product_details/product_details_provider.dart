@@ -30,10 +30,4 @@ class ProductDetailsProvider with ChangeNotifier {
       throw e; // Rethrow the exception for handling in UI or higher levels
     }
   }
-  void updateWishlistStatus(int postId, bool isWishlisted) {
-    if (_post != null && _post!.postId == postId) {
-      _post!.isWishlisted = isWishlisted;
-      notifyListeners();
-    }
-  }
 }

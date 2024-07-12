@@ -10,16 +10,10 @@ import 'package:provider/provider.dart';
 
 
 class WishlistService {
-  final PostCardProvider postCardProvider;
-  final ProductDetailsProvider productDetailsProvider;
   List<int> _wishlistedPostIds = [];
   List<int> get wishlistedPostIds => _wishlistedPostIds;
   static const String baseUrl = MyApp.baseUrl;
   final AuthService _authService = AuthService();
-  WishlistService({
-    required this.postCardProvider,
-    required this.productDetailsProvider,
-  });
   Future<void> addToWishlist(int postId) async {
     final email = await _authService.getEmail();
     final token = await _authService.getToken();
@@ -39,8 +33,6 @@ class WishlistService {
 
       if (response.statusCode == 200) {
         print('Added to wishlist');
-        postCardProvider.updateWishlistStatus(postId, true);
-        productDetailsProvider.updateWishlistStatus(postId, true);
       } else {
         throw Exception('Failed to add to wishlist');
       }
@@ -66,8 +58,6 @@ class WishlistService {
       if (response.statusCode == 200) {
         print('Removed from wishlist');
         // Optionally handle success
-        postCardProvider.updateWishlistStatus(postId, false);
-        productDetailsProvider.updateWishlistStatus(postId, false);
       } else {
         throw Exception('Failed to remove from wishlist');
       }

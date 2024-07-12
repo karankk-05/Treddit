@@ -5,7 +5,6 @@ class PostCard {
   final String title;
   final int price;
   final String image;
-  bool? isWishlisted;
   static String _baseUrl = MyApp.baseUrl;
 
   PostCard({
@@ -13,7 +12,6 @@ class PostCard {
     required this.title,
     required this.price,
     required this.image,
-    this.isWishlisted,
   });
 
   factory PostCard.fromJson(Map<String, dynamic> json, int postId) {

@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 import 'chat_provider.dart';
 
 class ChatDetailScreen extends StatefulWidget {
-  final int chatId;
-  ChatDetailScreen({required this.chatId,});
+  final int postId;
+
+  ChatDetailScreen({required this.postId});
 
   @override
   _ChatDetailScreenState createState() => _ChatDetailScreenState();
@@ -14,70 +15,75 @@ class ChatDetailScreen extends StatefulWidget {
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final _messageController = TextEditingController();
+  String _receiverEmail = 'keerkaran64@gmail.com';
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ChatProvider>(context, listen: false)
+        .fetchMessages(widget.postId);
+    print("fecthing messages.");
+  }
 
   @override
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatProvider>(context);
-
+    print(chatProvider.messages);
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat Details'),
       ),
-      body: FutureBuilder(
-        future: chatProvider.fetchChat(widget.chatId),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return Column(
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: chatProvider.messages.length,
+              itemBuilder: (ctx, index) {
+                return ListTile(
+                  title: Text(
+                    chatProvider.messages[index]['chat'],
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: Text(
+                    'From: ${chatProvider.messages[index]['sender']} To: ${chatProvider.messages[index]['reciever']}',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
               children: [
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: chatProvider.selectedChat['messages'].length,
-                    itemBuilder: (ctx, index) {
-                      return ListTile(
-                        title: Text(chatProvider.selectedChat['messages'][index]
-                            ['content']),
-                        subtitle: Text(chatProvider.selectedChat['messages']
-                            [index]['sender']),
-                      );
-                    },
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      labelText: 'Message',
+                      fillColor: Colors.white,
+                      filled: true,
+                    ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          decoration:
-                              InputDecoration(labelText: 'Enter your message'),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () async {
-                          final message = _messageController.text;
-                          if (message.isNotEmpty) {
-                            await chatProvider.sendChat(
-                              widget.chatId,
-                              chatProvider.selectedChat['sender'],
-                              chatProvider.selectedChat['receiver'],
-                            
-                              message
-                            );
-                            _messageController.clear();
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    if (_messageController.text.isNotEmpty &&
+                        _receiverEmail.isNotEmpty) {
+                      chatProvider.sendMessage(
+                        widget.postId,
+                        _receiverEmail,
+                        _messageController.text,
+                      );
+                      _messageController.clear();
+                    }
+                  },
                 ),
               ],
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
