@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/domains/chat/chat_provider.dart';
 import 'package:kampus_konnect/domains/homepage/unsold_post_card.dart';
 import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
 import 'package:kampus_konnect/domains/homepage/post_card_provider.dart';
@@ -8,7 +9,7 @@ import 'domains/auth/screens/login.dart';
 import 'app/appcolors.dart';
 import 'nav/mainpage.dart';
 import 'domains/addpost/add_post_page.dart';
-import 'domains/chat/chat.dart';
+import 'domains/chat/chat_detail_screen.dart';
 import 'domains/homepage/homepage.dart';
 import 'domains/myposts/my_posts_page.dart';
 import 'domains/user_details/profile_page.dart';
@@ -55,6 +56,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
         ChangeNotifierProvider(create: (_) => PostCardProvider()),
         ChangeNotifierProvider(create: (_) => AppUserProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider())
       ],
       child: FutureBuilder<bool>(
         future: _isTokenValid,
@@ -80,7 +82,7 @@ class _MyAppState extends State<MyApp> {
                 '/login': (context) => LoginPage(),
                 '/main': (context) => MainPage(),
                 '/home': (context) => HomePage(),
-                '/chat': (context) => Chat(),
+                // '/chat': (context) => Chat(),
                 '/addPost': (context) => AddPost(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
@@ -96,7 +98,7 @@ class _MyAppState extends State<MyApp> {
               routes: {
                 '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),
-                '/chat': (context) => Chat(),
+                // '/chat': (context) => Chat(),
                 '/addPost': (context) => AddPost(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),

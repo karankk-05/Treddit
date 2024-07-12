@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/domains/chat/chat_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'product_details_provider.dart'; // Import the provider
 import '../../../wishlist/wishlist_service.dart'; // Import WishlistService
@@ -139,6 +140,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 onPressed: () {
                                   setState(() {
                                     dealInitiated = !dealInitiated;
+                                     Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                           ChatListScreen(postId: post.postId)
+                                      ),
+                                    );
                                   });
                                   // Handle chat or deal initiation action
                                 },

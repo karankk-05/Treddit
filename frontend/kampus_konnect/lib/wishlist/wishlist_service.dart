@@ -6,10 +6,14 @@ import '../domains/auth/services/auth.dart';
 import 'dart:convert';
 import 'package:http/http.dart'
     as http; // Import AuthService or adjust path as needed
+import 'package:provider/provider.dart';
+
 
 class WishlistService {
   final PostCardProvider postCardProvider;
   final ProductDetailsProvider productDetailsProvider;
+  List<int> _wishlistedPostIds = [];
+  List<int> get wishlistedPostIds => _wishlistedPostIds;
   static const String baseUrl = MyApp.baseUrl;
   final AuthService _authService = AuthService();
   WishlistService({
@@ -69,6 +73,30 @@ class WishlistService {
       }
     } catch (e) {
       print('Error removing from wishlist: $e');
+      throw e;
+    }
+  }
+  Future<void> fetchWishlistPostIds(String email,String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/user/wishlist'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, String>{'email': email,'token':token}),
+    
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> wishlistIds = jsonDecode(response.body);
+        _wishlistedPostIds = List<int>.from(wishlistIds);
+        print("Fetched wishlisted post IDs successfully: $_wishlistedPostIds");
+      } else {
+        print("Failed to fetch wishlisted post IDs");
+        throw Exception('Failed to load wishlisted post IDs');
+      }
+    } catch (e) {
+      print("Error fetching wishlist data: $e");
       throw e;
     }
   }

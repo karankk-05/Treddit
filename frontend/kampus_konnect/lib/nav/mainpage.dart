@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/domains/chat/chat_list_screen.dart';
 
-import '../domains/chat/chat.dart';
+import '../domains/chat/chat_list_screen.dart';
 import '../domains/homepage/homepage.dart';
 import '../domains/addpost/add_post_page.dart';
 import '../domains/myposts/my_posts_page.dart';
@@ -26,7 +27,7 @@ class _MainPageState extends State<MainPage> {
   void _initializePages() {
     _pages = [
       HomePage(),
-      Chat(),
+      // ChatListScreen(),
       AddPost(), // Add the callback here
       MyPosts(),
       ProfilePage(),
