@@ -27,11 +27,11 @@ pub struct Post {
     pub post_id: i32,
     pub owner: String,
     pub title: String,
-    pub body: String,
+    pub body: Option<String>,
     pub opening_timestamp: DateTime<Utc>,
     pub price: i32,
     pub sold: bool,
-    pub images: String,
+    pub images: Option<String>,
     pub reports: i32,
 }
 

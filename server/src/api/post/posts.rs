@@ -52,35 +52,20 @@ async fn fetch_post(
     seeker: Option<String>,
     pool: &Pool<Postgres>,
 ) -> Result<Post, StatusCode> {
-    let empty_full_img = String::from("empty.jpg");
-    let row = match sqlx::query!(
-        "select * from posts where post_id = $1 and (visible or owner = $2)",
+    match sqlx::query_as!(
+        Post,
+        "select post_id,owner,title,
+        body,open_timestamp as opening_timestamp,price,sold,image_paths as images,reports 
+        from posts where post_id = $1 and (visible or owner = $2)",
         id,
         seeker
     )
     .fetch_one(pool)
     .await
     {
-        Ok(val) => val,
-        Err(_) => return Err(StatusCode::NOT_FOUND),
-    };
-    Ok(Post {
-        post_id: row.post_id,
-        owner: row.owner,
-        title: row.title,
-        body: row.body.unwrap_or_default(),
-        sold: row.sold,
-        opening_timestamp: row.open_timestamp,
-        price: row.price,
-        images: match row.image_paths {
-            Some(val) => match val.is_empty() {
-                true => empty_full_img,
-                false => val,
-            },
-            None => empty_full_img,
-        },
-        reports: row.reports,
-    })
+        Ok(val) => Ok(val),
+        Err(_) => Err(StatusCode::NOT_FOUND),
+    }
 }
 
 pub async fn get_post(
@@ -195,7 +180,7 @@ pub async fn change_post(
     match sqlx::query!(
         "update posts set title = $1, body = $2,price = $3,sold = $4 where post_id = $5 and owner = $6",
         payload.title.unwrap_or(post.title),
-        payload.body.unwrap_or(post.body),
+        payload.body.unwrap_or(post.body.unwrap_or_default()),
         payload.price.unwrap_or(post.price),
         payload.sold.unwrap_or(post.sold),
         post_id,
