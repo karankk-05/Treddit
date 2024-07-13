@@ -17,7 +17,7 @@ pub async fn get_user(
     Json(payload): Json<Email>,
 ) -> Result<Json<UserDisp>, StatusCode> {
     let st = state.read().await;
-    let user = find_user(&payload.email, &st.pool).await?;
+    let user = find_user(&payload.email, &st.pool, false).await?;
     Ok(Json(user.disp))
 }
 
@@ -27,7 +27,7 @@ pub async fn get_user_private(
 ) -> Result<Json<User>, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    let user = find_user(&payload.email, &st.pool).await?;
+    let user = find_user(&payload.email, &st.pool, true).await?;
     Ok(Json(user))
 }
 
@@ -37,11 +37,15 @@ pub async fn change_user_info(
 ) -> Result<StatusCode, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    let user = find_user(&payload.email, &st.pool).await?;
+    let user = find_user(&payload.email, &st.pool, true).await?;
     match sqlx::query!(
         "update users set username = $1,contact_no = $2,address = $3 where email = $4",
         payload.username.unwrap_or(user.disp.username),
-        payload.contact_no.unwrap_or(user.contact_no),
+        payload.contact_no.unwrap_or(
+            user.disp
+                .contact_no
+                .expect("Contact info is not in database")
+        ),
         payload.address.unwrap_or(user.disp.address),
         payload.email,
     )
@@ -56,7 +60,11 @@ pub async fn change_user_info(
     }
 }
 
-async fn find_user(email: &str, pool: &Pool<Postgres>) -> Result<User, StatusCode> {
+async fn find_user(
+    email: &str,
+    pool: &Pool<Postgres>,
+    is_master: bool,
+) -> Result<User, StatusCode> {
     let row = match sqlx::query!("select * from users where email = $1", email)
         .fetch_one(pool)
         .await
@@ -70,9 +78,14 @@ async fn find_user(email: &str, pool: &Pool<Postgres>) -> Result<User, StatusCod
             email: row.email,
             username: row.username,
             address: row.address,
-            profile_pic_path: row.profile_pic_path.unwrap_or(String::from("generic.jpg")),
+            profile_pic_path: row.profile_pic_path,
+            contact_no: {
+                match row.contact_visible || is_master {
+                    true => Some(row.contact_no),
+                    false => None,
+                }
+            },
         },
-        contact_no: row.contact_no,
         reports: row.reports,
     })
 }
@@ -190,3 +203,4 @@ pub async fn report_user(
         }
     }
 }
+

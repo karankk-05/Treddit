@@ -5,14 +5,14 @@ pub struct UserDisp {
     pub email: String,
     pub username: String,
     pub address: String,
-    pub profile_pic_path: String,
+    pub profile_pic_path: Option<String>,
+    pub contact_no: Option<String>,
 }
 
 #[derive(Serialize)]
 pub struct User {
     #[serde(flatten)]
     pub disp: UserDisp,
-    pub contact_no: String,
     pub reports: i32,
 }
 

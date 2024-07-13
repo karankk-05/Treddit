@@ -37,6 +37,11 @@
         "ordinal": 6,
         "name": "contact_no",
         "type_info": "Varchar"
+      },
+      {
+        "ordinal": 7,
+        "name": "contact_visible",
+        "type_info": "Bool"
       }
     ],
     "parameters": {
@@ -49,6 +54,7 @@
       false,
       false,
       true,
+      false,
       false,
       false,
       false
