@@ -38,11 +38,11 @@ fn build_search_query(filters: &PageFilter) -> String {
     };
 
     if let Some(min) = filters.min_price {
-        search_query.and_where(Expr::col(Posts::Price).gt(min));
+        search_query.and_where(Expr::col(Posts::Price).gte(min));
     };
 
     if let Some(max) = filters.max_price {
-        search_query.and_where(Expr::col(Posts::Price).lt(max));
+        search_query.and_where(Expr::col(Posts::Price).lte(max));
     };
     search_query.to_string(PostgresQueryBuilder)
 }

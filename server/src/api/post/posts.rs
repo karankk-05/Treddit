@@ -24,7 +24,7 @@ async fn fetch_post(
     match sqlx::query_as!(
         PostInfo,
         "select post_id,owner,title,
-        body,open_timestamp as opening_timestamp,price,sold,image_paths as images,reports 
+        body, category,open_timestamp as opening_timestamp,price,sold,image_paths as images,reports 
         from posts where post_id = $1 and (visible or owner = $2)",
         id,
         seeker

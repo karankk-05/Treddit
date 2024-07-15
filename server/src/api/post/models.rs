@@ -31,6 +31,7 @@ pub struct PostInfo {
     pub opening_timestamp: DateTime<Utc>,
     pub price: i32,
     pub sold: bool,
+    pub category: Option<String>,
     pub images: Option<String>,
     pub reports: i32,
 }
