@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../main.dart';
+import '../../../main.dart';
 import 'unsold_post_card.dart'; // Assuming you have PostCard model defined
 
 class PostCardProvider with ChangeNotifier {

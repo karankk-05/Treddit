@@ -1,0 +1,127 @@
+import 'package:kampus_konnect/domains/homepage/post_cards/unsold_post_card.dart';
+import '../../product_details/product_details.dart';
+import 'package:flutter/material.dart';
+import '../../../../theme/decorations.dart';
+
+import '../../../auth/services/auth.dart';
+
+
+
+class PostCardTile extends StatefulWidget {
+  final PostCard postCard;
+
+  const PostCardTile({
+    Key? key,
+    required this.postCard,
+  }) : super(key: key);
+
+  @override
+  _PostCardTileState createState() => _PostCardTileState();
+}
+
+class _PostCardTileState extends State<PostCardTile> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  // void _toggleFavorite() async {
+  //   try {
+  //     if (isFavorite) {
+  //       await widget.wishlistService.removeFromWishlist(widget.postCard.postId);
+  //     } else {
+  //       await widget.wishlistService.addToWishlist(widget.postCard.postId);
+  //     }
+  //     setState(() {
+  //       isFavorite = !isFavorite;
+  //     });
+  //   } catch (e) {
+  //     print('Error toggling wishlist: $e');
+  //     // Handle error or show a snackbar
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailsPage(
+              id: widget.postCard.postId,
+            ),
+          ),
+        );
+      },
+      child: Stack(
+        children: [
+          Card(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: widget.postCard.image.isNotEmpty
+                            ? Image.network(
+                                widget.postCard.image,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              )
+                            : Icon(
+                                Icons.person,
+                                size: 150,
+                                color: Colors.white,
+                              ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        widget.postCard.title,
+                        style: mytext.headingtext1(fontSize: 13, context),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '₹${widget.postCard.price}',
+                            style: mytext.headingbold(fontSize: 15, context),
+                            textAlign: TextAlign.left,
+                          ),
+                          Expanded(child: SizedBox()),
+                          GestureDetector(
+                            //onTap: _toggleFavorite,
+                            child: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: isFavorite ? Colors.red : Colors.grey,
+                              size: 25,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

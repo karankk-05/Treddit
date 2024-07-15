@@ -1,205 +1,131 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../domains/homepage/homepage.dart';
+import '../domains/homepage/post_cards/homepage.dart';
 import '../domains/addpost/add_post_page.dart';
 import '../domains/myposts/screens/my_posts_page.dart';
 import '../domains/user_details/profile_page.dart';
+import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
   int _selectedIndex = 0;
-
-  static List<Widget> _pages = <Widget>[];
 
   @override
   void initState() {
     super.initState();
-    _initializePages();
+    tabController = TabController(length: 4, vsync: this);
   }
 
-  void _initializePages() {
-    _pages = [
-      HomePage(),
-      // ChatListScreen(),
-      AddPost(), // Add the callback here
-      MyPosts(),
-      ProfilePage(),
-    ];
+  @override
+  void dispose() {
+    tabController.dispose();
+    super.dispose();
   }
 
   void onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      Navigator.of(context).pop(); // Close the drawer
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(40.0), // Set the desired height
-        child: AppBar(
-          leading: Builder(
-            builder: (context) {
-              return Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: IconButton(
-                  icon: Icon(Icons.menu,
-                      color: Theme.of(context).colorScheme.onBackground),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                ),
-              );
-            },
-          ),
-          actions: [
-            SizedBox(width: 50),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 15),
-            //   child: Image.asset('assets/home_head.png', height: 25),
-            // ),
-            Expanded(child: SizedBox()),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text('Your App Title'),
       ),
-      drawer: Drawer(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20.0),
-          child: Container(
-            color: Theme.of(context)
-                .colorScheme
-                .background, // Set the background color of the entire drawer
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerItem(
-                  icon: Icons.home,
-                  label: 'Home',
-                  isSelected: _selectedIndex == 0,
-                  onTap: () => onItemTapped(0),
-                ),
-                // DrawerItem(
-                //   icon: Icons.chat,
-                //   label: 'Chat',
-                //   isSelected: _selectedIndex == 1,
-                //   onTap: () => onItemTapped(1),
-                // ),
-                DrawerItemadd(
-                  icon: Icons.add,
-                  label: 'Add',
-                  isSelected: _selectedIndex == 1,
-                  onTap: () => onItemTapped(1),
-                ),
-                DrawerItem(
-                  icon: Icons.list,
-                  label: 'My Ads',
-                  isSelected: _selectedIndex == 2,
-                  onTap: () => onItemTapped(2),
-                ),
-                DrawerItem(
-                  icon: Icons.person,
-                  label: 'Profile',
-                  isSelected: _selectedIndex == 3,
-                  onTap: () => onItemTapped(3),
-                ),
-              ],
+      body: BottomBar(
+        child: TabBar(
+          controller: tabController,
+          tabs: [
+            Tab(
+                icon: Icon(
+              Icons.home,
+              color: _selectedIndex == 0
+                  ? Theme.of(context).colorScheme.onSecondaryContainer
+                  : Theme.of(context).colorScheme.onPrimaryContainer,
+            )),
+            Tab(
+                icon: Icon(
+              Icons.add,
+              color: _selectedIndex == 1
+                  ? Theme.of(context).colorScheme.onSecondaryContainer
+                  : Theme.of(context).colorScheme.onPrimaryContainer,
+            )),
+            Tab(
+                icon: Icon(
+              Icons.list,
+              color: _selectedIndex == 2
+                  ? Theme.of(context).colorScheme.onSecondaryContainer
+                  : Theme.of(context).colorScheme.onPrimaryContainer,
+            )),
+            Tab(
+                icon: Icon(
+              Icons.person,
+              color: _selectedIndex == 3
+                  ? Theme.of(context).colorScheme.onSecondaryContainer
+                  : Theme.of(context).colorScheme.onPrimaryContainer,
+            )),
+          ],
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
+        fit: StackFit.expand,
+        icon: (width, height) => Center(
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            onPressed: null,
+            icon: Icon(
+              Icons.arrow_upward_rounded,
+              size: width,
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
           ),
         ),
-      ),
-      body: _pages[_selectedIndex],
-    );
-  }
-}
-
-class DrawerItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const DrawerItem({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: isSelected
-              ? Theme.of(context).colorScheme.primaryContainer
-              : Colors.transparent,
+        borderRadius: BorderRadius.circular(500),
+        duration: Duration(seconds: 1),
+        curve: Curves.decelerate,
+        showIcon: true,
+        width: MediaQuery.of(context).size.width * 0.7,
+        barColor: Theme.of(context).colorScheme.secondaryContainer,
+        start: 10,
+        end: 0,
+        offset: 10,
+        barAlignment: Alignment.bottomCenter,
+        iconHeight: 35,
+        iconWidth: 35,
+        reverse: false,
+        barDecoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(500),
         ),
-        child: Icon(
-          icon,
-          color: isSelected
-              ? Theme.of(context).colorScheme.onBackground
-              : Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
+        iconDecoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onSecondaryContainer,
+          borderRadius: BorderRadius.circular(500),
+        ),
+        hideOnScroll: true,
+        scrollOpposite: false,
+        onBottomBarHidden: () {},
+        onBottomBarShown: () {},
+        body: (context, controller) => TabBarView(
+          controller: tabController,
+          physics: const BouncingScrollPhysics(),
+          children: [
+            HomePage(),
+            AddPost(),
+            MyPosts(),
+            ProfilePage(),
+          ],
         ),
       ),
-      title: Text(
-        label,
-        style: TextStyle(
-          color: isSelected
-              ? Theme.of(context).colorScheme.onBackground
-              : Theme.of(context).colorScheme.onBackground.withOpacity(0.5),
-        ),
-      ),
-      onTap: onTap,
-      selected: isSelected,
-      selectedTileColor: Theme.of(context).colorScheme.primaryContainer,
-    );
-  }
-}
-
-class DrawerItemadd extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const DrawerItemadd({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white),
-          borderRadius: BorderRadius.circular(50),
-          color: Theme.of(context).colorScheme.primaryContainer,
-        ),
-        child: Icon(icon, color: Theme.of(context).colorScheme.onBackground),
-      ),
-      title: Text(
-        label,
-        style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
-      ),
-      onTap: onTap,
-      selected: isSelected,
-      selectedTileColor: Theme.of(context).colorScheme.primaryContainer,
     );
   }
 }

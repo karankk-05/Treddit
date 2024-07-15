@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/fields.dart';
-import 'package:kampus_konnect/domains/homepage/homepage.dart';
+import 'package:kampus_konnect/domains/homepage/post_cards/homepage.dart';
 import '../../../theme/themes.dart';
 import '../../../theme/decorations.dart';
 import '../services/auth.dart';
