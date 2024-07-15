@@ -14,36 +14,66 @@ use axum::{
     Json,
 };
 use chrono::Utc;
+use sea_query::{Expr, Query as SeaQuery};
+use sea_query::{Iden, PostgresQueryBuilder};
 use serde::Deserialize;
-use sqlx::{query_builder::QueryBuilder, Pool, Postgres};
+use sqlx::{Pool, Postgres, Row};
 use tokio::fs::remove_file;
 
-// #[derive(Deserialize)]
-// pub struct PageFilter {
-//     pub search: Option<String>,
-//     pub min_price: Option<i32>,
-//     pub max_price: Option<i32>,
-// }
+#[derive(Deserialize)]
+pub struct PageFilter {
+    // pub search: Option<String>,
+    pub category: Option<String>,
+    pub min_price: Option<i32>,
+    pub max_price: Option<i32>,
+}
 
-// pub async fn get_post_ids(
-//     State(state): State<SharedState>,
-//     Query(filters): Query<PageFilter>,
-// ) -> Result<Json<Vec<i32>>, StatusCode> {
-//     let mut query: QueryBuilder<Postgres> =
-//         QueryBuilder::new("Select post_id from posts where sold = false and visible = true");
-//
-//     Err(StatusCode::NOT_IMPLEMENTED)
-// }
+#[derive(Iden)]
+enum Posts {
+    PostId,
+    Table,
+    Visible,
+    Sold,
+    Price,
+    Category,
+}
 
-pub async fn get_post_ids(State(state): State<SharedState>) -> Result<Json<Vec<i32>>, StatusCode> {
-    match sqlx::query!("select post_id from posts where sold = false")
-        .fetch_all(&state.read().await.pool)
-        .await
-    {
-        Ok(val) => Ok(Json(val.iter().map(|x| x.post_id).collect())),
+fn build_search_query(filters: &PageFilter) -> String {
+    let mut search_query = SeaQuery::select()
+        .column(Posts::PostId)
+        .from(Posts::Table)
+        .and_where(Expr::col(Posts::Visible).is(true))
+        .and_where(Expr::col(Posts::Sold).is(false))
+        .to_owned();
+
+    if let Some(category) = &filters.category {
+        search_query.and_where(Expr::col(Posts::Category).eq(category));
+    };
+
+    if let Some(min) = filters.min_price {
+        search_query.and_where(Expr::col(Posts::Price).gt(min));
+    };
+
+    if let Some(max) = filters.max_price {
+        search_query.and_where(Expr::col(Posts::Price).lt(max));
+    };
+    search_query.to_string(PostgresQueryBuilder)
+}
+
+pub async fn get_post_ids(
+    State(state): State<SharedState>,
+    Query(filters): Query<PageFilter>,
+) -> Result<Json<Vec<i32>>, StatusCode> {
+    let st = state.read();
+    let search_query = build_search_query(&filters);
+
+    match sqlx::query(&search_query).fetch_all(&st.await.pool).await {
+        Ok(val) => Ok(Json(
+            val.into_iter().map(|row| row.get("post_id")).collect(),
+        )),
         Err(err) => {
-            eprintln!("{}", err);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
+            eprintln!("{:?}", err);
+            Err(StatusCode::EXPECTATION_FAILED)
         }
     }
 }
@@ -52,9 +82,9 @@ async fn fetch_post(
     id: i32,
     seeker: Option<String>,
     pool: &Pool<Postgres>,
-) -> Result<Post, StatusCode> {
+) -> Result<PostInfo, StatusCode> {
     match sqlx::query_as!(
-        Post,
+        PostInfo,
         "select post_id,owner,title,
         body,open_timestamp as opening_timestamp,price,sold,image_paths as images,reports 
         from posts where post_id = $1 and (visible or owner = $2)",
@@ -72,7 +102,7 @@ async fn fetch_post(
 pub async fn get_post(
     State(state): State<SharedState>,
     Path(id): Path<i32>,
-) -> Result<Json<Post>, StatusCode> {
+) -> Result<Json<PostInfo>, StatusCode> {
     Ok(Json(fetch_post(id, None, &state.read().await.pool).await?))
 }
 
@@ -80,7 +110,7 @@ pub async fn get_post_as_owner(
     State(state): State<SharedState>,
     Path(id): Path<i32>,
     Json(payload): Json<ValidToken>,
-) -> Result<Json<Post>, StatusCode> {
+) -> Result<Json<PostInfo>, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
     Ok(Json(fetch_post(id, Some(payload.email), &st.pool).await?))

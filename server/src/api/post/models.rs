@@ -23,7 +23,7 @@ pub struct PostCard {
 }
 
 #[derive(Serialize)]
-pub struct Post {
+pub struct PostInfo {
     pub post_id: i32,
     pub owner: String,
     pub title: String,
