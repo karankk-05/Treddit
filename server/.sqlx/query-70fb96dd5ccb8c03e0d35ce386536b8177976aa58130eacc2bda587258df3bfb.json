@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select * from posts where post_id = $1 and (visible or owner = $2)",
+  "query": "select post_id,owner,title,\n        body,open_timestamp as opening_timestamp,price,sold,image_paths as images,reports \n        from posts where post_id = $1 and (visible or owner = $2)",
   "describe": {
     "columns": [
       {
@@ -25,7 +25,7 @@
       },
       {
         "ordinal": 4,
-        "name": "open_timestamp",
+        "name": "opening_timestamp",
         "type_info": "Timestamptz"
       },
       {
@@ -35,23 +35,18 @@
       },
       {
         "ordinal": 6,
-        "name": "reports",
-        "type_info": "Int4"
+        "name": "sold",
+        "type_info": "Bool"
       },
       {
         "ordinal": 7,
-        "name": "visible",
-        "type_info": "Bool"
-      },
-      {
-        "ordinal": 8,
-        "name": "image_paths",
+        "name": "images",
         "type_info": "Text"
       },
       {
-        "ordinal": 9,
-        "name": "sold",
-        "type_info": "Bool"
+        "ordinal": 8,
+        "name": "reports",
+        "type_info": "Int4"
       }
     ],
     "parameters": {
@@ -69,9 +64,8 @@
       false,
       false,
       true,
-      true,
       false
     ]
   },
-  "hash": "811c1f9fe227d5983324e662e29c6a6d975b4339768df3afc74acd0a35638f48"
+  "hash": "70fb96dd5ccb8c03e0d35ce386536b8177976aa58130eacc2bda587258df3bfb"
 }

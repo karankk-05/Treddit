@@ -18,7 +18,5 @@ services:
     image: docker.io/adminer
     container_name: adminer-backend-test
     restart: always
-    env_file:
-        - .env
     ports:
       - 8080:8080
