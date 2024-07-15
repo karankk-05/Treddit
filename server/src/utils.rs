@@ -11,13 +11,11 @@ pub async fn write_file(name: &str, data: &[u8]) -> Result<(), StatusCode> {
             return Err(StatusCode::INTERNAL_SERVER_ERROR);
         }
     };
-    match file.write_all(data).await {
-        Ok(_) => Ok(()),
-        Err(err) => {
-            eprintln!("{}", err);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
-        }
-    }
+    if let Err(err) = file.write_all(data).await {
+        eprintln!("{}", err);
+        return Err(StatusCode::INTERNAL_SERVER_ERROR);
+    };
+    Ok(())
 }
 
 pub fn bytes_to_string(data: Bytes) -> Result<String, StatusCode> {
