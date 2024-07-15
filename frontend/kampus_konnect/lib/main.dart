@@ -6,7 +6,7 @@ import 'package:kampus_konnect/domains/homepage/post_card_provider.dart';
 import 'package:kampus_konnect/domains/homepage/product_details/product_details_provider.dart';
 import 'domains/auth/screens/signup.dart';
 import 'domains/auth/screens/login.dart';
-import 'app/appcolors.dart';
+import 'theme/themes.dart';
 import 'nav/mainpage.dart';
 import 'domains/addpost/add_post_page.dart';
 import 'domains/chat/chat_detail_screen.dart';
@@ -23,7 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://192.168.46.64:3000';
+  static const String baseUrl = 'http://192.168.20.64:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -75,8 +75,6 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
-              darkTheme: appthemes.darktheme,
-              themeMode: ThemeMode.dark,
               home: LoginPage(),
               routes: {
                 '/login': (context) => LoginPage(),
@@ -92,8 +90,6 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
-              darkTheme: appthemes.darktheme,
-              themeMode: ThemeMode.dark,
               home: MainPage(),
               routes: {
                 '/login': (context) => LoginPage(),

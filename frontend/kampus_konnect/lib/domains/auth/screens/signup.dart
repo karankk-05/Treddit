@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kampus_konnect/domains/auth/widgets/fields.dart';
 
-import '../../../../app/appcolors.dart';
+import '../../../theme/themes.dart';
 import '../services/auth.dart';
-import '../../../../app/decorations.dart';
+import '../../../theme/decorations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../services/auth_action.dart'; // Import the auth_actions file
 

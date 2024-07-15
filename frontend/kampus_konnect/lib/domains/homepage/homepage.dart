@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_konnect/domains/homepage/unsold_post_card.dart';
 import 'dart:math';
-import '../../app/decorations.dart';
+import '../../theme/decorations.dart';
 import 'post_card_provider.dart';
 import 'package:provider/provider.dart';
 import 'product_details/product_details.dart';
