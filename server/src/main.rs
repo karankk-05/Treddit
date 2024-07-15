@@ -15,7 +15,7 @@ use axum::{
 };
 use dotenvy::dotenv;
 use rand::{thread_rng, RngCore};
-use sqlx::postgres::PgPoolOptions;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 use std::{collections::HashMap, env, sync::Arc};
 use storage::{AppState, Otp};
 use tokio::sync::RwLock;
@@ -79,8 +79,7 @@ async fn create_router() -> Router {
         .route("/posts/:id", delete(posts::delete_post))
         .route("/posts/:id/owned", get(posts::get_post_as_owner))
         .route("/posts/cards", post(posts::get_post_cards))
-        .route("/posts/all", get(posts::get_all_posts_id))
-        .route("/posts/unsold", get(posts::get_all_posts_id_unsold))
+        .route("/posts/unsold", get(posts::get_post_ids))
         .route("/posts/:id/chats/new", post(chat::postchat::send_chat))
         .route("/posts/:id/chats", post(chat::postchat::get_chat_ids))
         .route("/posts/:id/chatters", post(chat::postchat::get_chatters))
@@ -92,7 +91,7 @@ async fn create_router() -> Router {
         .nest_service("/res", ServeDir::new("res"))
 }
 
-async fn create_state() -> AppState {
+async fn configure_db() -> Pool<Postgres> {
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL not found");
     let pool = PgPoolOptions::new()
         .max_connections(10)
@@ -103,6 +102,11 @@ async fn create_state() -> AppState {
         .run(&pool)
         .await
         .expect("Cannot create db structure");
+    pool
+}
+
+async fn create_state() -> AppState {
+    let pool = configure_db().await;
     let otp_storage: HashMap<String, Otp> = HashMap::new();
     let mail_pass = env::var("MAIL_PASSWD").expect("Mail password not found");
     let mail_id = env::var("MAIL_ID").unwrap_or("kampuskonnect@zohomail.in".to_owned());

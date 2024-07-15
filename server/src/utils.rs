@@ -49,8 +49,8 @@ mod tests {
 
     #[test]
     fn check_email_sanitization() {
-        let sanitized_email = vec!["hallo@iitk.ac.in"];
-        let unsanitized_email = vec![" hallo@iitk.ac.in "];
+        let sanitized_email = vec!["hallo@iitk.ac.in", "capital@h.com"];
+        let unsanitized_email = vec![" hallo@iitk.ac.in ", "Capital@H.com "];
         for (unsanitezed, sanitized) in unsanitized_email
             .into_iter()
             .zip(sanitized_email.into_iter())

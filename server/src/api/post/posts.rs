@@ -8,33 +8,34 @@ use crate::{
     SharedState,
 };
 use axum::{
-    extract::{Multipart, Path, State},
+    extract::{Multipart, Path, Query, State},
     http::StatusCode,
     response::Result,
     Json,
 };
 use chrono::Utc;
-use sqlx::{Pool, Postgres};
+use serde::Deserialize;
+use sqlx::{query_builder::QueryBuilder, Pool, Postgres};
 use tokio::fs::remove_file;
 
-pub async fn get_all_posts_id(
-    State(state): State<SharedState>,
-) -> Result<Json<Vec<i32>>, StatusCode> {
-    match sqlx::query!("select post_id from posts")
-        .fetch_all(&state.read().await.pool)
-        .await
-    {
-        Ok(val) => Ok(Json(val.iter().map(|x| x.post_id).collect())),
-        Err(err) => {
-            eprintln!("{}", err);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
-        }
-    }
-}
+// #[derive(Deserialize)]
+// pub struct PageFilter {
+//     pub search: Option<String>,
+//     pub min_price: Option<i32>,
+//     pub max_price: Option<i32>,
+// }
 
-pub async fn get_all_posts_id_unsold(
-    State(state): State<SharedState>,
-) -> Result<Json<Vec<i32>>, StatusCode> {
+// pub async fn get_post_ids(
+//     State(state): State<SharedState>,
+//     Query(filters): Query<PageFilter>,
+// ) -> Result<Json<Vec<i32>>, StatusCode> {
+//     let mut query: QueryBuilder<Postgres> =
+//         QueryBuilder::new("Select post_id from posts where sold = false and visible = true");
+//
+//     Err(StatusCode::NOT_IMPLEMENTED)
+// }
+
+pub async fn get_post_ids(State(state): State<SharedState>) -> Result<Json<Vec<i32>>, StatusCode> {
     match sqlx::query!("select post_id from posts where sold = false")
         .fetch_all(&state.read().await.pool)
         .await
