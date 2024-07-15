@@ -13,11 +13,13 @@ pub struct PageFilter {
     pub category: Option<String>,
     pub min_price: Option<i32>,
     pub max_price: Option<i32>,
+    pub owner: Option<String>,
 }
 
 #[derive(Iden)]
 enum Posts {
     PostId,
+    Owner,
     Table,
     Visible,
     Sold,
@@ -32,6 +34,10 @@ fn build_search_query(filters: &PageFilter) -> String {
         .and_where(Expr::col(Posts::Visible).is(true))
         .and_where(Expr::col(Posts::Sold).is(false))
         .to_owned();
+
+    if let Some(owner) = &filters.owner {
+        search_query.and_where(Expr::col(Posts::Owner).eq(owner));
+    };
 
     if let Some(category) = &filters.category {
         search_query.and_where(Expr::col(Posts::Category).eq(category));
