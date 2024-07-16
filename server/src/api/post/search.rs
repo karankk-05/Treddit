@@ -1,31 +1,21 @@
+use super::posts::Posts;
 use crate::SharedState;
 use axum::{
     extract::{Query, State},
     http::StatusCode,
     Json,
 };
-use sea_query::{Expr, Iden, PostgresQueryBuilder, Query as SeaQuery};
+use sea_query::{Expr, PostgresQueryBuilder, Query as SeaQuery};
 use serde::Deserialize;
 use sqlx::Row;
 
 #[derive(Deserialize)]
 pub struct PageFilter {
-    // pub search: Option<String>,
+    pub search_str: Option<String>,
     pub category: Option<String>,
     pub min_price: Option<i32>,
     pub max_price: Option<i32>,
     pub owner: Option<String>,
-}
-
-#[derive(Iden)]
-enum Posts {
-    PostId,
-    Owner,
-    Table,
-    Visible,
-    Sold,
-    Price,
-    Category,
 }
 
 fn build_search_query(filters: &PageFilter) -> String {
@@ -51,6 +41,7 @@ fn build_search_query(filters: &PageFilter) -> String {
     if let Some(max) = filters.max_price {
         search_query.and_where(Expr::col(Posts::Price).lte(max));
     };
+
     search_query.to_string(PostgresQueryBuilder)
 }
 

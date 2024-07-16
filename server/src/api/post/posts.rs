@@ -14,8 +14,23 @@ use axum::{
     Json,
 };
 use chrono::Utc;
+use sea_query::Iden;
 use sqlx::{Pool, Postgres};
 use tokio::fs::remove_file;
+
+#[derive(Iden)]
+pub enum Posts {
+    PostId,
+    Owner,
+    Table,
+    Title,
+    Body,
+    Visible,
+    Sold,
+    Price,
+    Category,
+}
+
 async fn fetch_post(
     id: i32,
     seeker: Option<String>,
@@ -134,35 +149,6 @@ pub async fn report_post(
         Err(err) => {
             eprintln!("{}", err);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
-        }
-    }
-}
-
-pub async fn change_post(
-    State(state): State<SharedState>,
-    Path(post_id): Path<i32>,
-    Json(payload): Json<ChPost>,
-) -> Result<StatusCode, StatusCode> {
-    let st = state.read().await;
-    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    let post = fetch_post(post_id, Some(payload.email.clone()), &st.pool).await?;
-    match sqlx::query!(
-        "update posts set title = $1, body = $2,category = $3,price = $4,sold = $5 where post_id = $6 and owner = $7",
-        payload.title.unwrap_or(post.title),
-        payload.category.clone().unwrap_or(post.category.unwrap_or_default()),
-        payload.body.unwrap_or(post.body.unwrap_or_default()),
-        payload.price.unwrap_or(post.price),
-        payload.sold.unwrap_or(post.sold),
-        post_id,
-        payload.email
-    )
-    .execute(&st.pool)
-    .await
-    {
-        Ok(_) => Ok(StatusCode::OK),
-        Err(err) => {
-            eprintln!("{}", err);
-            Err(StatusCode::NOT_MODIFIED)
         }
     }
 }

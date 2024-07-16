@@ -5,7 +5,7 @@ mod utils;
 
 use api::{
     chat,
-    post::{posts, search as post_search, wishlist},
+    post::{posts, search as post_search, update as post_update, wishlist},
     user::{auth, users},
 };
 use axum::{
@@ -75,7 +75,7 @@ async fn create_router() -> Router {
         .route("/user/post", post(posts::create_post))
         .route("/user/report", post(users::report_user))
         .route("/posts/:id", get(posts::get_post))
-        .route("/posts/:id", put(posts::change_post))
+        .route("/posts/:id", put(post_update::update_post))
         .route("/posts/:id", delete(posts::delete_post))
         .route("/posts/:id/owned", get(posts::get_post_as_owner))
         .route("/posts/cards", post(posts::get_post_cards))
