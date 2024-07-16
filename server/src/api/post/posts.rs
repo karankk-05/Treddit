@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use super::models::*;
 use crate::{
     auth::utils::validate_token,
@@ -202,7 +200,7 @@ pub async fn create_post(
     let mut body = String::new();
     let mut category: Option<String> = None;
     let mut price: i32 = 0;
-    let mut images: HashMap<String, Vec<u8>> = HashMap::new();
+    let mut images: Vec<(String, Vec<u8>)> = vec![];
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = &field.name().expect("Cannot get name from user").to_owned();
@@ -230,7 +228,7 @@ pub async fn create_post(
                 if !(ext == ".png" || ext == ".jpg") {
                     return Err(StatusCode::UNSUPPORTED_MEDIA_TYPE);
                 }
-                images.insert(format!("{path_prefix}_{ext}"), data.to_vec());
+                images.push((format!("{path_prefix}_{ext}"), data.to_vec()));
             }
             &_ => (),
         }
@@ -239,7 +237,11 @@ pub async fn create_post(
     let st = state.read().await;
     validate_token(token, &email, st.jwt_secret_key).await?;
 
-    let img_paths = images.keys().cloned().collect::<Vec<String>>().join(",");
+    let img_paths = images
+        .iter()
+        .map(|x| x.0.clone())
+        .collect::<Vec<String>>()
+        .join(",");
 
     if let Err(err) = sqlx::query!(
         "insert into posts(owner,title,body,price,visible,image_paths,category) values($1,$2,$3,$4,$5,$6,$7)",
