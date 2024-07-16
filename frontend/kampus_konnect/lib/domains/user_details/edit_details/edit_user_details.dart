@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kampus_konnect/domains/user_details/app_user_model.dart';
 import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
-import 'package:kampus_konnect/nav/mainpage.dart';
+import 'package:kampus_konnect/nav/nav_bar.dart';
 import 'package:provider/provider.dart';
 import '../../auth/services/auth.dart';
 import 'change_password.dart';
