@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domains/homepage/post_cards/homepage.dart';
+import '../domains/homepage/post_cards/screens/homepage.dart';
 import '../../domains/addpost/add_post_page.dart';
 import '../domains/myposts/screens/my_posts_page.dart';
 import '../domains/user_details/profile_page.dart';

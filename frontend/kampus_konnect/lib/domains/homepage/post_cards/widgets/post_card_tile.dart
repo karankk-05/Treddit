@@ -1,4 +1,4 @@
-import 'package:kampus_konnect/domains/homepage/post_cards/unsold_post_card.dart';
+import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/model.dart';
 import '../../product_details/product_details.dart';
 import 'package:flutter/material.dart';
 import '../../../../theme/decorations.dart';

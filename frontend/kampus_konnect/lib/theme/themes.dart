@@ -14,8 +14,8 @@ class appthemes {
   static final ThemeData lighttheme = ThemeData(
       colorScheme: const ColorScheme(
     primary: Color.fromARGB(255, 183, 255, 0),
-    primaryContainer: Colors.white,
     onPrimary: Color.fromARGB(255, 0, 0, 0),
+    primaryContainer: Colors.white,
     onPrimaryContainer: Colors.white,
     secondary: Color.fromARGB(255, 0, 251, 255),
     onSecondary: Color.fromRGBO(0, 0, 0, 0.831),

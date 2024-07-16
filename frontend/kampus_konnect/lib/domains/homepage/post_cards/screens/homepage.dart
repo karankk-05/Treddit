@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/theme/decorations.dart';
-import 'post_card_provider.dart';
 import 'package:provider/provider.dart';
-import '../post_cards/widgets/post_card_tile.dart';
-import '../../auth/services/auth.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import '../model_provider/provider.dart';
+import '../widgets/post_card_tile.dart';
+import '../../../auth/services/auth.dart';
+import '../widgets/search_bar.dart'
+    as CustomSearchBar; // Import the SearchBar widget with an alias
 
 class HomePage extends StatefulWidget {
   @override
@@ -30,47 +31,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  bool displayAll = false;
   bool isRefreshing = false;
-
-  Widget _appbar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          color: Theme.of(context).colorScheme.primaryContainer,
-        ),
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Text('Search',
-                  textAlign: TextAlign.center,
-                  style: mytext.headingtext1(context, fontSize: 15)),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                child: Icon(
-                  Icons.search,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Future<void> _handleRefresh() async {
     setState(() {
@@ -92,6 +53,7 @@ class _HomePageState extends State<HomePage> {
         title: Text("App Name Will Come"),
       ),
       body: RefreshIndicator(
+        color: Theme.of(context).colorScheme.onSecondary,
         onRefresh: _handleRefresh,
         child: MasonryGridView.count(
           padding: EdgeInsets.fromLTRB(15, 10, 15, 70),
@@ -102,15 +64,15 @@ class _HomePageState extends State<HomePage> {
               postCardProvider.productCard.length + 1, // +1 for the search bar
           itemBuilder: (context, index) {
             if (index == 1) {
-              return _appbar(context);
+              return CustomSearchBar
+                  .SearchBar(); // Use the SearchBar widget with the alias
             } else {
-              int adjustedIndex = index > 1 ? index - 1 : index;
+              int adjustedIndex = index > 0 ? index - 1 : index;
               if (adjustedIndex < postCardProvider.productCard.length) {
                 return PostCardTile(
                   postCard: postCardProvider.productCard[adjustedIndex],
                 );
               } else {
-                // Handle case where adjustedIndex is out of bounds
                 return Container(); // or some placeholder widget
               }
             }

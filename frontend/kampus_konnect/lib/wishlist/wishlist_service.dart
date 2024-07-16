@@ -1,6 +1,6 @@
 // wishlist_service.dart
 import 'package:kampus_konnect/main.dart';
-import '../domains/homepage/post_cards/post_card_provider.dart';
+import '../domains/homepage/post_cards/model_provider/provider.dart';
 import '../domains/homepage/product_details/product_details_provider.dart';
 import '../domains/auth/services/auth.dart';
 import 'dart:convert';
