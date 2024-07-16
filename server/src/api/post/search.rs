@@ -42,6 +42,13 @@ fn build_search_query(filters: &PageFilter) -> String {
         search_query.and_where(Expr::col(Posts::Price).lte(max));
     };
 
+    if let Some(search_str) = &filters.search_str {
+        search_query.and_where(Expr::cust_with_values(
+            "text_search @@ to_tsquery($1)",
+            [search_str],
+        ));
+    }
+
     search_query.to_string(PostgresQueryBuilder)
 }
 
