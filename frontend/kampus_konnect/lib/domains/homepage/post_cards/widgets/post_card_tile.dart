@@ -1,5 +1,5 @@
 import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/model.dart';
-import '../../product_details/product_details.dart';
+import '../../product_details/screens/product_details.dart';
 import 'package:flutter/material.dart';
 import '../../../../theme/decorations.dart';
 

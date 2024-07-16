@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         title: Text("App Name Will Come"),
       ),
       body: RefreshIndicator(

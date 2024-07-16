@@ -3,7 +3,7 @@ import 'package:kampus_konnect/domains/chat/chat_provider.dart';
 import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/model.dart';
 import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
 import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/provider.dart';
-import 'package:kampus_konnect/domains/homepage/product_details/product_details_provider.dart';
+import 'package:kampus_konnect/domains/homepage/product_details/model_provider/provider.dart';
 import 'domains/auth/screens/signup.dart';
 import 'domains/auth/screens/login.dart';
 import 'theme/themes.dart';
@@ -24,7 +24,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://172.23.158.125:3000';
+  static const String baseUrl = 'http://172.23.159.109:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
