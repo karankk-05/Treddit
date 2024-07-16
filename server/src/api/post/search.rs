@@ -43,10 +43,16 @@ fn build_search_query(filters: &PageFilter) -> String {
     };
 
     if let Some(search_str) = &filters.search_str {
-        search_query.and_where(Expr::cust_with_values(
-            "text_search @@ to_tsquery($1)",
-            [search_str],
-        ));
+        if !search_str.is_empty() {
+            search_query.and_where(Expr::cust_with_values(
+                "text_search @@ plainto_tsquery($1)",
+                [search_str],
+            ));
+            search_query.order_by_expr(
+                Expr::cust_with_values("ts_rank(text_search, plainto_tsquery($1))", [search_str]),
+                sea_query::Order::Desc,
+            );
+        }
     }
 
     search_query.to_string(PostgresQueryBuilder)
