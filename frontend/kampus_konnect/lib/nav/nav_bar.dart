@@ -41,12 +41,14 @@ class _MainPageState extends State<MainPage> {
         onPressed: () {
           _onItemTapped(4);
         },
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       bottomNavigationBar: BottomAppBar(
         height: MediaQuery.of(context).size.height * 0.08,
-        color: Colors.black,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         shape: CircularNotchedRectangle(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -89,9 +91,7 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
-      appBar: AppBar(
-        title: Text('Your App Title'),
-      ),
+      appBar: null,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

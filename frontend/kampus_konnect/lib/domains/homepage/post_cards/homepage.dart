@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
-import 'dart:math';
-import '../../../theme/decorations.dart';
+import 'package:kampus_konnect/theme/decorations.dart';
 import 'post_card_provider.dart';
 import 'package:provider/provider.dart';
 import '../post_cards/widgets/post_card_tile.dart';
 import '../../auth/services/auth.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,25 +35,36 @@ class _HomePageState extends State<HomePage> {
 
   Widget _appbar(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
           color: Theme.of(context).colorScheme.primaryContainer,
         ),
-        height: 50,
-        child: Column(
+        height: 60,
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                SizedBox(width: 8),
-                Icon(Icons.search,
-                    color: Theme.of(context).colorScheme.onBackground),
-                Text('Search for products'),
-              ],
+            Expanded(
+              child: Text('Search',
+                  textAlign: TextAlign.center,
+                  style: mytext.headingtext1(context, fontSize: 15)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                child: Icon(
+                  Icons.search,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
             ),
           ],
         ),
@@ -77,19 +87,33 @@ class _HomePageState extends State<HomePage> {
     final postCardProvider = Provider.of<PostCardProvider>(context);
 
     return Scaffold(
-      appBar: null,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        title: Text("App Name Will Come"),
+      ),
       body: RefreshIndicator(
         onRefresh: _handleRefresh,
-        child: ListView.builder(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          itemCount: postCardProvider.productCard.length,
+        child: MasonryGridView.count(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 70),
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          itemCount:
+              postCardProvider.productCard.length + 1, // +1 for the search bar
           itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: PostCardTile(
-                postCard: postCardProvider.productCard[index],
-              ),
-            );
+            if (index == 1) {
+              return _appbar(context);
+            } else {
+              int adjustedIndex = index > 1 ? index - 1 : index;
+              if (adjustedIndex < postCardProvider.productCard.length) {
+                return PostCardTile(
+                  postCard: postCardProvider.productCard[adjustedIndex],
+                );
+              } else {
+                // Handle case where adjustedIndex is out of bounds
+                return Container(); // or some placeholder widget
+              }
+            }
           },
         ),
       ),

@@ -21,7 +21,7 @@ class appthemes {
     onSecondary: Color.fromRGBO(0, 0, 0, 0.831),
     secondaryContainer: Color.fromARGB(255, 0, 0, 0),
     onSecondaryContainer: Color.fromARGB(255, 183, 255, 0),
-    surface: Color.fromARGB(255, 201, 201, 199),
+    surface: Color.fromARGB(255, 245, 245, 245),
     onSurface: Color.fromARGB(255, 0, 0, 0),
     error: Colors.red,
     onError: Colors.black,

@@ -5,8 +5,6 @@ import '../../../../theme/decorations.dart';
 
 import '../../../auth/services/auth.dart';
 
-
-
 class PostCardTile extends StatefulWidget {
   final PostCard postCard;
 
@@ -60,7 +58,7 @@ class _PostCardTileState extends State<PostCardTile> {
         children: [
           Card(
             color: Theme.of(context).colorScheme.primaryContainer,
-            elevation: 2,
+            elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -72,27 +70,30 @@ class _PostCardTileState extends State<PostCardTile> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
-                        child: widget.postCard.image.isNotEmpty
-                            ? Image.network(
-                                widget.postCard.image,
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              )
-                            : Icon(
-                                Icons.person,
-                                size: 150,
-                                color: Colors.white,
-                              ),
-                      ),
-                      SizedBox(height: 10),
                       Text(
                         widget.postCard.title,
-                        style: mytext.headingtext1(fontSize: 13, context),
+                        style: mytext.headingbold(fontSize: 16, context),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
+                      SizedBox(height: 10),
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              15), // Adjust the radius as needed
+                          child: widget.postCard.image.isNotEmpty
+                              ? Image.network(
+                                  widget.postCard.image,
+                                  fit: BoxFit.cover,
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  size: 150,
+                                  color: Colors.white,
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: 15),
                       Row(
                         children: [
                           Text(
