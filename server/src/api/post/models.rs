@@ -43,6 +43,7 @@ pub struct ChPost {
 
     pub title: Option<String>,
     pub body: Option<String>,
+    pub category: Option<String>,
     pub price: Option<i32>,
     pub sold: Option<bool>,
 }

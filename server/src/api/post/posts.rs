@@ -147,8 +147,9 @@ pub async fn change_post(
     validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
     let post = fetch_post(post_id, Some(payload.email.clone()), &st.pool).await?;
     match sqlx::query!(
-        "update posts set title = $1, body = $2,price = $3,sold = $4 where post_id = $5 and owner = $6",
+        "update posts set title = $1, body = $2,category = $3,price = $4,sold = $5 where post_id = $6 and owner = $7",
         payload.title.unwrap_or(post.title),
+        payload.category.clone().unwrap_or(post.category.unwrap_or_default()),
         payload.body.unwrap_or(post.body.unwrap_or_default()),
         payload.price.unwrap_or(post.price),
         payload.sold.unwrap_or(post.sold),
@@ -213,6 +214,7 @@ pub async fn create_post(
     let mut token = String::new();
     let mut title = String::new();
     let mut body = String::new();
+    let mut category: Option<String> = None;
     let mut price: i32 = 0;
     let mut images: HashMap<String, Vec<u8>> = HashMap::new();
 
@@ -225,6 +227,7 @@ pub async fn create_post(
             "email" => email = bytes_to_string(data)?,
             "title" => title = bytes_to_string(data)?,
             "body" => body = bytes_to_string(data)?,
+            "category" => category = Some(bytes_to_string(data)?),
             "price" => {
                 price = match bytes_to_string(data)?.parse() {
                     Ok(val) => val,
@@ -253,19 +256,20 @@ pub async fn create_post(
     let img_paths = images.keys().cloned().collect::<Vec<String>>().join(",");
 
     if let Err(err) = sqlx::query!(
-        "insert into posts(owner,title,body,price,visible,image_paths) values($1,$2,$3,$4,$5,$6)",
+        "insert into posts(owner,title,body,price,visible,image_paths,category) values($1,$2,$3,$4,$5,$6,$7)",
         email,
         title,
         body,
         price,
         true,
-        img_paths
+        img_paths,
+        category
     )
     .execute(&st.pool)
     .await
     {
         eprintln!("{}", err);
-        return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        return Err(StatusCode::EXPECTATION_FAILED);
     }
 
     for (name, img) in &images {
