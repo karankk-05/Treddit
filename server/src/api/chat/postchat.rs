@@ -83,7 +83,7 @@ pub async fn get_chats(
         payload.email
     ).fetch_all(&st.pool).await{
         Ok(val)=> Ok(Json(val)),
-        Err(_)=> return Err(StatusCode::INTERNAL_SERVER_ERROR)
+        Err(_)=> Err(StatusCode::INTERNAL_SERVER_ERROR)
     }
 }
 
