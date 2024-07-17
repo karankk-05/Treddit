@@ -1,7 +1,7 @@
-use super::models::*;
+use super::json::*;
 use crate::{
     api::user::auth::utils::*,
-    models::{Token, ValidToken},
+    token_json::{Token, ValidToken},
     SharedState,
 };
 use axum::{

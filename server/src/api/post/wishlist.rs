@@ -1,6 +1,6 @@
-use super::models::*;
+use super::json::*;
 use crate::auth::utils::validate_token;
-use crate::models::ValidToken;
+use crate::token_json::ValidToken;
 use crate::SharedState;
 use axum::{
     extract::{Json, State},

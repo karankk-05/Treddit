@@ -1,2 +1,2 @@
-mod models;
+mod json;
 pub mod postchat;

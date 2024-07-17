@@ -1,5 +1,5 @@
-use super::super::models::*;
-use crate::models::{Token, ValidToken};
+use super::super::json::*;
+use crate::token_json::{Token, ValidToken};
 use crate::utils::sanitize_check_email;
 use crate::SharedState;
 use argon2::{Argon2, PasswordHash, PasswordVerifier};

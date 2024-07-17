@@ -1,4 +1,4 @@
-use super::super::models::*;
+use super::super::json::*;
 use crate::utils::sanitize_check_email;
 use crate::{Otp, SharedState};
 use argon2::{

@@ -1,4 +1,4 @@
-use super::models::*;
+use super::json::*;
 use super::posts::Posts;
 use crate::{api::user::auth::utils::validate_token, SharedState};
 use axum::{

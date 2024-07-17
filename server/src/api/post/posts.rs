@@ -1,7 +1,7 @@
-use super::models::*;
+use super::json::*;
 use crate::{
     auth::utils::validate_token,
-    models::*,
+    token_json::*,
     utils::{bytes_to_string, random_string, write_file},
     SharedState,
 };
