@@ -19,7 +19,7 @@ pub struct RemoveWish {
 pub struct PostCard {
     pub title: String,
     pub price: i32,
-    pub image: String,
+    pub image: Option<String>,
 }
 
 #[derive(Serialize)]
