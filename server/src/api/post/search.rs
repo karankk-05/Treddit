@@ -11,7 +11,7 @@ use sqlx::Row;
 
 #[derive(Deserialize)]
 pub struct PageFilter {
-    pub search_str: Option<String>,
+    pub search_query: Option<String>,
     pub category: Option<String>,
     pub min_price: Option<i32>,
     pub max_price: Option<i32>,
@@ -19,7 +19,7 @@ pub struct PageFilter {
 }
 
 fn build_search_query(filters: PageFilter) -> String {
-    let mut search_query = SeaQuery::select()
+    let mut search_sql = SeaQuery::select()
         .column(Posts::PostId)
         .from(Posts::Table)
         .and_where(Expr::col(Posts::Visible).is(true))
@@ -27,35 +27,35 @@ fn build_search_query(filters: PageFilter) -> String {
         .to_owned();
 
     if let Some(owner) = filters.owner {
-        search_query.and_where(Expr::col(Posts::Owner).eq(owner));
+        search_sql.and_where(Expr::col(Posts::Owner).eq(owner));
     };
 
     if let Some(category) = filters.category {
-        search_query.and_where(Expr::col(Posts::Category).eq(category));
+        search_sql.and_where(Expr::col(Posts::Category).eq(category));
     };
 
     if let Some(min) = filters.min_price {
-        search_query.and_where(Expr::col(Posts::Price).gte(min));
+        search_sql.and_where(Expr::col(Posts::Price).gte(min));
     };
 
     if let Some(max) = filters.max_price {
-        search_query.and_where(Expr::col(Posts::Price).lte(max));
+        search_sql.and_where(Expr::col(Posts::Price).lte(max));
     };
 
-    if let Some(search_str) = &filters.search_str {
-        if !search_str.is_empty() {
-            search_query.and_where(Expr::cust_with_values(
+    if let Some(search_query) = &filters.search_query {
+        if !search_query.is_empty() {
+            search_sql.and_where(Expr::cust_with_values(
                 "text_search @@ plainto_tsquery($1)",
-                [search_str],
+                [search_query],
             ));
-            search_query.order_by_expr(
-                Expr::cust_with_values("ts_rank(text_search, plainto_tsquery($1))", [search_str]),
+            search_sql.order_by_expr(
+                Expr::cust_with_values("ts_rank(text_search, plainto_tsquery($1))", [search_query]),
                 sea_query::Order::Desc,
             );
         }
     }
 
-    search_query.to_string(PostgresQueryBuilder)
+    search_sql.to_string(PostgresQueryBuilder)
 }
 
 pub async fn get_post_ids(
