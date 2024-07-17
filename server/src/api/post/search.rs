@@ -18,7 +18,7 @@ pub struct PageFilter {
     pub owner: Option<String>,
 }
 
-fn build_search_query(filters: &PageFilter) -> String {
+fn build_search_query(filters: PageFilter) -> String {
     let mut search_query = SeaQuery::select()
         .column(Posts::PostId)
         .from(Posts::Table)
@@ -26,11 +26,11 @@ fn build_search_query(filters: &PageFilter) -> String {
         .and_where(Expr::col(Posts::Sold).is(false))
         .to_owned();
 
-    if let Some(owner) = &filters.owner {
+    if let Some(owner) = filters.owner {
         search_query.and_where(Expr::col(Posts::Owner).eq(owner));
     };
 
-    if let Some(category) = &filters.category {
+    if let Some(category) = filters.category {
         search_query.and_where(Expr::col(Posts::Category).eq(category));
     };
 
@@ -63,7 +63,7 @@ pub async fn get_post_ids(
     Query(filters): Query<PageFilter>,
 ) -> Result<Json<Vec<i32>>, StatusCode> {
     let st = state.read();
-    let search_query = build_search_query(&filters);
+    let search_query = build_search_query(filters);
 
     match sqlx::query(&search_query).fetch_all(&st.await.pool).await {
         Ok(val) => Ok(Json(
