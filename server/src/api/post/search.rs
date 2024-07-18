@@ -18,6 +18,14 @@ pub struct PageFilter {
     pub owner: Option<String>,
 }
 
+fn sanitize_query(search_query: String) -> String {
+    let max_length = 50;
+    let mut sanitized_query = search_query.trim().to_owned();
+    sanitized_query = sanitized_query.chars().take(max_length).collect();
+    sanitized_query.retain(|c| c.is_alphanumeric() || c.is_ascii_punctuation());
+    sanitized_query
+}
+
 fn build_search_query(filters: PageFilter) -> String {
     let mut search_sql = SeaQuery::select()
         .column(Posts::PostId)
@@ -42,14 +50,18 @@ fn build_search_query(filters: PageFilter) -> String {
         search_sql.and_where(Expr::col(Posts::Price).lte(max));
     };
 
-    if let Some(search_query) = &filters.search_query {
-        if !search_query.is_empty() {
+    if let Some(search_query) = filters.search_query {
+        let sanitized_query = sanitize_query(search_query);
+        if !sanitized_query.is_empty() {
             search_sql.and_where(Expr::cust_with_values(
                 "text_search @@ plainto_tsquery($1)",
-                [search_query],
+                [&sanitized_query],
             ));
             search_sql.order_by_expr(
-                Expr::cust_with_values("ts_rank(text_search, plainto_tsquery($1))", [search_query]),
+                Expr::cust_with_values(
+                    "ts_rank(text_search, plainto_tsquery($1))",
+                    [sanitized_query],
+                ),
                 sea_query::Order::Desc,
             );
         }
