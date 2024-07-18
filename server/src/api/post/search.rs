@@ -22,7 +22,8 @@ fn sanitize_query(search_query: String) -> String {
     let max_length = 50;
     let mut sanitized_query = search_query.trim().to_owned();
     sanitized_query = sanitized_query.chars().take(max_length).collect();
-    sanitized_query.retain(|c| c.is_alphanumeric() || c.is_ascii_punctuation());
+    sanitized_query
+        .retain(|c| c.is_alphanumeric() || c.is_ascii_punctuation() || c.is_ascii_whitespace());
     sanitized_query
 }
 
