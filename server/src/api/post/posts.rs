@@ -1,3 +1,6 @@
+use std::collections::HashSet;
+use std::path::Path as OsPath;
+
 use super::json::*;
 use crate::{
     auth::utils::validate_token,
@@ -197,12 +200,20 @@ pub async fn create_post(
     let mut category: Option<String> = None;
     let mut price: i32 = 0;
     let mut images: Vec<(String, Vec<u8>)> = vec![];
+    let required_fields = HashSet::from(["email", "token", "title", "body", "price"]);
+    let mut acquired_fields: HashSet<String> = HashSet::new();
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = &field.name().expect("Cannot get name from user").to_owned();
-        let data = field.bytes().await.expect("Cannot get data from user");
+    while let Ok(Some(field)) = multipart.next_field().await {
+        let name = field.name().expect("Cannot get name from user").to_owned();
+        let data = match field.bytes().await {
+            Ok(val) => val,
+            Err(err) => {
+                eprintln!("{:?}", err);
+                return Err(StatusCode::PARTIAL_CONTENT);
+            }
+        };
 
-        match name as &str {
+        match &name as &str {
             "token" => token = bytes_to_string(data)?,
             "email" => email = bytes_to_string(data)?,
             "title" => title = bytes_to_string(data)?,
@@ -220,14 +231,21 @@ pub async fn create_post(
                     Utc::now().format("%Y-%m-%d %H:%M:%S"),
                     random_string(5)
                 );
-                let ext = &name[&name.len() - 4..];
-                if !(ext == ".png" || ext == ".jpg") {
+                let ext = match OsPath::new(&name).extension() {
+                    Some(val) => val,
+                    None => return Err(StatusCode::UNSUPPORTED_MEDIA_TYPE),
+                };
+                if !(ext == "png" || ext == "jpg" || ext == "jpeg") {
                     return Err(StatusCode::UNSUPPORTED_MEDIA_TYPE);
                 }
-                images.push((format!("{path_prefix}_{ext}"), data.to_vec()));
+                images.push((format!("{path_prefix}_{name}"), data.to_vec()));
             }
-            &_ => (),
+            _ => (),
         }
+        acquired_fields.insert(name);
+    }
+    if !required_fields.is_subset(&acquired_fields.iter().map(|x| x as &str).collect()) {
+        return Err(StatusCode::EXPECTATION_FAILED);
     }
 
     let st = state.read().await;
