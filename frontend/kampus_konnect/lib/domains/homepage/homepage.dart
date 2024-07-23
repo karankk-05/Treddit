@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
 
   bool displayAll = false;
   bool isRefreshing = false;
-  final search = TextEditingController();
 
   Widget _appbar(BuildContext context) {
     return Padding(
@@ -47,10 +46,11 @@ class _HomePageState extends State<HomePage> {
           color: Theme.of(context).colorScheme.primaryContainer,
         ),
         height: 50,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: Container(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.fromLTRB(25, 10, 25, 5),
+          child: 
             
             TextField(
               onSubmitted: (query) => {
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             
-          ],
+          
         ),
       ),
     );
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isRefreshing = true;
     });
-    await _fetchPosts(search);
+    await _fetchPosts('');
     setState(() {
       isRefreshing = false;
     });
