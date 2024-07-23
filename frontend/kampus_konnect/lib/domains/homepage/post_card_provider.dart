@@ -9,11 +9,11 @@ class PostCardProvider with ChangeNotifier {
   final String baseUrl = MyApp.baseUrl;
 
   List<PostCard> get productCard => _productCard;
-  Future<void> fetchPostCards() async {
+  Future<void> fetchPostCards(query) async {
     try {
       // Step 1: Fetch post IDs from /posts/unsold
       final responseIds = await http.get(
-        Uri.parse('$baseUrl/posts/unsold'),
+        Uri.parse('$baseUrl/posts/unsold?search_query=$query'),
       );
 
       if (responseIds.statusCode == 200) {

@@ -19,22 +19,23 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _fetchPosts();
+    _fetchPosts('');
   }
 
-  Future<void> _fetchPosts() async {
+  Future<void> _fetchPosts(query) async {
     print('Its working');
     final email = await _authService.getEmail();
     final token = await _authService.getToken();
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
     if (email != null && token != null) {
-      await postCardProvider.fetchPostCards();
+      await postCardProvider.fetchPostCards(query);
     }
   }
 
   bool displayAll = false;
   bool isRefreshing = false;
+  final search = TextEditingController();
 
   Widget _appbar(BuildContext context) {
     return Padding(
@@ -50,14 +51,13 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                SizedBox(width: 8),
-                Icon(Icons.search,
-                    color: Theme.of(context).colorScheme.onBackground),
-                Text('Search for products'),
-              ],
+            
+            TextField(
+              onSubmitted: (query) => {
+                _fetchPosts(query)
+              },
             ),
+            
           ],
         ),
       ),
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isRefreshing = true;
     });
-    await _fetchPosts();
+    await _fetchPosts(search);
     setState(() {
       isRefreshing = false;
     });
