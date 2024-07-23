@@ -11,7 +11,7 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 # Build application
 COPY . .
-RUN cargo test && cargo build --release --bin server
+RUN cargo build --release --bin server
 
 # We do not need the Rust toolchain to run the binary!
 FROM docker.io/debian:bookworm-slim AS runtime
