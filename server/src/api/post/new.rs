@@ -9,6 +9,8 @@ use crate::{
     SharedState,
 };
 use axum::{
+    body::Bytes,
+    extract::multipart::Field,
     extract::{Multipart, State},
     http::StatusCode,
     response::Result,
@@ -90,6 +92,16 @@ fn validate_extenstion(ext: &str) -> Result<(), StatusCode> {
     }
 }
 
+async fn get_data(field: Field<'_>) -> Result<Bytes, StatusCode> {
+    match field.bytes().await {
+        Ok(val) => Ok(val),
+        Err(err) => {
+            eprintln!("{:?}", err);
+            return Err(StatusCode::PARTIAL_CONTENT);
+        }
+    }
+}
+
 pub async fn create_post(
     State(state): State<SharedState>,
     mut multipart: Multipart,
@@ -101,14 +113,7 @@ pub async fn create_post(
 
     while let Ok(Some(field)) = multipart.next_field().await {
         let name = field.name().expect("Cannot get name from user").to_owned();
-        let data = match field.bytes().await {
-            Ok(val) => val,
-            Err(err) => {
-                eprintln!("{:?}", err);
-                return Err(StatusCode::PARTIAL_CONTENT);
-            }
-        };
-
+        let data = get_data(field).await?;
         match &name as &str {
             "token" => token = bytes_to_string(data)?,
             "email" => post.email = bytes_to_string(data)?,
