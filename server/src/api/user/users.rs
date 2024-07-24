@@ -1,16 +1,24 @@
 use super::json::*;
 use crate::token_json::ValidToken;
 use crate::utils::write_file;
+use crate::{auth::utils::validate_token, utils::bytes_to_string, SharedState};
 use axum::{
     extract::{Multipart, State},
     http::StatusCode,
     response::Result,
     Json,
 };
-
+use sea_query::{Expr, Iden, PostgresQueryBuilder, Query as SeaQuery};
 use sqlx::{Pool, Postgres};
 
-use crate::{auth::utils::validate_token, utils::bytes_to_string, SharedState};
+#[derive(Iden)]
+enum Users {
+    Email,
+    Username,
+    ContactNo,
+    Address,
+    Table,
+}
 
 pub async fn get_user(
     State(state): State<SharedState>,
@@ -31,26 +39,33 @@ pub async fn get_user_private(
     Ok(Json(user))
 }
 
+fn build_update_query(payload: ChUser) -> String {
+    let mut update_query = SeaQuery::update()
+        .table(Users::Table)
+        .and_where(Expr::col(Users::Email).eq(payload.email))
+        .to_owned();
+
+    if let Some(username) = payload.username {
+        update_query.value(Users::Username, username);
+    }
+    if let Some(contact_no) = payload.contact_no {
+        update_query.value(Users::ContactNo, contact_no);
+    }
+    if let Some(address) = payload.address {
+        update_query.value(Users::Address, address);
+    }
+    update_query.to_string(PostgresQueryBuilder)
+}
+
 pub async fn change_user_info(
     State(state): State<SharedState>,
     Json(payload): Json<ChUser>,
 ) -> Result<StatusCode, StatusCode> {
     let st = state.read().await;
-    validate_token(payload.token, &payload.email, st.jwt_secret_key).await?;
-    let user = find_user(&payload.email, &st.pool, true).await?;
-    match sqlx::query!(
-        "update users set username = $1,contact_no = $2,address = $3 where email = $4",
-        payload.username.unwrap_or(user.disp.username),
-        payload.contact_no.unwrap_or(
-            user.disp
-                .contact_no
-                .expect("Contact info is not in database")
-        ),
-        payload.address.unwrap_or(user.disp.address),
-        payload.email,
-    )
-    .execute(&st.pool)
-    .await
+    validate_token(payload.token.clone(), &payload.email, st.jwt_secret_key).await?;
+    match sqlx::query(&build_update_query(payload))
+        .execute(&st.pool)
+        .await
     {
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
@@ -203,4 +218,3 @@ pub async fn report_user(
         }
     }
 }
-
