@@ -97,7 +97,7 @@ async fn get_data(field: Field<'_>) -> Result<Bytes, StatusCode> {
         Ok(val) => Ok(val),
         Err(err) => {
             eprintln!("{:?}", err);
-            return Err(StatusCode::PARTIAL_CONTENT);
+            Err(StatusCode::PARTIAL_CONTENT)
         }
     }
 }
