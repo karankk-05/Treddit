@@ -1,11 +1,11 @@
 mod api;
-mod token_json;
 mod storage;
+mod token_json;
 mod utils;
 
 use api::{
     chat,
-    post::{posts, search as post_search, update as post_update, wishlist},
+    post::{self, posts, search as post_search, update as post_update, wishlist},
     user::{auth, users},
 };
 use axum::{
@@ -72,7 +72,7 @@ async fn create_router() -> Router {
         .route("/user/profile/pic", put(users::change_profile_pic))
         .route("/user/posts", post(users::get_posts))
         .route("/user/passwd", put(auth::signup::change_password))
-        .route("/user/post", post(posts::create_post))
+        .route("/user/post", post(post::new::create_post))
         .route("/user/report", post(users::report_user))
         .route("/posts/:id", get(posts::get_post))
         .route("/posts/:id", put(post_update::update_post))
