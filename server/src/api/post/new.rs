@@ -1,5 +1,5 @@
 use chrono::Utc;
-use sqlx::{prelude::FromRow, PgPool};
+use sqlx::PgPool;
 use std::collections::HashSet;
 use std::path::Path as OsPath;
 
@@ -16,7 +16,6 @@ use axum::{
     response::Result,
 };
 
-#[derive(FromRow)]
 struct Post {
     email: String,
     title: String,
