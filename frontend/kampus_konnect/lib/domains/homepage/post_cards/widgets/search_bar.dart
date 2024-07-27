@@ -17,12 +17,13 @@ class SearchBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: Text(
-                'Search',
-                textAlign: TextAlign.center,
-                style: mytext.headingtext1(context,
-                    fontSize: 15), // Adjust styling as per your project
-              ),
+              child: Text('Search',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onPrimaryContainer) // Adjust styling as per your project
+                  ),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),

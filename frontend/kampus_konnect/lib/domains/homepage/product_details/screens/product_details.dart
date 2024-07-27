@@ -144,9 +144,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ),
       backgroundColor: theme.primaryContainer,
-      floatingActionButton: post != null
+      floatingActionButton: post != null && post.owner != _sender
           ? CollapsibleFAB(
-            iconlabel: Icon(
+              iconlabel: Icon(
                 Icons.chat,
                 color: theme.primary,
               ),

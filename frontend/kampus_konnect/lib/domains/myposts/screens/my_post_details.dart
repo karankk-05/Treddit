@@ -8,6 +8,7 @@ import '../services&providers/fetch_chatters_service.dart';
 import '../../chat/chat_detail_screen.dart';
 import '../../homepage/product_details/widgets/image_viewer.dart';
 import '../../homepage/product_details/widgets/collapsible_fab.dart';
+import '../../chat/chat_provider.dart';
 
 class MyPostDetailsPage extends StatefulWidget {
   final Product product;
@@ -64,13 +65,20 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
   }
 
   void _navigateToChatDetail(String sender, String reciever, int postId) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => ChatDetailScreen(
-        sender: sender,
-        reciever: reciever,
-        postId: postId,
+    Provider.of<ChatProvider>(
+      context,
+      listen: false,
+    ).updatePostId(postId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatDetailScreen(
+          postId: postId,
+          reciever: sender,
+          sender: reciever,
+        ),
       ),
-    ));
+    );
   }
 
   @override
@@ -211,8 +219,8 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                           children: [
                             ListTile(
                               onTap: () => _navigateToChatDetail(
-                                widget.product.owner,
                                 email,
+                                widget.product.owner,
                                 widget.product.id,
                               ),
                               title: Text(

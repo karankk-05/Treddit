@@ -70,7 +70,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
     }
   }
 
-  Widget _LoginBtn() {
+  Widget _SaveDetailsBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -79,11 +79,14 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
           _saveForm();
         },
         style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all(Size(100, 60)),
-          backgroundColor: MaterialStateProperty.all<Color>(
-              Theme.of(context).colorScheme.primaryContainer),
+          minimumSize: WidgetStateProperty.all(Size(100, 60)),
+          backgroundColor: WidgetStateProperty.all<Color>(
+              Theme.of(context).colorScheme.secondaryContainer),
         ),
-        child: Text('Save'),
+        child: Text(
+          'Update',
+          style: TextStyle(fontSize: 17),
+        ),
       ),
     );
   }
@@ -92,7 +95,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Post Details'),
+        title: Text('Edit Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -110,6 +113,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
                   return null;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 controller: _bodyController,
                 decoration: InputDecoration(labelText: 'Body'),
@@ -120,6 +124,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
                   return null;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 controller: _priceController,
                 decoration: InputDecoration(labelText: 'Price'),
@@ -135,7 +140,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
                 },
               ),
               SizedBox(height: 20),
-              _LoginBtn(),
+              _SaveDetailsBtn(),
             ],
           ),
         ),

@@ -44,6 +44,7 @@ class ChatService {
   Future<List<int>> getChatIds(int postId) async {
     final token = await _authService.getToken();
     final email = await _authService.getEmail();
+    print("-->$email");
     final url = Uri.parse('$baseUrl/posts/$postId/chats');
     try {
       final response = await http.post(
