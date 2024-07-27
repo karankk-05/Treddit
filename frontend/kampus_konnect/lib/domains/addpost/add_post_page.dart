@@ -1,6 +1,6 @@
 import '../auth/widgets/fields.dart';
 import 'package:flutter/material.dart';
-import '../../theme/decorations.dart';
+import '../../app/decorations.dart';
 import 'add_product_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';

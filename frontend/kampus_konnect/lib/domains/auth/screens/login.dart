@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/fields.dart';
-import 'package:kampus_konnect/domains/homepage/post_cards/screens/homepage.dart';
-import '../../../theme/themes.dart';
-import '../../../theme/decorations.dart';
+import 'package:kampus_konnect/domains/homepage/homepage.dart';
+import '../../../../app/appcolors.dart';
+import '../../../../app/decorations.dart';
 import '../services/auth.dart';
 import '../services/auth_action.dart';
 import 'signup.dart';
