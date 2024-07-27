@@ -1,0 +1,85 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import '../model_provider/provider.dart';
+import '../widgets/post_card_tile.dart';
+import '../../../auth/services/auth.dart';
+import '../widgets/search_bar.dart'
+    as CustomSearchBar; // Import the SearchBar widget with an alias
+
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final AuthService _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPosts();
+  }
+
+  Future<void> _fetchPosts() async {
+    final email = await _authService.getEmail();
+    final token = await _authService.getToken();
+    final postCardProvider =
+        Provider.of<PostCardProvider>(context, listen: false);
+    if (email != null && token != null) {
+      await postCardProvider.fetchPostCards();
+    }
+  }
+
+  bool isRefreshing = false;
+
+  Future<void> _handleRefresh() async {
+    setState(() {
+      isRefreshing = true;
+    });
+    await _fetchPosts();
+    setState(() {
+      isRefreshing = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final postCardProvider = Provider.of<PostCardProvider>(context);
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        title: Text("App Name Will Come"),
+      ),
+      body: RefreshIndicator(
+        color: Theme.of(context).colorScheme.onSecondary,
+        onRefresh: _handleRefresh,
+        child: MasonryGridView.count(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 70),
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          itemCount:
+              postCardProvider.productCard.length + 1, // +1 for the search bar
+          itemBuilder: (context, index) {
+            if (index == 1) {
+              return CustomSearchBar
+                  .SearchBar(); // Use the SearchBar widget with the alias
+            } else {
+              int adjustedIndex = index > 0 ? index - 1 : index;
+              if (adjustedIndex < postCardProvider.productCard.length) {
+                return PostCardTile(
+                  postCard: postCardProvider.productCard[adjustedIndex],
+                );
+              } else {
+                return Container(); // or some placeholder widget
+              }
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
