@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../services&providers/my_posts_provider.dart';
 import '../../auth/screens/login.dart';
 import '../models/my_posts_model.dart';
-import '../../../app/decorations.dart';
+import '../../../theme/decorations.dart';
 import 'my_post_details.dart';
 
 class MyPosts extends StatefulWidget {
