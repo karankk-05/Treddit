@@ -24,7 +24,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://172.23.159.109:3000';
+  static const String baseUrl = 'http://172.23.149.80:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -40,11 +40,14 @@ class _MyAppState extends State<MyApp> {
 
   Future<bool> _checkToken() async {
     AuthService authService = AuthService();
-    String? token = await authService.getToken();
-    String? email = await authService.getEmail();
+    // String? token = await authService.getToken();
+    // String? email = await authService.getEmail();
+    String? token = 'await authService.getToken()';
+    String? email = 'await authService.getEmail()';
 
     if (token != null && email != null) {
       return await authService.validateToken(email, token);
+      
     }
     return false;
   }
