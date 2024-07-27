@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../../main.dart';
-import 'unsold_post_card.dart'; // Assuming you have PostCard model defined
+import '../../../../main.dart';
+import 'model.dart'; // Assuming you have PostCard model defined
 
 class PostCardProvider with ChangeNotifier {
   List<PostCard> _productCard = [];
   final String baseUrl = MyApp.baseUrl;
 
   List<PostCard> get productCard => _productCard;
-  Future<void> fetchPostCards(query) async {
+  Future<void> fetchPostCards() async {
     try {
       // Step 1: Fetch post IDs from /posts/unsold
       final responseIds = await http.get(
-        Uri.parse('$baseUrl/posts/unsold?search_query=$query'),
+        Uri.parse('$baseUrl/posts/unsold'),
       );
 
       if (responseIds.statusCode == 200) {
