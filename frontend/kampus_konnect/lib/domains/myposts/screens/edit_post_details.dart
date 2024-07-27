@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/nav/nav_bar.dart';
+import 'package:kampus_konnect/nav/mainpage.dart';
 import 'package:provider/provider.dart';
 import '../models/my_posts_model.dart';
 import '../services&providers/my_posts_provider.dart';
