@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'auth.dart';
-import '../../../theme/decorations.dart';
+import '../../../../app/decorations.dart';
 
 class AuthActions {
   final AuthService _authService = AuthService();
