@@ -13,15 +13,15 @@ class gradients {
 class appthemes {
   static final ThemeData lighttheme = ThemeData(
       colorScheme: const ColorScheme(
-    primary: Color.fromARGB(255, 183, 255, 0),
-    onPrimary: Color.fromARGB(255, 0, 0, 0),
-    primaryContainer: Colors.white,
-    onPrimaryContainer: Colors.white,
+    primary: Color.fromARGB(255, 183, 255, 0), //used
+    onPrimary: Color.fromARGB(255, 0, 0, 0), //used
+    primaryContainer: Colors.white, //used
+    onPrimaryContainer: Color.fromARGB(255, 0, 0, 0), //used
     secondary: Color.fromARGB(255, 0, 251, 255),
-    onSecondary: Color.fromRGBO(0, 0, 0, 0.831),
-    secondaryContainer: Color.fromARGB(255, 0, 0, 0),
-    onSecondaryContainer: Color.fromARGB(255, 183, 255, 0),
-    surface: Color.fromARGB(255, 245, 245, 245),
+    onSecondary: Colors.white, //used
+    secondaryContainer: Color.fromARGB(255, 0, 0, 0), //used
+    onSecondaryContainer: Color.fromARGB(255, 183, 255, 0), //used
+    surface: Color.fromARGB(255, 245, 245, 245), //used
     onSurface: Color.fromARGB(255, 0, 0, 0),
     error: Colors.red,
     onError: Colors.black,

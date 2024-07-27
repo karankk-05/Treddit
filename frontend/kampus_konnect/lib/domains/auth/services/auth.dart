@@ -92,7 +92,7 @@ class AuthService {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': '1', 'token': "token"}),
+      body: json.encode({'email': email, 'token': token}),
     );
     print("Status code is this:-->${response.statusCode == 200}<--");
    

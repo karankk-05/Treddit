@@ -16,7 +16,6 @@ import 'domains/user_details/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'domains/myposts/services&providers/my_posts_provider.dart';
 import 'domains/auth/services/auth.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://172.23.149.80:3000';
+  static const String baseUrl = 'http://172.23.145.34:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -40,10 +39,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<bool> _checkToken() async {
     AuthService authService = AuthService();
-    // String? token = await authService.getToken();
-    // String? email = await authService.getEmail();
-    String? token = 'await authService.getToken()';
-    String? email = 'await authService.getEmail()';
+    String? token = await authService.getToken();
+    String? email = await authService.getEmail();
 
     if (token != null && email != null) {
       return await authService.validateToken(email, token);

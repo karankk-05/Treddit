@@ -58,7 +58,7 @@ class _MainPageState extends State<MainPage> {
                   ? Icon(Icons.home,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.home_outlined,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer),
+                      color: Theme.of(context).colorScheme.onSecondary),
               onPressed: () => _onItemTapped(0),
             ),
             IconButton(
@@ -66,7 +66,7 @@ class _MainPageState extends State<MainPage> {
                   ? Icon(Icons.list,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.list_outlined,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer),
+                      color: Theme.of(context).colorScheme.onSecondary),
               onPressed: () => _onItemTapped(1),
             ),
             SizedBox(
@@ -77,7 +77,7 @@ class _MainPageState extends State<MainPage> {
                   ? Icon(Icons.favorite,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.favorite_border,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer),
+                      color: Theme.of(context).colorScheme.onSecondary),
               onPressed: () => _onItemTapped(2),
             ),
             IconButton(
@@ -85,7 +85,7 @@ class _MainPageState extends State<MainPage> {
                   ? Icon(Icons.person,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.person_outline,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer),
+                      color: Theme.of(context).colorScheme.onSecondary),
               onPressed: () => _onItemTapped(3),
             ),
           ],
