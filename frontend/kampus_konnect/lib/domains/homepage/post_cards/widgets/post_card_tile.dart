@@ -1,4 +1,5 @@
 import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/model.dart';
+import 'package:kampus_konnect/main.dart';
 import '../../product_details/screens/product_details.dart';
 import 'package:flutter/material.dart';
 import '../../../../theme/decorations.dart';
@@ -19,6 +20,7 @@ class PostCardTile extends StatefulWidget {
 
 class _PostCardTileState extends State<PostCardTile> {
   bool isFavorite = false;
+  final _baseUrl = MyApp.baseUrl;
 
   @override
   void initState() {
@@ -43,6 +45,8 @@ class _PostCardTileState extends State<PostCardTile> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.postCard.image as String);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -81,15 +85,17 @@ class _PostCardTileState extends State<PostCardTile> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(
                               15), // Adjust the radius as needed
-                          child: widget.postCard.image.isNotEmpty
+                          child: (widget.postCard.image != null &&
+                                  (widget.postCard.image as String) !=
+                                      "$_baseUrl/res/")
                               ? Image.network(
-                                  widget.postCard.image,
+                                  widget.postCard.image as String,
                                   fit: BoxFit.cover,
                                 )
                               : Icon(
-                                  Icons.person,
-                                  size: 150,
-                                  color: Colors.white,
+                                  Icons.photo_rounded,
+                                  size: 100,
+                                  color: Colors.black,
                                 ),
                         ),
                       ),

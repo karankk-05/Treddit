@@ -1,12 +1,13 @@
 // screens/my_post_card_tile.dart
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/main.dart';
 import '../models/my_posts_model.dart';
 import '../../../theme/decorations.dart';
 import '../screens/my_post_details.dart';
 
 class MyPostCardTile extends StatelessWidget {
   final Product postCard;
-
+  final _baseUrl = MyApp.baseUrl;
   const MyPostCardTile({
     Key? key,
     required this.postCard,
@@ -47,16 +48,17 @@ class MyPostCardTile extends StatelessWidget {
               Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: postCard.imageUrls.isNotEmpty
+                  child: (postCard.imageUrls[0] != null &&
+                          (postCard.imageUrls[0] as String) != "$_baseUrl/res/")
                       ? Image.network(
                           height: 150,
                           postCard.imageUrls[0],
                           fit: BoxFit.cover,
                         )
                       : Icon(
-                          Icons.person,
-                          size: 150,
-                          color: Colors.white,
+                          Icons.photo_rounded,
+                          size: 100,
+                          color: Colors.black,
                         ),
                 ),
               ),
