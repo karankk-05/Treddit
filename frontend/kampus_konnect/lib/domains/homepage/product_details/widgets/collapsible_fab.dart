@@ -1,19 +1,15 @@
-// collapsible_fab.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:kampus_konnect/domains/chat/chat_detail_screen.dart';
-import '../../../chat/chat_provider.dart';
 
 class CollapsibleFAB extends StatefulWidget {
-  final int? postId;
-  final String? owner;
-  final String? sender;
 
+  final String label;
+  final VoidCallback? onPressed;
+final Icon iconlabel;
   const CollapsibleFAB({
     Key? key,
-    required this.postId,
-    required this.owner,
-    required this.sender,
+ required this.iconlabel,
+    required this.label,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -60,39 +56,19 @@ class _CollapsibleFABState extends State<CollapsibleFAB> {
       width: _showFAB ? 130 : 56,
       height: 56,
       child: FloatingActionButton.extended(
-        onPressed: widget.postId != null
-            ? () {
-                Provider.of<ChatProvider>(
-                  context,
-                  listen: false,
-                ).updatePostId(widget.postId!);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatDetailScreen(
-                      postId: widget.postId!,
-                      reciever: widget.owner!,
-                      sender: widget.sender,
-                    ),
-                  ),
-                );
-              }
-            : null,
+        onPressed: widget.onPressed,
         backgroundColor: theme.secondaryContainer,
         icon: Padding(
           padding: _showFAB
               ? const EdgeInsets.only()
               : const EdgeInsets.only(left: 70),
-          child: Icon(
-            Icons.chat,
-            color: theme.primary,
-          ),
+          child: widget.iconlabel
         ),
         label: AnimatedOpacity(
           opacity: _showFAB ? 1.0 : 0.0,
           duration: Duration(milliseconds: 200),
           child: Text(
-            'Chat Now',
+            widget.label,
             style: TextStyle(
               color: theme.primary,
             ),
@@ -108,3 +84,4 @@ class _CollapsibleFABState extends State<CollapsibleFAB> {
     super.dispose();
   }
 }
+

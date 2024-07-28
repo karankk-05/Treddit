@@ -144,11 +144,31 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ),
       backgroundColor: theme.primaryContainer,
-      floatingActionButton: _sender != null
+      floatingActionButton: post != null && post.owner != _sender
           ? CollapsibleFAB(
-              postId: post?.postId,
-              owner: post?.owner,
-              sender: _sender,
+              iconlabel: Icon(
+                Icons.chat,
+                color: theme.primary,
+              ),
+              onPressed: post.postId != null
+                  ? () {
+                      Provider.of<ChatProvider>(
+                        context,
+                        listen: false,
+                      ).updatePostId(post.postId!);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatDetailScreen(
+                            postId: post.postId!,
+                            reciever: post.owner!,
+                            sender: _sender,
+                          ),
+                        ),
+                      );
+                    }
+                  : null,
+              label: "Chat Now",
             )
           : null, // Show FAB only if _sender is not null
     );

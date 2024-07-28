@@ -18,8 +18,8 @@ class AuthService {
     return response.statusCode == 200;
   }
 
-  Future<bool> changePassword(String email,String password,int otp) async{
-     const baseUrl = MyApp.baseUrl;
+  Future<bool> changePassword(String email, String password, int otp) async {
+    const baseUrl = MyApp.baseUrl;
     final response = await http.put(
       Uri.parse('$baseUrl/user/passwd'),
       headers: <String, String>{
@@ -27,9 +27,8 @@ class AuthService {
       },
       body: jsonEncode({
         'passwd': password,
-        'otp':otp,
+        'otp': otp,
         'email': email,
-        
       }),
     );
 
@@ -95,6 +94,8 @@ class AuthService {
       headers: {'Content-Type': 'application/json'},
       body: json.encode({'email': email, 'token': token}),
     );
+    print("Status code is this:-->${response.statusCode == 200}<--");
+   
     return response.statusCode == 200;
   }
 

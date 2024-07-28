@@ -6,6 +6,9 @@ import '../../auth/services/auth.dart';
 import 'edit_post_details.dart';
 import '../services&providers/fetch_chatters_service.dart';
 import '../../chat/chat_detail_screen.dart';
+import '../../homepage/product_details/widgets/image_viewer.dart';
+import '../../homepage/product_details/widgets/collapsible_fab.dart';
+import '../../chat/chat_provider.dart';
 
 class MyPostDetailsPage extends StatefulWidget {
   final Product product;
@@ -62,34 +65,62 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
   }
 
   void _navigateToChatDetail(String sender, String reciever, int postId) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => ChatDetailScreen(
-        sender: sender,
-        reciever: reciever,
-        postId: postId,
+    Provider.of<ChatProvider>(
+      context,
+      listen: false,
+    ).updatePostId(postId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatDetailScreen(
+          postId: postId,
+          reciever: sender,
+          sender: reciever,
+        ),
       ),
-    ));
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
+    final onPrimaryContainer = Theme.of(context).colorScheme.onPrimaryContainer;
+    final theme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           product.title,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: onPrimaryContainer),
         ),
+      ),
+      floatingActionButton: CollapsibleFAB(
+        iconlabel: Icon(
+          Icons.edit_outlined,
+          color: theme.primary,
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditPostDetailsPage(
+                product: product,
+              ),
+            ),
+          );
+        },
+        label: "Edit Details",
       ),
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height * 1.5,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SwitchListTile(
                 title: Text(
                   _isSold ? 'Sold' : 'On Sale',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: onPrimaryContainer),
                 ),
                 value: !_isSold,
                 activeColor: Color.fromARGB(255, 0, 255, 21),
@@ -101,132 +132,128 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                   _saveForm();
                 },
               ),
-              Card(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(children: [
-                        if (product.imageUrls.isNotEmpty)
-                          Container(
-                            height: 250,
-                            child: PageView.builder(
-                              itemCount: product.imageUrls.length,
-                              itemBuilder: (context, index) {
-                                return Image.network(
-                                  product.imageUrls[index],
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                            ),
-                          )
-                        else
-                          Center(
-                            child: Icon(
-                              Icons.person,
-                              size: 150,
-                              color: Colors.white,
-                            ),
-                          )
-                      ]))),
-              SizedBox(
-                height: 15,
+              ProductImageViewer(imageUrls: product.imageUrls),
+              Container(
+                width: double.infinity,
+                height: 5,
+                color: theme.surface,
               ),
-              Card(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.title,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      product.title,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: onPrimaryContainer,
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        '₹${product.price}',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      '₹${product.price}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        product.body,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      product.body,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: onPrimaryContainer,
                       ),
-                      SizedBox(height: 20),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 10),
-              Card(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Buy Requests',
+              SizedBox(
+                height: 5,
+              ),
+              Container(
+                width: double.infinity,
+                height: 5,
+                color: theme.surface,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Buy Requests',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: onPrimaryContainer,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _usernames.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 10.0, top: 10),
+                      child: Text(
+                        "No Buy Requests",
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: onPrimaryContainer,
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _usernames.keys.map((email) {
-                          final username = _usernames[email] ?? 'Unknown';
-                          return Card(
-                            color: Color.fromARGB(255, 109, 110, 111),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            margin: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: ListTile(
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _usernames.keys.map((email) {
+                        final username = _usernames[email] ?? 'Unknown';
+                        return Column(
+                          children: [
+                            ListTile(
                               onTap: () => _navigateToChatDetail(
-                                  widget.product.owner,
-                                  email,
-                                  widget.product.id),
+                                email,
+                                widget.product.owner,
+                                widget.product.id,
+                              ),
                               title: Text(
                                 username,
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
+                                  color: onPrimaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               subtitle: Text(
                                 email,
                                 style: TextStyle(
-                                    color: const Color.fromARGB(
-                                        179, 255, 255, 255)),
+                                  color: onPrimaryContainer.withOpacity(0.7),
+                                ),
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                            Container(
+                              width: double.infinity,
+                              height: 2,
+                              color: theme.surface,
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
             ],
           ),
         ),
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     );
   }
 }

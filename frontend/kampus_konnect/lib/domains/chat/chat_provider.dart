@@ -35,7 +35,7 @@ class ChatProvider with ChangeNotifier {
         Map<String, dynamic> messageData = await _chatService.getChat(id);
         _messages.add(messageData);
       }
-
+      print(_messages);
       notifyListeners();
     } catch (error) {
       print('Error fetching messages: $error');
@@ -62,6 +62,8 @@ class ChatProvider with ChangeNotifier {
   @override
   void dispose() {
     _pollingTimer.cancel();
+    _messages.clear();
+
     super.dispose();
   }
 }

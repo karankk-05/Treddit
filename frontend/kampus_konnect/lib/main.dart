@@ -16,7 +16,6 @@ import 'domains/user_details/profile_page.dart';
 import 'package:provider/provider.dart';
 import 'domains/myposts/services&providers/my_posts_provider.dart';
 import 'domains/auth/services/auth.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://172.23.159.109:3000';
+  static const String baseUrl = 'http://172.23.144.23:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -40,6 +39,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<bool> _checkToken() async {
     AuthService authService = AuthService();
+
     try {
       String? token = await authService.getToken();
       String? email = await authService.getEmail();
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
               home: LoginPage(),
               routes: {
                 '/login': (context) => LoginPage(),
-                '/main': (context) => MainPage(),
+                '/main': (context) => MainPage(selectedIndex: 0),
                 '/home': (context) => HomePage(),
                 // '/chat': (context) => Chat(),
                 '/addPost': (context) => AddPost(),
@@ -93,7 +93,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
-              home: MainPage(),
+              home: MainPage(selectedIndex: 0,),
               routes: {
                 '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),
@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
                 '/addPost': (context) => AddPost(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
-                '/main': (context) => MainPage(),
+                '/main': (context) => MainPage(selectedIndex: 0),
               },
             );
           }
