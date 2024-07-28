@@ -6,13 +6,13 @@ import '../domains/user_details/profile_page.dart';
 import '../wishlist/wishlist_page.dart'; // Import the Wishlist page
 
 class MainPage extends StatefulWidget {
+  int selectedIndex;
+  MainPage({required this.selectedIndex});
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
-
   // List of pages
   static final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
@@ -24,7 +24,7 @@ class _MainPageState extends State<MainPage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      widget.selectedIndex = index;
     });
   }
 
@@ -39,7 +39,7 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: FloatingActionButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(500)),
         onPressed: () {
-          _onItemTapped(4);
+          Navigator.pushNamed(context, '/addPost');
         },
         child: Icon(
           Icons.add,
@@ -54,7 +54,7 @@ class _MainPageState extends State<MainPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-              icon: _selectedIndex == 0
+              icon: widget.selectedIndex == 0
                   ? Icon(Icons.home,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.home_outlined,
@@ -62,7 +62,7 @@ class _MainPageState extends State<MainPage> {
               onPressed: () => _onItemTapped(0),
             ),
             IconButton(
-              icon: _selectedIndex == 1
+              icon: widget.selectedIndex == 1
                   ? Icon(Icons.list,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.list_outlined,
@@ -73,7 +73,7 @@ class _MainPageState extends State<MainPage> {
                 width: MediaQuery.of(context).size.width *
                     0.20), // Space for FloatingActionButton
             IconButton(
-              icon: _selectedIndex == 2
+              icon: widget.selectedIndex == 2
                   ? Icon(Icons.favorite,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.favorite_border,
@@ -81,7 +81,7 @@ class _MainPageState extends State<MainPage> {
               onPressed: () => _onItemTapped(2),
             ),
             IconButton(
-              icon: _selectedIndex == 3
+              icon: widget.selectedIndex == 3
                   ? Icon(Icons.person,
                       color: Theme.of(context).colorScheme.onSecondaryContainer)
                   : Icon(Icons.person_outline,
@@ -103,8 +103,8 @@ class _MainPageState extends State<MainPage> {
             ],
           ),
         ),
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _widgetOptions.elementAt(widget.selectedIndex),
       ),
     );
   }
-} 
+}

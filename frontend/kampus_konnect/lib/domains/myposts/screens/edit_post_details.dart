@@ -64,7 +64,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
       )
           .then((_) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => MainPage(),
+          builder: (context) => MainPage(selectedIndex: 1,),
         ));
       });
     }

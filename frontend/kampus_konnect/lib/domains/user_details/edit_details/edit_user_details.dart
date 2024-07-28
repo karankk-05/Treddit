@@ -82,7 +82,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
         await Provider.of<AppUserProvider>(context, listen: false)
             .fetchUser(_email ?? "", _token ?? "");
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage()));
+            MaterialPageRoute(builder: (context) => MainPage(selectedIndex: 3,)));
       });
     }
   }

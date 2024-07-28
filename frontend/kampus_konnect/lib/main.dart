@@ -23,7 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://172.23.145.34:3000';
+  static const String baseUrl = 'http://172.23.144.23:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -44,7 +44,6 @@ class _MyAppState extends State<MyApp> {
 
     if (token != null && email != null) {
       return await authService.validateToken(email, token);
-      
     }
     return false;
   }
@@ -79,7 +78,7 @@ class _MyAppState extends State<MyApp> {
               home: LoginPage(),
               routes: {
                 '/login': (context) => LoginPage(),
-                '/main': (context) => MainPage(),
+                '/main': (context) => MainPage(selectedIndex: 0),
                 '/home': (context) => HomePage(),
                 // '/chat': (context) => Chat(),
                 '/addPost': (context) => AddPost(),
@@ -91,7 +90,9 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
-              home: MainPage(),
+              home: MainPage(
+                selectedIndex: 0,
+              ),
               routes: {
                 '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),
@@ -99,7 +100,7 @@ class _MyAppState extends State<MyApp> {
                 '/addPost': (context) => AddPost(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
-                '/main': (context) => MainPage(),
+                '/main': (context) => MainPage(selectedIndex: 0),
               },
             );
           }

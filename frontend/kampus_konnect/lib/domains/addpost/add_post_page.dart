@@ -29,6 +29,12 @@ class _AddPostState extends State<AddPost> {
     }
   }
 
+  void _removeImage(int index) {
+    setState(() {
+      _images.removeAt(index);
+    });
+  }
+
   Future<void> _submit() async {
     int price = int.tryParse(_priceController.text) ?? 0;
     bool success = await _productService.addProduct(
@@ -60,89 +66,94 @@ class _AddPostState extends State<AddPost> {
         child: Form(
           child: ListView(
             children: [
-              fields.TextField(
-                  label: 'Product Title',
-                  controller: _titleController,
-                  context: context),
+              Center(
+                child: CircleAvatar(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  radius: 30,
+                  child: IconButton(
+                    icon: Icon(Icons.add_a_photo),
+                    color: Theme.of(context).colorScheme.primary,
+                    onPressed: _pickImages,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _titleController,
+                decoration: InputDecoration(labelText: 'Product Title'),
+              ),
               SizedBox(
                 height: 20,
               ),
-              fields.TextField(
-                  label: 'Product Price',
-                  controller: _priceController,
-                  context: context),
+              TextField(
+                controller: _priceController,
+                decoration: InputDecoration(labelText: 'Product Price'),
+              ),
               SizedBox(
                 height: 20,
               ),
-              fields.TextField(
-                  label: 'Product Details',
-                  controller: _descriptionController,
-                  context: context),
+              TextField(
+                controller: _descriptionController,
+                decoration: InputDecoration(labelText: 'Product Details'),
+              ),
               SizedBox(
                 height: 20,
               ),
               if (_images.isNotEmpty)
-                GridView.count(
-                  crossAxisSpacing: 10,
-                  crossAxisCount: 3,
+                GridView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  children: _images.map((image) {
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Image.file(
-                        image,
-                        fit: BoxFit.cover,
-                      ),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: _images.length,
+                  itemBuilder: (context, index) {
+                    return Stack(
+                      children: [
+                        Image.file(
+                          _images[index],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                        Positioned(
+                          right: -10,
+                          top: -10,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.cancel,
+                              color: Colors.red,
+                            ),
+                            onPressed: () => _removeImage(index),
+                          ),
+                        ),
+                      ],
                     );
-                  }).toList(),
+                  },
                 ),
               SizedBox(height: 20),
-              Row(
-                children: [
-                  Container(
-                    height: 60,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all(Size(100, 60)),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Theme.of(context).colorScheme.primaryContainer),
-                        side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      onPressed: _pickImages,
-                      child: Text(
-                        'Add Images',
-                        style: mytext.headingtext1(fontSize: 15, context),
-                      ),
+              Center(
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(Size(100, 60)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Theme.of(context).colorScheme.secondaryContainer,
+                    ),
+                    side: MaterialStateProperty.all<BorderSide>(
+                      BorderSide(color: Colors.white),
                     ),
                   ),
-                ],
+                  onPressed: _submit,
+                  child: Text('Let\'s Sell',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).colorScheme.primary,
+                      )),
+                ),
               ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Container(
-                    height: 60,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        maximumSize: MaterialStateProperty.all(Size(200, 120)),
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Theme.of(context).colorScheme.primaryContainer,
-                        ),
-                        side: MaterialStateProperty.all<BorderSide>(
-                          BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      onPressed: _submit,
-                      child: Text('Save Product',
-                          style: mytext.headingtext1(fontSize: 15, context)),
-                    ),
-                  ),
-                  Expanded(child: SizedBox())
-                ],
-              ),
+              Expanded(child: SizedBox()),
             ],
           ),
         ),
