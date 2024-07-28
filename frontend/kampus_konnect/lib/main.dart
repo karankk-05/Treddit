@@ -39,13 +39,15 @@ class _MyAppState extends State<MyApp> {
 
   Future<bool> _checkToken() async {
     AuthService authService = AuthService();
-    String? token = await authService.getToken();
-    String? email = await authService.getEmail();
 
-    if (token != null && email != null) {
-      return await authService.validateToken(email, token);
-      
-    }
+    try {
+      String? token = await authService.getToken();
+      String? email = await authService.getEmail();
+      if (token != null && email != null) {
+        return await authService.validateToken(email, token);
+      }
+      return false;
+    } catch (_) {}
     return false;
   }
 
