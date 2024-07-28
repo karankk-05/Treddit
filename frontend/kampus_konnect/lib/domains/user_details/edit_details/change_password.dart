@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../../auth/services/auth.dart';
 
@@ -56,13 +55,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   Future<void> _changePassword() async {
     if (_formKey.currentState!.validate()) {
-      bool success = await _authService.changePassword(
-       widget.email!,
-        _newPasswordController.text,
-       int.parse(_otpController.text)
-
-        
-      );
+      bool success = await _authService.changePassword(widget.email!,
+          _newPasswordController.text, int.parse(_otpController.text));
 
       if (success) {
         // Handle password change success
@@ -118,54 +112,59 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       appBar: AppBar(
         title: Text('Change Password'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              if (_otpSent) ...[
-                TextFormField(
-                  controller: _otpController,
-                  decoration: InputDecoration(labelText: 'OTP'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter OTP';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _newPasswordController,
-                  decoration: InputDecoration(labelText: 'New Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a new password';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: InputDecoration(labelText: 'Confirm Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your new password';
-                    }
-                    if (value != _newPasswordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                _changePasswordBtn(),
-              ] else ...[
-                _getOtpBtn(),
-              ],
-            ],
+      body: SingleChildScrollView(
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  if (_otpSent) ...[
+                    TextFormField(
+                      controller: _otpController,
+                      decoration: InputDecoration(labelText: 'OTP'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter OTP';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _newPasswordController,
+                      decoration: InputDecoration(labelText: 'New Password'),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a new password';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      decoration:
+                          InputDecoration(labelText: 'Confirm Password'),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your new password';
+                        }
+                        if (value != _newPasswordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    _changePasswordBtn(),
+                  ] else ...[
+                    _getOtpBtn(),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

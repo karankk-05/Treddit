@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kampus_konnect/domains/user_details/action__buttons.dart';
 import 'package:kampus_konnect/domains/user_details/app_user_model.dart';
 import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
 import 'package:kampus_konnect/nav/nav_bar.dart';
@@ -81,51 +82,12 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
         }
         await Provider.of<AppUserProvider>(context, listen: false)
             .fetchUser(_email ?? "", _token ?? "");
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => MainPage(selectedIndex: 3,)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => MainPage(
+                  selectedIndex: 3,
+                )));
       });
     }
-  }
-
-  Widget _loginBtn() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          _saveForm();
-        },
-        style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all(Size(100, 60)),
-          backgroundColor: MaterialStateProperty.all<Color>(
-              Theme.of(context).colorScheme.primaryContainer),
-        ),
-        child: Text('Save'),
-      ),
-    );
-  }
-
-  Widget _changePasswordBtn() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-                builder: (context) => ChangePasswordPage(
-                      email: _email,
-                    )),
-          );
-        },
-        style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all(Size(100, 60)),
-          backgroundColor: MaterialStateProperty.all<Color>(
-              Theme.of(context).colorScheme.secondaryContainer),
-        ),
-        child: Text('Change Password'),
-      ),
-    );
   }
 
   Widget _profileImageWidget() {
@@ -151,7 +113,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit User Details'),
+        title: Text('Edit Your Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -171,6 +133,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                   return null;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 controller: _addressController,
                 decoration: InputDecoration(labelText: 'Address'),
@@ -181,6 +144,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                   return null;
                 },
               ),
+              SizedBox(height: 10),
               TextFormField(
                 controller: _contactNoController,
                 decoration: InputDecoration(labelText: 'Contact No'),
@@ -192,8 +156,18 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                 },
               ),
               SizedBox(height: 20),
-              _loginBtn(),
-              _changePasswordBtn(),
+              Action_Buttons(context: context, label: "Save", onTap: () {
+                  _saveForm();
+                }),
+              SizedBox(height: 15),
+              Action_Buttons(context: context, label: "Change Password", onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => ChangePasswordPage(
+                              email: _email,
+                            )),
+                  );
+                })
             ],
           ),
         ),

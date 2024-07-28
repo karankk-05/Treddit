@@ -68,7 +68,7 @@ class _AddPostState extends State<AddPost> {
       images: _images.map((image) => image['compressed'] as File).toList(),
     );
     if (success) {
-      Navigator.pushNamed(context, '/main');
+      Navigator.pushReplacementNamed(context, '/main');
     }
   }
 

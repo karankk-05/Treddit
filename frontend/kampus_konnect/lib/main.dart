@@ -44,6 +44,7 @@ class _MyAppState extends State<MyApp> {
 
     if (token != null && email != null) {
       return await authService.validateToken(email, token);
+      
     }
     return false;
   }
@@ -90,9 +91,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
-              home: MainPage(
-                selectedIndex: 0,
-              ),
+              home: MainPage(selectedIndex: 0,),
               routes: {
                 '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),
