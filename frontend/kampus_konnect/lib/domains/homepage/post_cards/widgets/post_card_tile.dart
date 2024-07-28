@@ -45,7 +45,7 @@ class _PostCardTileState extends State<PostCardTile> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.postCard.image as String);
+    // print(widget.postCard.image as String);
 
     return GestureDetector(
       onTap: () {

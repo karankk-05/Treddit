@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kampus_konnect/domains/auth/screens/login.dart';
+import 'package:kampus_konnect/main.dart';
 import '../auth/services/auth.dart';
 import 'app_user_provider.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'edit_details/edit_user_details.dart';
 import 'action__buttons.dart';
 
 class ProfilePage extends StatefulWidget {
+  final _baseUrl = MyApp.baseUrl;
   ProfilePage({super.key});
 
   @override
@@ -38,17 +40,16 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: Colors.transparent,
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Image.network(
-              imagePath,
-              fit: BoxFit.contain,
-            ),
-          ),
-        );
+            backgroundColor: Colors.transparent,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Image.network(
+                imagePath,
+                fit: BoxFit.contain,
+              ),
+            ));
       },
     );
   }
@@ -106,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ? Icon(
                                     Icons.person,
                                     size: 60,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   )
                                 : null,
                           ),

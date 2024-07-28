@@ -20,14 +20,19 @@ class AppUser {
   });
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
+    String profile_path = json['profile_pic_path'].toString();
+    if (profile_path == "null"){
+      profile_path = '';
+    }else{
+      profile_path = '$_baseUrl/res/${json['email']}_profile_${json['profile_pic_path']}';
+    }
     return AppUser(
       email: json['email'],
       username: json['username'],
       reports: json['reports'],
       address: json['address'],
       contactNo: json['contact_no'],
-      profilePicPath:
-          '$_baseUrl/res/${json['email']}_profile_${json['profile_pic_path']}',
+      profilePicPath: profile_path,
     );
   }
 
