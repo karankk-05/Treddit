@@ -4,6 +4,7 @@ import '../../theme/decorations.dart';
 import 'add_product_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class AddPost extends StatefulWidget {
   @override
@@ -17,16 +18,39 @@ class _AddPostState extends State<AddPost> {
   final ProductService _productService = ProductService();
   final ImagePicker _picker = ImagePicker();
 
-  List<File> _images = [];
+  List<Map<String, dynamic>> _images = [];
 
   Future<void> _pickImages() async {
     final pickedFiles = await _picker.pickMultiImage();
     if (pickedFiles != null) {
+      List<Map<String, dynamic>> imagesWithSizes = [];
+      for (var pickedFile in pickedFiles) {
+        File originalImage = File(pickedFile.path);
+        File? compressedImage = await _compressImage(originalImage);
+        if (compressedImage != null) {
+          imagesWithSizes.add({
+            'original': originalImage,
+            'compressed': compressedImage,
+            'originalSize': await originalImage.length(),
+            'compressedSize': await compressedImage.length(),
+          });
+        }
+      }
       setState(() {
-        _images =
-            pickedFiles.map((pickedFile) => File(pickedFile.path)).toList();
+        _images = imagesWithSizes;
       });
     }
+  }
+
+  Future<File?> _compressImage(File imageFile) async {
+    final compressedFile = await FlutterImageCompress.compressAndGetFile(
+      imageFile.absolute.path,
+      '${imageFile.path}_compressed.jpg',
+      quality: 70,
+      minWidth: 600,
+      minHeight: 600,
+    );
+    return compressedFile != null ? File(compressedFile.path) : null;
   }
 
   void _removeImage(int index) {
@@ -41,14 +65,10 @@ class _AddPostState extends State<AddPost> {
       title: _titleController.text,
       price: price,
       description: _descriptionController.text,
-      images: _images,
+      images: _images.map((image) => image['compressed'] as File).toList(),
     );
     if (success) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Product added successfully')));
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to add product')));
+      Navigator.pushNamed(context, '/main');
     }
   }
 
@@ -108,25 +128,32 @@ class _AddPostState extends State<AddPost> {
                     crossAxisCount: 3,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
+                    childAspectRatio: 1,
                   ),
                   itemCount: _images.length,
                   itemBuilder: (context, index) {
-                    return Stack(
+                    return Column(
                       children: [
-                        Image.file(
-                          _images[index],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                        Positioned(
-                          right: -10,
-                          top: -10,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.cancel,
-                              color: Colors.red,
-                            ),
-                            onPressed: () => _removeImage(index),
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              Image.file(
+                                _images[index]['compressed'],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                              Positioned(
+                                right: -10,
+                                top: -10,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () => _removeImage(index),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -153,7 +180,6 @@ class _AddPostState extends State<AddPost> {
                       )),
                 ),
               ),
-              Expanded(child: SizedBox()),
             ],
           ),
         ),
