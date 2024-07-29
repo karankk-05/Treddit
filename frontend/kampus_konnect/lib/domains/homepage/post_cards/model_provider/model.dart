@@ -4,7 +4,7 @@ class PostCard {
   final int postId;
   final String title;
   final int price;
-  final String image;
+  final String? image;
   static String _baseUrl = MyApp.baseUrl;
 
   PostCard({
@@ -15,6 +15,8 @@ class PostCard {
   });
 
   factory PostCard.fromJson(Map<String, dynamic> json, int postId) {
+    // print("See here");
+    // print((json['image'] as String));
     return PostCard(
       postId: postId,
       title: json['title'],

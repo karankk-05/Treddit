@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/main.dart';
 
 class ProductImageViewer extends StatefulWidget {
   final List<String> imageUrls;
-
+  final baseUrl = MyApp.baseUrl;
   const ProductImageViewer({
     Key? key,
     required this.imageUrls,
@@ -31,10 +32,18 @@ class _ProductImageViewerState extends State<ProductImageViewer> {
               });
             },
             itemBuilder: (context, index) {
-              return Image.network(
-                widget.imageUrls[index],
-                fit: BoxFit.contain,
-              );
+              return (widget.imageUrls[0] != null &&
+                      (widget.imageUrls[0] as String) !=
+                          "${widget.baseUrl}/res/")
+                  ? Image.network(
+                      widget.imageUrls[index],
+                      fit: BoxFit.contain,
+                    )
+                  : Icon(
+                      Icons.photo_rounded,
+                      size: 100,
+                      color: Colors.black,
+                    );
             },
           ),
         ),

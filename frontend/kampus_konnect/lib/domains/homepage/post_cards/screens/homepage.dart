@@ -14,20 +14,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final AuthService _authService = AuthService();
-
+  String searchQuery = '';
   @override
   void initState() {
     super.initState();
     _fetchPosts();
   }
 
-  Future<void> _fetchPosts() async {
+  Future<void> _fetchPosts({String query = ''}) async {
     final email = await _authService.getEmail();
     final token = await _authService.getToken();
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
     if (email != null && token != null) {
-      await postCardProvider.fetchPostCards();
+      await postCardProvider.fetchPostCards(query: query);
     }
   }
 
@@ -41,6 +41,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isRefreshing = false;
     });
+  }
+
+  void _onSearch(String query) {
+    setState(() {
+      searchQuery = query;
+    });
+    _fetchPosts(query: query);
   }
 
   @override
@@ -65,8 +72,9 @@ class _HomePageState extends State<HomePage> {
               postCardProvider.productCard.length + 1, // +1 for the search bar
           itemBuilder: (context, index) {
             if (index == 1) {
-              return CustomSearchBar
-                  .SearchBar(); // Use the SearchBar widget with the alias
+              return CustomSearchBar.SearchBar(
+                onSearch: _onSearch,
+              ); // Use the SearchBar widget with the alias
             } else {
               int adjustedIndex = index > 0 ? index - 1 : index;
               if (adjustedIndex < postCardProvider.productCard.length) {

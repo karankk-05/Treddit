@@ -102,7 +102,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
             ? Icon(
                 Icons.camera_alt,
                 size: 50,
-                color: Colors.white,
+                color: Colors.black,
               )
             : null,
       ),
@@ -115,60 +115,70 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       appBar: AppBar(
         title: Text('Edit Your Details'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              _profileImageWidget(),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Username'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a username';
-                  }
-                  return null;
-                },
+      body: SingleChildScrollView(
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: <Widget>[
+                  _profileImageWidget(),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(labelText: 'Username'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a username';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: _addressController,
+                    decoration: InputDecoration(labelText: 'Address'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an address';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: _contactNoController,
+                    decoration: InputDecoration(labelText: 'Contact No'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a contact number';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  Action_Buttons(
+                      context: context,
+                      label: "Save",
+                      onTap: () {
+                        _saveForm();
+                      }),
+                  SizedBox(height: 15),
+                  Action_Buttons(
+                      context: context,
+                      label: "Change Password",
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => ChangePasswordPage(
+                                    email: _email,
+                                  )),
+                        );
+                      })
+                ],
               ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: _addressController,
-                decoration: InputDecoration(labelText: 'Address'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an address';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 10),
-              TextFormField(
-                controller: _contactNoController,
-                decoration: InputDecoration(labelText: 'Contact No'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a contact number';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              Action_Buttons(context: context, label: "Save", onTap: () {
-                  _saveForm();
-                }),
-              SizedBox(height: 15),
-              Action_Buttons(context: context, label: "Change Password", onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => ChangePasswordPage(
-                              email: _email,
-                            )),
-                  );
-                })
-            ],
+            ),
           ),
         ),
       ),

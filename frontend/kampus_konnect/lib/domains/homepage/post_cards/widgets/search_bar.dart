@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/theme/decorations.dart'; // Adjust imports as per your project structure
 
 class SearchBar extends StatelessWidget {
+  final Function(String) onSearch;
+
+  SearchBar({required this.onSearch});
+
   @override
   Widget build(BuildContext context) {
+    TextEditingController _controller = TextEditingController();
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Container(
@@ -17,26 +22,41 @@ class SearchBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: Text('Search',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onPrimaryContainer) // Adjust styling as per your project
+              child: TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
+                ),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+                onSubmitted: (value) {
+                  onSearch(value);
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                child: Icon(
-                  Icons.search,
-                  color: Theme.of(context).colorScheme.onPrimary,
+              child: GestureDetector(
+                onTap: () {
+                  onSearch(_controller.text);
+                },
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Icon(
+                    Icons.search,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
                 ),
               ),
             ),

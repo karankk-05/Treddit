@@ -9,11 +9,14 @@ class PostCardProvider with ChangeNotifier {
   final String baseUrl = MyApp.baseUrl;
 
   List<PostCard> get productCard => _productCard;
-  Future<void> fetchPostCards() async {
+
+  Future<void> fetchPostCards({String query = ''}) async {
     try {
-      // Step 1: Fetch post IDs from /posts/unsold
+      // Step 1: Fetch post IDs from /posts/unsold or /posts/unsold?query=...
+      print(query);
       final responseIds = await http.get(
-        Uri.parse('$baseUrl/posts/unsold'),
+        Uri.parse(
+            '$baseUrl/posts/unsold${query.isNotEmpty ? '?search_query=$query' : ''}'),
       );
 
       if (responseIds.statusCode == 200) {
@@ -56,6 +59,5 @@ class PostCardProvider with ChangeNotifier {
       print("Error fetching data: $e");
       throw e; // Rethrow the exception for handling in UI or higher levels
     }
-    
   }
 }
