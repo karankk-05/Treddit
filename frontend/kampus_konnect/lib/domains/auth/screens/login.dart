@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../widgets/fields.dart';
+import './custom_text_field.dart'; // Import the new file
 import 'package:kampus_konnect/domains/homepage/post_cards/screens/homepage.dart';
 import '../../../theme/themes.dart';
 import '../../../theme/decorations.dart';
 import '../services/auth.dart';
 import '../services/auth_action.dart';
 import 'signup.dart';
+import 'custom_appbar.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -24,102 +26,84 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Widget _email() {
-    return fields.TextField(
-        controller: _emailController,
-        label: "Registered Email",
-        secure: false,
-        context: context);
-  }
-
-  Widget _password() {
-    return fields.TextField(
-        controller: _passwordController,
-        label: "Password",
-        secure: true,
-        context: context);
-  }
-
   Widget _LoginBtn() {
+    final theme = Theme.of(context).colorScheme;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          _authActions.handleLoginButton(_emailController.text.trim(),
-              _passwordController.text.trim(), context);
+          _authActions.handleLoginButton(
+            _emailController.text.trim(),
+            _passwordController.text.trim(),
+            context,
+          );
         },
         style: ButtonStyle(
           minimumSize: MaterialStateProperty.all(Size(100, 60)),
           backgroundColor: MaterialStateProperty.all<Color>(
-              Theme.of(context).colorScheme.primaryContainer),
+              Theme.of(context).colorScheme.secondaryContainer),
         ),
-        child: Text('LOGIN', style: mytext.headingbold(fontSize: 18, context)),
-      ),
-    );
-  }
-
-  Widget _SignupBtn() {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => signuppage(),
-          ),
-        );
-      },
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: 'New To Campus Ebay? ',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            TextSpan(
-              text: 'Sign Up',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+        child:
+            Text('LOGIN', style: TextStyle(fontSize: 18, color: theme.primary)),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
+      appBar: CustomAppBar(
+        title: '',
+        backgroundImage: 'assets/bg.jpeg', // Path to your background image
+      ),
       resizeToAvoidBottomInset:
           true, // Ensures the view resizes when the keyboard appears
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(gradient: gradients.login),
+          height: MediaQuery.of(context).size.height * 0.65,
+          decoration: BoxDecoration(color: theme.surface),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
             child: Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 40),
                   Text(
-                    'Join The Community Now',
-                    style: mytext.headingbold(fontSize: 30, context),
+                    'Welcome Back',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary, // Primary color
+                    ),
                   ),
-                  Expanded(child: SizedBox()),
-                  _email(),
+                  SizedBox(height: 20),
+                  Text(
+                    'Sign into your account',
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface // Text color
+                        ),
+                  ),
+                  SizedBox(height: 25),
+                  CustomTextField(
+                    icon: Icons.email,
+                    label: "Registered Email",
+                    controller: _emailController,
+                  ),
                   SizedBox(height: 30.0),
-                  _password(),
+                  CustomTextField(
+                    icon: Icons.lock,
+                    label: "Password",
+                    obscureText: true,
+                    controller: _passwordController,
+                  ),
                   _LoginBtn(),
-                  _SignupBtn(),
                 ],
               ),
             ),

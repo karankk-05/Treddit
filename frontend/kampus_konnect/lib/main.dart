@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kampus_konnect/domains/auth/screens/background_page.dart';
 import 'package:kampus_konnect/domains/chat/chat_provider.dart';
 import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/model.dart';
 import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
@@ -23,7 +24,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://172.23.148.233:3000';
+  static const String baseUrl = 'http://172.23.149.126:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -78,7 +79,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialApp(
               title: 'Mail Client',
               theme: appthemes.lighttheme,
-              home: LoginPage(),
+              home: BackgroundPage(),
               routes: {
                 '/login': (context) => LoginPage(),
                 '/main': (context) => MainPage(selectedIndex: 0),

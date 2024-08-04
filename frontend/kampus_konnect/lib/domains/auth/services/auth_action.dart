@@ -94,16 +94,9 @@ class AuthActions {
   void handleLoginButton(String email,String password,context) async {
     
     bool success = await _authService.login(email, password);
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login successful')),
-      );
+    
       Navigator.pushReplacementNamed(context, '/main');
       // Navigate to another page or perform another action
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed')),
-      );
-    }
+   
   }
 }

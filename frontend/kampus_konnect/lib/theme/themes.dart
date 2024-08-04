@@ -5,8 +5,8 @@ class gradients {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        Color.fromARGB(111, 77, 80, 80), // Very Dark Gray
-        Color.fromARGB(255, 0, 0, 0),
+        Color.fromARGB(109, 24, 183, 27), // Very Dark Gray
+        Color.fromARGB(108, 222, 230, 227), // Very Dark Gray
       ]);
 }
 

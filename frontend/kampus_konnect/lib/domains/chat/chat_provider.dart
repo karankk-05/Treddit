@@ -15,7 +15,7 @@ class ChatProvider with ChangeNotifier {
   }
 
   void _startPolling() {
-    const pollingInterval = Duration(seconds: 10); // Adjust interval as needed
+    const pollingInterval = Duration(seconds: 2); // Adjust interval as needed
     _pollingTimer = Timer.periodic(pollingInterval, (Timer timer) async {
       try {
         await fetchMessages(postId);

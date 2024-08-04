@@ -1,19 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/domains/auth/widgets/fields.dart';
-
+import 'custom_text_field.dart'; // Import the custom text field
 import '../../../theme/themes.dart';
 import '../services/auth.dart';
-import '../../../theme/decorations.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../services/auth_action.dart'; // Import the auth_actions file
+import 'custom_appbar.dart';
 
-class signuppage extends StatefulWidget {
+class SignupPage extends StatefulWidget {
   @override
-  _signuppageState createState() => _signuppageState();
+  _SignupPageState createState() => _SignupPageState();
 }
 
-class _signuppageState extends State<signuppage> {
+class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -21,6 +18,7 @@ class _signuppageState extends State<signuppage> {
   final _usernameController = TextEditingController();
 
   bool _showAdditionalFields = false;
+  bool _showAppBar = true; // New state variable for app bar visibility
   final AuthActions _authActions = AuthActions();
 
   @override
@@ -33,47 +31,49 @@ class _signuppageState extends State<signuppage> {
     super.dispose();
   }
 
-  Widget _email(BuildContext context) {
-    return fields.TextField(
-        label: "Email",
-        controller: _emailController,
-        secure: false,
-        context: context);
+  Widget _email() {
+    return CustomTextField(
+      icon: Icons.email,
+      label: "Email",
+      controller: _emailController,
+    );
   }
 
-  Widget _username(BuildContext context) {
-    return fields.TextField(
-        label: "Username",
-        controller: _usernameController,
-        secure: false,
-        context: context);
+  Widget _username() {
+    return CustomTextField(
+      icon: Icons.person,
+      label: "Username",
+      controller: _usernameController,
+    );
   }
 
-  Widget _password(BuildContext context) {
-    return fields.TextField(
-        label: "Password",
-        controller: _passwordController,
-        secure: true,
-        context: context);
+  Widget _password() {
+    return CustomTextField(
+      icon: Icons.lock,
+      label: "Password",
+      obscureText: true,
+      controller: _passwordController,
+    );
   }
 
-  Widget _conf_password(BuildContext context) {
-    return fields.TextField(
-        label: "Confirm Password",
-        controller: _confirmPasswordController,
-        secure: true,
-        context: context);
+  Widget _confPassword() {
+    return CustomTextField(
+      icon: Icons.lock,
+      label: "Confirm Password",
+      obscureText: true,
+      controller: _confirmPasswordController,
+    );
   }
 
-  Widget _otp(BuildContext context) {
-    return fields.TextField(
-        label: "OTP",
-        controller: _otpController,
-        secure: false,
-        context: context);
+  Widget _otp() {
+    return CustomTextField(
+      icon: Icons.code,
+      label: "OTP",
+      controller: _otpController,
+    );
   }
 
-  Widget _RegBtn(BuildContext context) {
+  Widget _regBtn() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -90,6 +90,8 @@ class _signuppageState extends State<signuppage> {
             updateUI: () {
               setState(() {
                 _showAdditionalFields = true;
+                _showAppBar =
+                    false; // Hide the app bar when the button is clicked
               });
             },
           );
@@ -102,7 +104,9 @@ class _signuppageState extends State<signuppage> {
         ),
         child: Text(
           _showAdditionalFields ? 'REGISTER' : 'SEND OTP',
-          style: mytext.headingbold(fontSize: 18, context),
+          style: TextStyle(
+            fontSize: 18,
+          ),
         ),
       ),
     );
@@ -110,28 +114,52 @@ class _signuppageState extends State<signuppage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return Scaffold(
+      appBar: CustomAppBar(
+        title: '',
+        backgroundImage: 'assets/bg.jpeg', // Path to your background image
+      ), // Conditionally display the app bar
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height * 1.1,
           padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-          decoration: BoxDecoration(gradient: gradients.login),
+          decoration: BoxDecoration(
+            color: theme.surface, // Set background color to surface
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              _email(context),
+              Text(
+                'Welcome Back',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary, // Primary color
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Sign into your account',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurface // Text color
+                    ),
+              ),
+              SizedBox(height: 20),
+              _email(),
               SizedBox(height: 30.0),
               if (_showAdditionalFields) ...[
-                _username(context),
+                _username(),
                 SizedBox(height: 30.0),
-                _password(context),
+                _password(),
                 SizedBox(height: 30.0),
-                _conf_password(context),
+                _confPassword(),
                 SizedBox(height: 30.0),
-                _otp(context),
+                _otp(),
                 SizedBox(height: 30.0),
               ],
-              _RegBtn(context), // extra space at the bottom if needed
+              _regBtn(),
             ],
           ),
         ),
