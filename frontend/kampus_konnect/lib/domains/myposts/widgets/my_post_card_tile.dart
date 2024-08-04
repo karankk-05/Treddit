@@ -1,6 +1,6 @@
 // screens/my_post_card_tile.dart
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/main.dart';
+import 'package:Treddit/main.dart';
 import '../models/my_posts_model.dart';
 import '../../../theme/decorations.dart';
 import '../screens/my_post_details.dart';

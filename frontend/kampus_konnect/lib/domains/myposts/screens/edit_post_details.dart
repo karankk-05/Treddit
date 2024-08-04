@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/nav/nav_bar.dart';
+import 'package:Treddit/nav/nav_bar.dart';
 import 'package:provider/provider.dart';
 import '../models/my_posts_model.dart';
 import '../services&providers/my_posts_provider.dart';
@@ -64,7 +64,9 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
       )
           .then((_) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => MainPage(selectedIndex: 1,),
+          builder: (context) => MainPage(
+            selectedIndex: 1,
+          ),
         ));
       });
     }

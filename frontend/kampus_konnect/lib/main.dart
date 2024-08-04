@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/domains/auth/screens/background_page.dart';
-import 'package:kampus_konnect/domains/chat/chat_provider.dart';
-import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/model.dart';
-import 'package:kampus_konnect/domains/user_details/app_user_provider.dart';
-import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/provider.dart';
-import 'package:kampus_konnect/domains/homepage/product_details/model_provider/provider.dart';
+import 'package:Treddit/domains/auth/screens/background_page.dart';
+import 'package:Treddit/domains/chat/chat_provider.dart';
+import 'package:Treddit/domains/homepage/post_cards/model_provider/model.dart';
+import 'package:Treddit/domains/user_details/app_user_provider.dart';
+import 'package:Treddit/domains/homepage/post_cards/model_provider/provider.dart';
+import 'package:Treddit/domains/homepage/product_details/model_provider/provider.dart';
 import 'domains/auth/screens/signup.dart';
 import 'domains/auth/screens/login.dart';
 import 'theme/themes.dart';
@@ -77,7 +77,7 @@ class _MyAppState extends State<MyApp> {
             print(snapshot.data);
 
             return MaterialApp(
-              title: 'Mail Client',
+              title: 'Treddit',
               theme: appthemes.lighttheme,
               home: BackgroundPage(),
               routes: {
@@ -92,9 +92,11 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             return MaterialApp(
-              title: 'Mail Client',
+              title: 'Treddit',
               theme: appthemes.lighttheme,
-              home: MainPage(selectedIndex: 0,),
+              home: MainPage(
+                selectedIndex: 0,
+              ),
               routes: {
                 '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),

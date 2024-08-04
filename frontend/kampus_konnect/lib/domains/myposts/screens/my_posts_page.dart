@@ -1,6 +1,6 @@
 // screens/my_posts.dart
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/domains/auth/services/auth.dart';
+import 'package:Treddit/domains/auth/services/auth.dart';
 import 'package:provider/provider.dart';
 import '../services&providers/my_posts_provider.dart';
 import '../../auth/screens/login.dart';

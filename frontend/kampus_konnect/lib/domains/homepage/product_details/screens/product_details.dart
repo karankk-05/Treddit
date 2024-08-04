@@ -1,6 +1,6 @@
 // product_details_page.dart
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/domains/chat/chat_detail_screen.dart';
+import 'package:Treddit/domains/chat/chat_detail_screen.dart';
 import 'package:provider/provider.dart';
 import '../model_provider/provider.dart';
 import '../../../auth/services/auth.dart';

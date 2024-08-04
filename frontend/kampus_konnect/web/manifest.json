@@ -1,6 +1,6 @@
 {
-    "name": "kampus_konnect",
-    "short_name": "kampus_konnect",
+    "name": "Treddit",
+    "short_name": "Treddit",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,4 +1,4 @@
-# kampus_konnect
+# Treddit
 
 A new Flutter project.
 

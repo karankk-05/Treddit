@@ -1,5 +1,5 @@
-import 'package:kampus_konnect/domains/homepage/post_cards/model_provider/model.dart';
-import 'package:kampus_konnect/main.dart';
+import 'package:Treddit/domains/homepage/post_cards/model_provider/model.dart';
+import 'package:Treddit/main.dart';
 import '../../product_details/screens/product_details.dart';
 import 'package:flutter/material.dart';
 import '../../../../theme/decorations.dart';

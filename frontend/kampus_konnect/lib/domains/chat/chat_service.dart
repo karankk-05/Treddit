@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:kampus_konnect/main.dart';
+import 'package:Treddit/main.dart';
 import '../auth/services/auth.dart';
 
 class ChatService {

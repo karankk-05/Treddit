@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/fields.dart';
 import './custom_text_field.dart'; // Import the new file
-import 'package:kampus_konnect/domains/homepage/post_cards/screens/homepage.dart';
+import 'package:Treddit/domains/homepage/post_cards/screens/homepage.dart';
 import '../../../theme/themes.dart';
 import '../../../theme/decorations.dart';
 import '../services/auth.dart';

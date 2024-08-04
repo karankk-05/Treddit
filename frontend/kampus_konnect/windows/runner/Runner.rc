@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "kampus_konnect" "\0"
+            VALUE "FileDescription", "Treddit" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "kampus_konnect" "\0"
+            VALUE "InternalName", "Treddit" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "kampus_konnect.exe" "\0"
-            VALUE "ProductName", "kampus_konnect" "\0"
+            VALUE "OriginalFilename", "Treddit.exe" "\0"
+            VALUE "ProductName", "Treddit" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

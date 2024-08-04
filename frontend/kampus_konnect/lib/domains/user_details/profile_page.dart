@@ -1,6 +1,7 @@
+import 'package:Treddit/domains/auth/screens/background_page.dart';
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/domains/auth/screens/login.dart';
-import 'package:kampus_konnect/main.dart';
+import 'package:Treddit/domains/auth/screens/login.dart';
+import 'package:Treddit/main.dart';
 import '../auth/services/auth.dart';
 import 'app_user_provider.dart';
 import 'package:provider/provider.dart';
@@ -169,7 +170,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           label: 'Logout',
                           onTap: () {
                             _authService.logout();
-                            Navigator.pushReplacementNamed(context, '/login');
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => BackgroundPage()));
                           },
                         ),
                         SizedBox(height: 100),

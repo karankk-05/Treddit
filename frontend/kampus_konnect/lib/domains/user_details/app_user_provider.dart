@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:kampus_konnect/main.dart';
-import 'package:kampus_konnect/domains/user_details/app_user_model.dart';
+import 'package:Treddit/main.dart';
+import 'package:Treddit/domains/user_details/app_user_model.dart';
 
 class AppUserProvider with ChangeNotifier {
   AppUser? _appUser;

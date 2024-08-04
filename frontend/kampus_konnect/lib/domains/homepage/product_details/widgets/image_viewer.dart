@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kampus_konnect/main.dart';
+import 'package:Treddit/main.dart';
 
 class ProductImageViewer extends StatefulWidget {
   final List<String> imageUrls;

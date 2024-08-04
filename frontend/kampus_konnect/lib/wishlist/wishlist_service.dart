@@ -1,5 +1,5 @@
 // wishlist_service.dart
-import 'package:kampus_konnect/main.dart';
+import 'package:Treddit/main.dart';
 import '../domains/homepage/post_cards/model_provider/provider.dart';
 import '../domains/homepage/product_details/model_provider/provider.dart';
 import '../domains/auth/services/auth.dart';
@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'package:http/http.dart'
     as http; // Import AuthService or adjust path as needed
 import 'package:provider/provider.dart';
-
 
 class WishlistService {
   List<int> _wishlistedPostIds = [];
@@ -17,7 +16,7 @@ class WishlistService {
   Future<void> addToWishlist(int postId) async {
     final email = await _authService.getEmail();
     final token = await _authService.getToken();
-  print(email);
+    print(email);
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/user/wishlist/add'),
@@ -66,15 +65,15 @@ class WishlistService {
       throw e;
     }
   }
-  Future<void> fetchWishlistPostIds(String email,String token) async {
+
+  Future<void> fetchWishlistPostIds(String email, String token) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/user/wishlist'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
-      body: jsonEncode(<String, String>{'email': email,'token':token}),
-    
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(<String, String>{'email': email, 'token': token}),
       );
 
       if (response.statusCode == 200) {
