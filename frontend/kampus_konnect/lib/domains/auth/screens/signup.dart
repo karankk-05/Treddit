@@ -18,7 +18,8 @@ class _SignupPageState extends State<SignupPage> {
   final _usernameController = TextEditingController();
 
   bool _showAdditionalFields = false;
-  bool _showAppBar = true; // New state variable for app bar visibility
+  bool _changesize = true; // State variable for app bar visibility
+  bool _isLoading = false; // State variable for button loading
   final AuthActions _authActions = AuthActions();
 
   @override
@@ -78,36 +79,52 @@ class _SignupPageState extends State<SignupPage> {
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () async {
-          await _authActions.handleRegisterButtonPress(
-            context: context,
-            emailController: _emailController,
-            passwordController: _passwordController,
-            confirmPasswordController: _confirmPasswordController,
-            usernameController: _usernameController,
-            otpController: _otpController,
-            showAdditionalFields: _showAdditionalFields,
-            updateUI: () {
-              setState(() {
-                _showAdditionalFields = true;
-                _showAppBar =
-                    false; // Hide the app bar when the button is clicked
-              });
-            },
-          );
-        },
+        onPressed: _isLoading
+            ? null
+            : () async {
+                setState(() {
+                  _isLoading = true; // Start loading
+                });
+
+                await _authActions.handleRegisterButtonPress(
+                  context: context,
+                  emailController: _emailController,
+                  passwordController: _passwordController,
+                  confirmPasswordController: _confirmPasswordController,
+                  usernameController: _usernameController,
+                  otpController: _otpController,
+                  showAdditionalFields: _showAdditionalFields,
+                  updateUI: () {
+                    setState(() {
+                      _showAdditionalFields = true;
+                      _changesize =
+                          false; // Hide the app bar when the button is clicked
+                    });
+                  },
+                );
+
+                setState(() {
+                  _isLoading = false; // Stop loading
+                });
+              },
         style: ButtonStyle(
           minimumSize: MaterialStateProperty.all(Size(100, 60)),
           backgroundColor: MaterialStateProperty.all<Color>(
-            Theme.of(context).colorScheme.primaryContainer,
+            Theme.of(context).colorScheme.secondaryContainer,
           ),
         ),
-        child: Text(
-          _showAdditionalFields ? 'REGISTER' : 'SEND OTP',
-          style: TextStyle(
-            fontSize: 18,
-          ),
-        ),
+        child: _isLoading
+            ? CircularProgressIndicator(
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary, // Progress indicator color
+              )
+            : Text(
+                _showAdditionalFields ? 'REGISTER' : 'SEND OTP',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
       ),
     );
   }
@@ -122,7 +139,9 @@ class _SignupPageState extends State<SignupPage> {
       ), // Conditionally display the app bar
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height * 1.1,
+          height: _changesize
+              ? MediaQuery.of(context).size.height * 0.6
+              : MediaQuery.of(context).size.height * 1.0,
           padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
           decoration: BoxDecoration(
             color: theme.surface, // Set background color to surface
@@ -131,33 +150,32 @@ class _SignupPageState extends State<SignupPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Welcome Back',
+                'Register',
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 35,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary, // Primary color
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 25),
               Text(
-                'Sign into your account',
+                'Create New Account',
                 style: TextStyle(
                     fontSize: 14,
                     color: Theme.of(context).colorScheme.onSurface // Text color
                     ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 35),
               _email(),
-              SizedBox(height: 30.0),
+              SizedBox(height: 10.0),
               if (_showAdditionalFields) ...[
                 _username(),
-                SizedBox(height: 30.0),
+                SizedBox(height: 10.0),
                 _password(),
-                SizedBox(height: 30.0),
+                SizedBox(height: 10.0),
                 _confPassword(),
-                SizedBox(height: 30.0),
+                SizedBox(height: 10.0),
                 _otp(),
-                SizedBox(height: 30.0),
               ],
               _regBtn(),
             ],

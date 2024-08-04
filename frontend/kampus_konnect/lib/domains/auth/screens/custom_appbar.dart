@@ -16,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).colorScheme;
     return Stack(
       children: [
         // Background Image in curved area
@@ -34,6 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         // AppBar with rounded bottom corners
         AppBar(
+          surfaceTintColor: theme.surface,
           title: Text(title),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
