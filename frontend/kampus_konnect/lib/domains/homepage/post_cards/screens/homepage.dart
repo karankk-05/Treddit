@@ -57,8 +57,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: null,
         surfaceTintColor: Colors.transparent,
-        title: Text("App Name Will Come"),
+        title: Image.asset(
+          'assets/title.png', // Path to your image asset
+          height: 30, // Adjust the height as needed
+          fit: BoxFit.contain, // Ensure the image fits within the space
+        ),
       ),
       body: RefreshIndicator(
         color: Theme.of(context).colorScheme.onSecondary,
