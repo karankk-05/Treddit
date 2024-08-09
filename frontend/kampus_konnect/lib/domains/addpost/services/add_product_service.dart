@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
-import '../auth/services/auth.dart';
-import '../../main.dart';
+import '../../auth/services/auth.dart';
+import '../../../main.dart';
 
 class ProductService {
   static const String _baseUrl = MyApp.baseUrl;

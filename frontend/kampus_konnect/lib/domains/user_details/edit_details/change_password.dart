@@ -81,8 +81,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: ElevatedButton(
         onPressed: _getOtp,
         style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all(Size(100, 60)),
-          backgroundColor: MaterialStateProperty.all<Color>(
+          minimumSize: WidgetStateProperty.all(Size(100, 60)),
+          backgroundColor: WidgetStateProperty.all<Color>(
               Theme.of(context).colorScheme.primaryContainer),
         ),
         child: Text('Get OTP'),
@@ -97,8 +97,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: ElevatedButton(
         onPressed: _changePassword,
         style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all(Size(100, 60)),
-          backgroundColor: MaterialStateProperty.all<Color>(
+          minimumSize: WidgetStateProperty.all(Size(100, 60)),
+          backgroundColor: WidgetStateProperty.all<Color>(
               Theme.of(context).colorScheme.secondaryContainer),
         ),
         child: Text('Change Password'),
@@ -157,7 +157,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     _changePasswordBtn(),
                   ] else ...[
                     _getOtpBtn(),

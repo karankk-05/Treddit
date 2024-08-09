@@ -1,10 +1,8 @@
-import '../auth/widgets/fields.dart';
 import 'package:flutter/material.dart';
-import '../../theme/decorations.dart';
-import 'add_product_service.dart';
-import 'package:image_picker/image_picker.dart';
+import '../../../theme/decorations.dart';
+import '../services/add_product_service.dart';
+import '../services/image_service.dart';
 import 'dart:io';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class AddPost extends StatefulWidget {
   @override
@@ -16,41 +14,15 @@ class _AddPostState extends State<AddPost> {
   final _priceController = TextEditingController();
   final _descriptionController = TextEditingController();
   final ProductService _productService = ProductService();
-  final ImagePicker _picker = ImagePicker();
+  final ImageService _imageService = ImageService();
 
   List<Map<String, dynamic>> _images = [];
 
   Future<void> _pickImages() async {
-    final pickedFiles = await _picker.pickMultiImage();
-    if (pickedFiles != null) {
-      List<Map<String, dynamic>> imagesWithSizes = [];
-      for (var pickedFile in pickedFiles) {
-        File originalImage = File(pickedFile.path);
-        File? compressedImage = await _compressImage(originalImage);
-        if (compressedImage != null) {
-          imagesWithSizes.add({
-            'original': originalImage,
-            'compressed': compressedImage,
-            'originalSize': await originalImage.length(),
-            'compressedSize': await compressedImage.length(),
-          });
-        }
-      }
-      setState(() {
-        _images = imagesWithSizes;
-      });
-    }
-  }
-
-  Future<File?> _compressImage(File imageFile) async {
-    final compressedFile = await FlutterImageCompress.compressAndGetFile(
-      imageFile.absolute.path,
-      '${imageFile.path}_compressed.jpg',
-      quality: 70,
-      minWidth: 600,
-      minHeight: 600,
-    );
-    return compressedFile != null ? File(compressedFile.path) : null;
+    final images = await _imageService.pickAndCompressImages();
+    setState(() {
+      _images = images;
+    });
   }
 
   void _removeImage(int index) {
@@ -92,32 +64,32 @@ class _AddPostState extends State<AddPost> {
                       Theme.of(context).colorScheme.secondaryContainer,
                   radius: 30,
                   child: IconButton(
-                    icon: Icon(Icons.add_a_photo),
+                    icon: const Icon(Icons.add_a_photo),
                     color: Theme.of(context).colorScheme.primary,
                     onPressed: _pickImages,
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _titleController,
                 decoration: InputDecoration(labelText: 'Product Title'),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               TextField(
                 controller: _priceController,
                 decoration: InputDecoration(labelText: 'Product Price'),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               TextField(
                 controller: _descriptionController,
                 decoration: InputDecoration(labelText: 'Product Details'),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               if (_images.isNotEmpty)
@@ -146,7 +118,7 @@ class _AddPostState extends State<AddPost> {
                                 right: -10,
                                 top: -10,
                                 child: IconButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.cancel,
                                     color: Colors.red,
                                   ),
@@ -160,16 +132,13 @@ class _AddPostState extends State<AddPost> {
                     );
                   },
                 ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(Size(100, 60)),
-                    backgroundColor: MaterialStateProperty.all<Color>(
+                    minimumSize: WidgetStateProperty.all(Size(100, 60)),
+                    backgroundColor: WidgetStateProperty.all<Color>(
                       Theme.of(context).colorScheme.secondaryContainer,
-                    ),
-                    side: MaterialStateProperty.all<BorderSide>(
-                      BorderSide(color: Colors.white),
                     ),
                   ),
                   onPressed: _submit,

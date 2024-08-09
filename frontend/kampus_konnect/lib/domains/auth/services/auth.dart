@@ -95,7 +95,7 @@ class AuthService {
       body: json.encode({'email': email, 'token': token}),
     );
     print("Status code is this:-->${response.statusCode == 200}<--");
-   
+
     return response.statusCode == 200;
   }
 

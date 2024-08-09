@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:Treddit/domains/auth/services/auth.dart';
 import 'package:provider/provider.dart';
 import '../services&providers/my_posts_provider.dart';
-import '../../auth/screens/login.dart';
-import '../models/my_posts_model.dart';
-import '../../../theme/decorations.dart';
-import 'my_post_details.dart';
 import '../widgets/my_post_card_tile.dart'; // Import the new tile
 
 class MyPosts extends StatefulWidget {
@@ -29,8 +25,7 @@ class _MyPostsState extends State<MyPosts> {
         Provider.of<MyPostsProvider>(context, listen: false);
     if (email != null)
       productProvider.fetchUserPosts(email);
-    else
-      print("email not found");
+  
   }
 
   @override

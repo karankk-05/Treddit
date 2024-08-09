@@ -12,7 +12,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(200); // Increased height of AppBar
+  Size get preferredSize =>
+      const Size.fromHeight(200); // Increased height of AppBar
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         AppBar(
           surfaceTintColor: theme.surface,
           title: Text(title),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(30),
             ),

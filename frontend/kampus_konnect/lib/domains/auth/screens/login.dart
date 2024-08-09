@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/fields.dart';
-import './custom_text_field.dart'; // Import the new file
-import 'package:Treddit/domains/homepage/post_cards/screens/homepage.dart';
-import '../../../theme/themes.dart';
-import '../../../theme/decorations.dart';
-import '../services/auth.dart';
+import '../widgets/custom_text_field.dart';
 import '../services/auth_action.dart';
-import 'signup.dart';
-import 'custom_appbar.dart';
+import '../widgets/custom_appbar.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -40,8 +34,8 @@ class _LoginPageState extends State<LoginPage> {
           );
         },
         style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all(Size(100, 60)),
-          backgroundColor: MaterialStateProperty.all<Color>(
+          minimumSize: WidgetStateProperty.all(Size(100, 60)),
+          backgroundColor: WidgetStateProperty.all<Color>(
               Theme.of(context).colorScheme.secondaryContainer),
         ),
         child:
@@ -80,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                           .primary, // Primary color
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Text(
                     'Sign into your account',
                     style: TextStyle(
@@ -90,13 +84,13 @@ class _LoginPageState extends State<LoginPage> {
                             .onSurface // Text color
                         ),
                   ),
-                  SizedBox(height: 25),
+                  const SizedBox(height: 25),
                   CustomTextField(
                     icon: Icons.email,
                     label: "Registered Email",
                     controller: _emailController,
                   ),
-                  SizedBox(height: 30.0),
+                  const SizedBox(height: 30.0),
                   CustomTextField(
                     icon: Icons.lock,
                     label: "Password",
