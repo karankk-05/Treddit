@@ -1,18 +1,13 @@
-use super::super::json::*;
+use super::{super::json::*, utils::verify_otp};
 use crate::utils::sanitize_check_email;
 use crate::{Otp, SharedState};
-use argon2::{
-    password_hash::{rand_core::OsRng, SaltString},
-    Argon2, PasswordHasher,
-};
+
 use axum::{extract::State, http::StatusCode, Json};
 use chrono::{Duration, Utc};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 use rand::Rng;
-use sqlx::PgPool;
-use std::collections::HashMap;
 
 pub async fn send_otp(
     State(state): State<SharedState>,
@@ -89,55 +84,8 @@ pub async fn create_user(
         Err(_) => return Err(StatusCode::CONFLICT),
     }
 
-    save_passwd(&st.pool, &new_user.email, &new_user.passwd).await?;
+    // save_passwd(&st.pool, &new_user.email, "blank").await?;
     Ok(StatusCode::OK)
-}
-
-pub async fn change_password(
-    State(state): State<SharedState>,
-    Json(payload): Json<ChPassd>,
-) -> Result<StatusCode, StatusCode> {
-    let mut st = state.write().await;
-    verify_otp(&payload.email, payload.otp, &mut st.otp_storage)?;
-    update_passwd(&st.pool, &payload.email, &payload.passwd).await?;
-    Ok(StatusCode::OK)
-}
-
-async fn update_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
-    let hash = get_hash(passwd).await?;
-    match sqlx::query!("update login set passwd = $1 where email = $2", hash, email)
-        .execute(pool)
-        .await
-    {
-        Ok(_) => Ok(()),
-        Err(_) => Err(StatusCode::NOT_FOUND),
-    }
-}
-
-async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
-    let hash = get_hash(passwd).await?;
-    match sqlx::query!(
-        "insert into login(email,passwd) values ($1,$2) ",
-        email,
-        hash
-    )
-    .execute(pool)
-    .await
-    {
-        Ok(_) => Ok(()),
-        Err(_) => Err(StatusCode::CONFLICT),
-    }
-}
-
-async fn get_hash(passwd: &str) -> Result<String, StatusCode> {
-    let salt = SaltString::generate(&mut OsRng);
-    match Argon2::default().hash_password(passwd.as_bytes(), &salt) {
-        Ok(val) => Ok(val.to_string()),
-        Err(err) => {
-            eprintln!("{}", err);
-            Err(StatusCode::INTERNAL_SERVER_ERROR)
-        }
-    }
 }
 
 fn prepare_mail(
@@ -169,21 +117,6 @@ fn prepare_mail(
             eprintln!("{}", err);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
-    }
-}
-
-fn verify_otp(
-    email: &str,
-    otp: u16,
-    otp_storage: &mut HashMap<String, Otp>,
-) -> Result<(), StatusCode> {
-    let stored_otp = &otp_storage.remove(email);
-    match stored_otp {
-        Some(val) => match !val.expired()? && val.email == email && val.otp == otp {
-            true => Ok(()),
-            false => Err(StatusCode::UNAUTHORIZED),
-        },
-        None => Err(StatusCode::UNAUTHORIZED),
     }
 }
 

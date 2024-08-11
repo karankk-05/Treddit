@@ -71,7 +71,6 @@ async fn create_router() -> Router {
         .route("/user/info/private", post(users::get_user_private))
         .route("/user/profile/pic", put(users::change_profile_pic))
         .route("/user/posts", post(users::get_posts))
-        .route("/user/passwd", put(auth::signup::change_password))
         .route("/user/post", post(post::new::create_post))
         .route("/user/report", post(users::report_user))
         .route("/posts/:id", get(posts::get_post))

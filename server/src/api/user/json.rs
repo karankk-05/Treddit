@@ -29,17 +29,9 @@ pub struct ChUser {
 pub struct NewUser {
     pub email: String,
     pub username: String,
-    pub passwd: String,
     pub address: String,
     pub contact_no: String,
     pub otp: u16,
-}
-
-#[derive(Deserialize)]
-pub struct ChPassd {
-    pub email: String,
-    pub otp: u16,
-    pub passwd: String,
 }
 
 #[derive(Deserialize)]
@@ -50,7 +42,7 @@ pub struct Email {
 #[derive(Deserialize)]
 pub struct LoginInfo {
     pub email: String,
-    pub passwd: String,
+    pub otp: u16,
 }
 
 #[derive(Deserialize)]
