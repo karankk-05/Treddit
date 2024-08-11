@@ -13,6 +13,7 @@ use sqlx::Row;
 pub struct PageFilter {
     pub search_query: Option<String>,
     pub category: Option<String>,
+    pub lost: Option<bool>,
     pub min_price: Option<i32>,
     pub max_price: Option<i32>,
     pub owner: Option<String>,
@@ -50,6 +51,10 @@ fn build_search_query(filters: PageFilter) -> String {
     if let Some(max) = filters.max_price {
         search_sql.and_where(Expr::col(Posts::Price).lte(max));
     };
+
+    if let Some(lost) = filters.lost {
+        search_sql.and_where(Expr::col(Posts::Lost).is(lost));
+    }
 
     if let Some(search_query) = filters.search_query {
         let sanitized_query = sanitize_query(search_query);
