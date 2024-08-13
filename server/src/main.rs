@@ -70,7 +70,7 @@ async fn create_router() -> Router {
         .route("/user/info", post(users::get_user))
         .route("/user/info/private", post(users::get_user_private))
         .route("/user/profile/pic", put(users::change_profile_pic))
-        .route("/user/posts", post(users::get_posts))
+        .route("/user/posts", post(users::get_posts_as_owner))
         .route("/user/post", post(post::new::create_post))
         .route("/user/report", post(users::report_user))
         .route("/posts/:id", get(posts::get_post))

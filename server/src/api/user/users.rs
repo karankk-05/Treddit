@@ -155,7 +155,7 @@ pub async fn change_profile_pic(
 }
 
 //Redundant function not required but kept for compatibility with frontend
-pub async fn get_posts(
+pub async fn get_posts_as_owner(
     State(state): State<SharedState>,
     Query(mut filters): Query<PageFilter>,
     Json(payload): Json<Email>,
