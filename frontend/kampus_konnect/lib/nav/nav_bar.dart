@@ -5,7 +5,7 @@ import '../domains/homepage/post_cards/screens/homepage.dart';
 import '../domains/addpost/screens/add_post_page.dart';
 import '../domains/myposts/screens/my_posts_page.dart';
 import '../domains/user_details/screens/profile_page.dart';
-import '../wishlist/wishlist_page.dart'; // Import the Wishlist page
+
 
 class MainPage extends StatefulWidget {
   int selectedIndex;
@@ -19,7 +19,7 @@ class _MainPageState extends State<MainPage> {
   static final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     MyPosts(),
-    WishlistPage(), // Add Wishlist page
+    //WishlistPage(), // Add Wishlist page
     ProfilePage(),
     AddPost()
   ];

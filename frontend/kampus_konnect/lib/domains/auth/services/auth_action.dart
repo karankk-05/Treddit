@@ -91,11 +91,50 @@ class AuthActions {
       }
     }
   }
+Future<void> sendOtp({
+    required String email,
+    required BuildContext context,
+    required Function onOtpSent,
+  }) async {
+    final otpSent = await _authService.sendOtp(email);
 
-  void handleLoginButton(String email, String password, context) async {
-    await _authService.login(email, password);
+    if (otpSent) {
+      onOtpSent(); // Update UI to show OTP input field
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "OTP sent successfully",
+                      style: TextStyle(color: Colors.black,
+                      ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Failed to send OTP",
+                       style: TextStyle(color: Colors.black,),
 
-    Navigator.pushReplacementNamed(context, '/main');
-    // Navigate to another page or perform another action
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        ),
+      );
+    }
+  }
+ void handleLoginButton(String email, int otp, context) async {
+  print("handling login");
+    final isLoggedIn = await _authService.login(email, otp);
+print(isLoggedIn);
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, '/main');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Login failed",
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ));
+    }
   }
 }

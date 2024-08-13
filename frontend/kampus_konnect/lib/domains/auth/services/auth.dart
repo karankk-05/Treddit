@@ -66,12 +66,12 @@ class AuthService {
     return response.statusCode == 200;
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(String email, int otp) async {
     final url = Uri.parse('$_baseUrl/user/login');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email, 'passwd': password}),
+      body: json.encode({'email': email, 'otp': otp}),
     );
 
     if (response.statusCode == 200) {
