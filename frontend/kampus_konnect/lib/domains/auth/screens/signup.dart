@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'custom_text_field.dart'; // Import the custom text field
-import '../../../theme/themes.dart';
-import '../services/auth.dart';
-import '../services/auth_action.dart'; // Import the auth_actions file
-import 'custom_appbar.dart';
+import '../widgets/custom_text_field.dart';
+import '../services/auth_action.dart';
+import '../widgets/custom_appbar.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -108,8 +106,8 @@ class _SignupPageState extends State<SignupPage> {
                 });
               },
         style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all(Size(100, 60)),
-          backgroundColor: MaterialStateProperty.all<Color>(
+          minimumSize: WidgetStateProperty.all(Size(100, 60)),
+          backgroundColor: WidgetStateProperty.all<Color>(
             Theme.of(context).colorScheme.secondaryContainer,
           ),
         ),
@@ -157,7 +155,7 @@ class _SignupPageState extends State<SignupPage> {
                   color: Theme.of(context).colorScheme.primary, // Primary color
                 ),
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               Text(
                 'Create New Account',
                 style: TextStyle(
@@ -165,16 +163,16 @@ class _SignupPageState extends State<SignupPage> {
                     color: Theme.of(context).colorScheme.onSurface // Text color
                     ),
               ),
-              SizedBox(height: 35),
+              const SizedBox(height: 35),
               _email(),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               if (_showAdditionalFields) ...[
                 _username(),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 _password(),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 _confPassword(),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 _otp(),
               ],
               _regBtn(),

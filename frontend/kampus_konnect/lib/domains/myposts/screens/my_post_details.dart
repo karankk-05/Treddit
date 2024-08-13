@@ -143,7 +143,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Text(
@@ -154,7 +154,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                         color: onPrimaryContainer,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       '₹${product.price}',
                       style: TextStyle(
@@ -163,7 +163,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                         color: Colors.green,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       product.body,
                       style: TextStyle(
@@ -174,7 +174,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Container(
@@ -182,7 +182,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                 height: 5,
                 color: theme.surface,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Padding(

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class CollapsibleFAB extends StatefulWidget {
-
   final String label;
   final VoidCallback? onPressed;
-final Icon iconlabel;
+  final Icon iconlabel;
   const CollapsibleFAB({
     Key? key,
- required this.iconlabel,
+    required this.iconlabel,
     required this.label,
     required this.onPressed,
   }) : super(key: key);
@@ -59,11 +58,10 @@ class _CollapsibleFABState extends State<CollapsibleFAB> {
         onPressed: widget.onPressed,
         backgroundColor: theme.secondaryContainer,
         icon: Padding(
-          padding: _showFAB
-              ? const EdgeInsets.only()
-              : const EdgeInsets.only(left: 70),
-          child: widget.iconlabel
-        ),
+            padding: _showFAB
+                ? const EdgeInsets.only()
+                : const EdgeInsets.only(left: 70),
+            child: widget.iconlabel),
         label: AnimatedOpacity(
           opacity: _showFAB ? 1.0 : 0.0,
           duration: Duration(milliseconds: 200),
@@ -84,4 +82,3 @@ class _CollapsibleFABState extends State<CollapsibleFAB> {
     super.dispose();
   }
 }
-

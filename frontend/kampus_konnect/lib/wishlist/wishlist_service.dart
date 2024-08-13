@@ -1,12 +1,8 @@
 // wishlist_service.dart
 import 'package:Treddit/main.dart';
-import '../domains/homepage/post_cards/model_provider/provider.dart';
-import '../domains/homepage/product_details/model_provider/provider.dart';
 import '../domains/auth/services/auth.dart';
 import 'dart:convert';
-import 'package:http/http.dart'
-    as http; // Import AuthService or adjust path as needed
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class WishlistService {
   List<int> _wishlistedPostIds = [];

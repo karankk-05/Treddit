@@ -4,11 +4,9 @@ import 'package:http/http.dart' as http;
 import 'model.dart';
 import '../../../../main.dart';
 
-
-
 class ProductDetailsProvider with ChangeNotifier {
   ProductDetails? _post;
-  
+
   ProductDetails? get post => _post;
 
   Future<void> fetchPost(int postId) async {

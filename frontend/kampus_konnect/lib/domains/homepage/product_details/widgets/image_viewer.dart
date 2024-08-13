@@ -32,14 +32,13 @@ class _ProductImageViewerState extends State<ProductImageViewer> {
               });
             },
             itemBuilder: (context, index) {
-              return (widget.imageUrls[0] != null &&
-                      (widget.imageUrls[0] as String) !=
-                          "${widget.baseUrl}/res/")
+              return ((widget.imageUrls[0] as String) !=
+                      "${widget.baseUrl}/res/")
                   ? Image.network(
                       widget.imageUrls[index],
                       fit: BoxFit.contain,
                     )
-                  : Icon(
+                  : const Icon(
                       Icons.photo_rounded,
                       size: 100,
                       color: Colors.black,
@@ -47,7 +46,7 @@ class _ProductImageViewerState extends State<ProductImageViewer> {
             },
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Row(
@@ -77,7 +76,7 @@ class _ProductImageViewerState extends State<ProductImageViewer> {
                       ),
                     )),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
       ],
