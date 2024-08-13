@@ -20,7 +20,7 @@ pub enum Posts {
     Visible,
     Sold,
     Price,
-    Lost,
+    Purpose,
     Category,
 }
 
