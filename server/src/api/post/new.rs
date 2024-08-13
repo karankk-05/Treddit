@@ -22,7 +22,7 @@ struct Post {
     body: String,
     price: i32,
     visible: bool,
-    lost: bool,
+    purpose: String,
     images: Vec<(String, Vec<u8>)>,
     category: Option<String>,
 }
@@ -35,7 +35,7 @@ impl Default for Post {
             price: 0,
             visible: true,
             category: None,
-            lost: false,
+            purpose: String::from("purpose"),
             images: Vec::new(),
         }
     }
@@ -52,7 +52,7 @@ impl Post {
     }
     async fn savepost(&self, pool: &PgPool) -> Result<(), StatusCode> {
         if let Err(err) = sqlx::query!(
-        "insert into posts(owner,title,body,price,visible,image_paths,category,lost) values($1,$2,$3,$4,$5,$6,$7,$8)",
+        "insert into posts(owner,title,body,price,visible,image_paths,category,purpose) values($1,$2,$3,$4,$5,$6,$7,$8)",
         self.email,
         self.title,
         self.body,
@@ -60,7 +60,7 @@ impl Post {
         self.visible,
         self.get_img_paths(),
         self.category,
-        self.lost
+        self.purpose
         )
     .execute(pool)
     .await
@@ -121,13 +121,7 @@ pub async fn create_post(
             "email" => post.email = bytes_to_string(data)?,
             "title" => post.title = bytes_to_string(data)?,
             "body" => post.body = bytes_to_string(data)?,
-            "lost" => {
-                post.lost = match &bytes_to_string(data)? as &str {
-                    "true" => true,
-                    "false" => false,
-                    _ => false,
-                }
-            }
+            "purpose" => post.purpose = bytes_to_string(data)?,
             "category" => post.category = Some(bytes_to_string(data)?),
             "price" => {
                 post.price = match bytes_to_string(data)?.parse() {
