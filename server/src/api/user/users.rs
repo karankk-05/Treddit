@@ -1,9 +1,10 @@
 use super::json::*;
+use crate::post::search::{search_post_ids, PageFilter};
 use crate::token_json::ValidToken;
 use crate::utils::write_file;
 use crate::{auth::utils::validate_token, utils::bytes_to_string, SharedState};
 use axum::{
-    extract::{Multipart, State},
+    extract::{Multipart, Query, State},
     http::StatusCode,
     response::Result,
     Json,
@@ -155,20 +156,12 @@ pub async fn change_profile_pic(
 
 pub async fn get_posts(
     State(state): State<SharedState>,
+    Query(mut filters): Query<PageFilter>,
     Json(payload): Json<Email>,
 ) -> Result<Json<Vec<i32>>, StatusCode> {
     let pool = &state.read().await.pool;
-    match sqlx::query!(
-        "select post_id from posts where owner = $1 and visible= $2",
-        payload.email,
-        true
-    )
-    .fetch_all(pool)
-    .await
-    {
-        Ok(val) => Ok(Json(val.iter().map(|x| x.post_id).collect())),
-        Err(_) => Err(StatusCode::NOT_FOUND),
-    }
+    filters.owner = Some(payload.email);
+    search_post_ids(pool, filters, true).await
 }
 
 pub async fn report_user(
