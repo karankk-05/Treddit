@@ -13,6 +13,7 @@ class ProductService {
     required int price,
     required String description,
     required List<File> images,
+    required String purpose
   }) async {
     try {
       final email = await _authService.getEmail();
@@ -31,7 +32,8 @@ class ProductService {
         ..fields['token'] = token
         ..fields['title'] = title
         ..fields['price'] = price.toString()
-        ..fields['body'] = description;
+        ..fields['body'] = description
+        ..fields['purpose']=purpose;
 
       for (var image in images) {
         var stream = http.ByteStream(image.openRead());

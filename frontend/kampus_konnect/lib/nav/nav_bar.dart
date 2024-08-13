@@ -1,11 +1,12 @@
 // ignore_for_file: must_be_immutable
+import 'package:Treddit/domains/addpost/screens/add_post_options.dart';
 
+import '../domains/lost_n_found/lost_n_found.dart';
 import 'package:flutter/material.dart';
 import '../domains/homepage/post_cards/screens/homepage.dart';
 import '../domains/addpost/screens/add_post_page.dart';
 import '../domains/myposts/screens/my_posts_page.dart';
 import '../domains/user_details/screens/profile_page.dart';
-
 
 class MainPage extends StatefulWidget {
   int selectedIndex;
@@ -19,9 +20,9 @@ class _MainPageState extends State<MainPage> {
   static final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     MyPosts(),
-    //WishlistPage(), // Add Wishlist page
+    LostAndFound(), // Add Wishlist page
     ProfilePage(),
-    AddPost()
+    AddPostOptions()
   ];
 
   void _onItemTapped(int index) {
@@ -29,7 +30,17 @@ class _MainPageState extends State<MainPage> {
       widget.selectedIndex = index;
     });
   }
-
+  void _showOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (BuildContext context) {
+        return AddPostOptions(); // Show the PreAddPostSheet widget
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +53,7 @@ class _MainPageState extends State<MainPage> {
           heroTag: "Unique",
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(500)),
-          onPressed: () {
-            Navigator.pushNamed(context, '/addPost');
-          },
+         onPressed: () => _showOptions(context),
           child: Icon(
             Icons.add,
             color: Theme.of(context).colorScheme.onSecondary,
@@ -81,10 +90,10 @@ class _MainPageState extends State<MainPage> {
                       0.20), // Space for FloatingActionButton
               IconButton(
                 icon: widget.selectedIndex == 2
-                    ? Icon(Icons.favorite,
+                    ? Icon(Icons.find_in_page,
                         color:
                             Theme.of(context).colorScheme.onSecondaryContainer)
-                    : Icon(Icons.favorite_border,
+                    : Icon(Icons.find_in_page_outlined,
                         color: Theme.of(context).colorScheme.onSecondary),
                 onPressed: () => _onItemTapped(2),
               ),
