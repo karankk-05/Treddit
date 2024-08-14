@@ -137,7 +137,7 @@ class _FoundPageState extends State<FoundPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.menu),
+            icon: Icon(Icons.more_vert),
             onPressed: () => _showSectionSelector(context),
             tooltip: 'Select Section',
           ),
@@ -171,9 +171,8 @@ class _FoundPageState extends State<FoundPage> {
                     int adjustedIndex = index > 0 ? index - 1 : index;
                     if (adjustedIndex < postCardProvider.productCard.length) {
                       return PostCardTile(
-                        postCard: postCardProvider.productCard[adjustedIndex],
-                        purpose:selectedSection
-                      );
+                          postCard: postCardProvider.productCard[adjustedIndex],
+                          purpose: selectedSection);
                     } else {
                       return Container();
                     }

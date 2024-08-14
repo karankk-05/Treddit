@@ -10,7 +10,7 @@ class MyPosts extends StatefulWidget {
 }
 
 class _MyPostsState extends State<MyPosts> {
-  String selectedCategory = 'lost'; // Default category is 'For Sale'
+  String selectedCategory = 'old'; // Default category is 'For Sale'
 
   final authService = AuthService();
 
@@ -104,10 +104,14 @@ class _MyPostsState extends State<MyPosts> {
       builder: (context, productProvider, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('My Posts'),
+            automaticallyImplyLeading: false,
+            title: Text(
+              'My Posts',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+            ),
             actions: [
               IconButton(
-                icon: Icon(Icons.menu),
+                icon: Icon(Icons.more_vert_sharp),
                 onPressed: () => _showCategorySelector(context),
                 tooltip: 'Select Category',
               ),

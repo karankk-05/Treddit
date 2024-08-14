@@ -13,7 +13,7 @@ class MyPostsProvider with ChangeNotifier {
     // Fetch post IDs
     const baseUrl = MyApp.baseUrl;
     final response = await http.post(
-      Uri.parse('$baseUrl/user/posts?=$purpose'),
+      Uri.parse('$baseUrl/user/posts?purpose=$purpose'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },

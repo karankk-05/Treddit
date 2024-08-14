@@ -77,18 +77,6 @@ class _MainPageState extends State<MainPage> {
                 onPressed: () => _onItemTapped(0),
               ),
               IconButton(
-                icon: widget.selectedIndex == 1
-                    ? Icon(Icons.list,
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer)
-                    : Icon(Icons.list_outlined,
-                        color: Theme.of(context).colorScheme.onSecondary),
-                onPressed: () => _onItemTapped(1),
-              ),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width *
-                      0.20), // Space for FloatingActionButton
-              IconButton(
                 icon: widget.selectedIndex == 2
                     ? Icon(Icons.find_in_page,
                         color:
@@ -97,6 +85,19 @@ class _MainPageState extends State<MainPage> {
                         color: Theme.of(context).colorScheme.onSecondary),
                 onPressed: () => _onItemTapped(2),
               ),
+              SizedBox(
+                  width: MediaQuery.of(context).size.width *
+                      0.20), // Space for FloatingActionButton
+              IconButton(
+                icon: widget.selectedIndex == 1
+                    ? Icon(Icons.list,
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer)
+                    : Icon(Icons.list_outlined,
+                        color: Theme.of(context).colorScheme.onSecondary),
+                onPressed: () => _onItemTapped(1),
+              ),
+
               IconButton(
                 icon: widget.selectedIndex == 3
                     ? Icon(Icons.person,
