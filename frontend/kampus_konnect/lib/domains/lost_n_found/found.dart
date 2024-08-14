@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../homepage/post_cards/model_provider/provider.dart';
 import '../homepage/post_cards/widgets/post_card_tile.dart';
-import '../auth/services/auth.dart';
 import '../homepage/post_cards/widgets/search_bar.dart' as CustomSearchBar;
 
 class FoundPage extends StatefulWidget {
@@ -12,7 +11,6 @@ class FoundPage extends StatefulWidget {
 }
 
 class _FoundPageState extends State<FoundPage> {
-  final AuthService _authService = AuthService();
   String searchQuery = '';
   String selectedSection = 'found'; // Track the selected section
 
@@ -23,14 +21,12 @@ class _FoundPageState extends State<FoundPage> {
   }
 
   Future<void> _fetchPosts({String query = ''}) async {
-    final email = await _authService.getEmail();
-    final token = await _authService.getToken();
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
-    if (email != null && token != null) {
+    
       await postCardProvider.fetchPostCards(
           query: query, purpose: selectedSection);
-    }
+    
   }
 
   bool isRefreshing = false;

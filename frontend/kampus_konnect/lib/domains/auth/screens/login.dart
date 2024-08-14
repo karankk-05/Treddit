@@ -1,8 +1,10 @@
+import 'package:Treddit/domains/auth/services/auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
 import '../services/auth_action.dart';
 import '../widgets/custom_appbar.dart';
-import '../widgets/background_page.dart';
+import 'background_page.dart';
+import '../../../nav/nav_bar.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -13,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final AuthActions _authActions = AuthActions();
+  final AuthService authService=AuthService();
   bool _otpSent = false; // Tracks if OTP has been sent
 
   @override
@@ -120,6 +123,35 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                   _loginBtn(),
+                  Text(
+                    "Or",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 51, 50, 50),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async{
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MainPage(
+                                  selectedIndex: 0,
+                                  
+                                )),
+                      );
+                                 await authService.setloginStatus(false);
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                    ),
+                    child: const Text(
+                      'Continue Without Login',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 94, 92, 92), // Text color
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

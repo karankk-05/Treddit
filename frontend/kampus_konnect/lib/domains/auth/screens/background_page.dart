@@ -1,8 +1,11 @@
+import 'package:Treddit/domains/auth/services/auth.dart';
+import 'package:Treddit/nav/nav_bar.dart';
 import 'package:flutter/material.dart';
-import '../screens/login.dart'; // Import the LoginPage
-import '../screens/signup.dart'; // Import the SignupPage
+import 'login.dart'; // Import the LoginPage
+import 'signup.dart'; // Import the SignupPage
 
 class BackgroundPage extends StatelessWidget {
+  final AuthService authService=AuthService();
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -118,6 +121,36 @@ class BackgroundPage extends StatelessWidget {
                       style: TextStyle(
                         color: Color.fromARGB(255, 203, 202, 202), // Text color
                         fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  // const SizedBox(height: 10),
+                  Text(
+                    "Or",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 203, 202, 202),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: ()async {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MainPage(
+                                  selectedIndex: 0,
+                                 
+                                )),
+                      );
+                                await authService.setloginStatus(false);
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                    ),
+                    child: const Text(
+                      'Continue Without Login',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 203, 202, 202), // Text color
+                        fontSize: 14,
                       ),
                     ),
                   ),

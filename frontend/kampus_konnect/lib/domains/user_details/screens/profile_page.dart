@@ -1,4 +1,4 @@
-import 'package:Treddit/domains/auth/widgets/background_page.dart';
+import 'package:Treddit/domains/auth/screens/background_page.dart';
 import 'package:Treddit/domains/user_details/widgets/profile_detail_field.dart';
 import 'package:flutter/material.dart';
 import '../../auth/services/auth.dart';

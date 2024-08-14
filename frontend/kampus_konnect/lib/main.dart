@@ -1,6 +1,6 @@
 import 'package:Treddit/domains/addpost/screens/add_post_options.dart';
 import 'package:flutter/material.dart';
-import 'package:Treddit/domains/auth/widgets/background_page.dart';
+import 'package:Treddit/domains/auth/screens/background_page.dart';
 import 'package:Treddit/domains/chat/chat_provider.dart';
 import 'package:Treddit/domains/user_details/model_provider/app_user_provider.dart';
 import 'package:Treddit/domains/homepage/post_cards/model_provider/provider.dart';

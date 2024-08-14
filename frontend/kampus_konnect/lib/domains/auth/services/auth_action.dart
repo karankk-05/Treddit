@@ -45,17 +45,6 @@ class AuthActions {
       );
 
       if (userCreated) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "User registered successfully",
-              style: mytext.headingtext1(fontSize: 15, context),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          ),
-          
-
-        );
         Navigator.pushReplacementNamed(context, '/main');
         // Navigate to another page or perform another action
       } else {

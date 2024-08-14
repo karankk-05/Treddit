@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
 import '../services/auth_action.dart';
 import '../widgets/custom_appbar.dart';
-import '../widgets/background_page.dart';
+import 'background_page.dart';
 
 class SignupPage extends StatefulWidget {
   @override

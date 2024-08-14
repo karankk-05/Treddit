@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../homepage/post_cards/model_provider/provider.dart';
 import '../homepage/post_cards/widgets/post_card_tile.dart';
-import '../auth/services/auth.dart';
 import '../homepage/post_cards/widgets/search_bar.dart' as CustomSearchBar;
 import 'found.dart';
 
@@ -13,9 +12,8 @@ class LostPage extends StatefulWidget {
 }
 
 class _LostPageState extends State<LostPage> {
-  final AuthService _authService = AuthService();
   String searchQuery = '';
-final String purpose="lost";
+  final String purpose = "lost";
   @override
   void initState() {
     super.initState();
@@ -23,13 +21,10 @@ final String purpose="lost";
   }
 
   Future<void> _fetchPosts({String query = ''}) async {
-    final email = await _authService.getEmail();
-    final token = await _authService.getToken();
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
-    if (email != null && token != null) {
-      await postCardProvider.fetchPostCards(query: query, purpose: purpose);
-    }
+    await postCardProvider.fetchPostCards(query: query, purpose: purpose);
+    
   }
 
   bool isRefreshing = false;
