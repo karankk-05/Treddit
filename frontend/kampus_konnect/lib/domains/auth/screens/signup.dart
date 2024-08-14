@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
 import '../services/auth_action.dart';
 import '../widgets/custom_appbar.dart';
+import '../widgets/background_page.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -10,8 +11,8 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  //final _passwordController = TextEditingController();
+  //final _confirmPasswordController = TextEditingController();
   final _otpController = TextEditingController();
   final _usernameController = TextEditingController();
 
@@ -23,8 +24,8 @@ class _SignupPageState extends State<SignupPage> {
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    //_passwordController.dispose();
+    //_confirmPasswordController.dispose();
     _otpController.dispose();
     _usernameController.dispose();
     super.dispose();
@@ -46,23 +47,23 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  Widget _password() {
-    return CustomTextField(
-      icon: Icons.lock,
-      label: "Password",
-      obscureText: true,
-      controller: _passwordController,
-    );
-  }
+  // Widget _password() {
+  //   return CustomTextField(
+  //     icon: Icons.lock,
+  //     label: "Password",
+  //     obscureText: true,
+  //     controller: _passwordController,
+  //   );
+  // }
 
-  Widget _confPassword() {
-    return CustomTextField(
-      icon: Icons.lock,
-      label: "Confirm Password",
-      obscureText: true,
-      controller: _confirmPasswordController,
-    );
-  }
+  // Widget _confPassword() {
+  //   return CustomTextField(
+  //     icon: Icons.lock,
+  //     label: "Confirm Password",
+  //     obscureText: true,
+  //     controller: _confirmPasswordController,
+  //   );
+  // }
 
   Widget _otp() {
     return CustomTextField(
@@ -87,8 +88,8 @@ class _SignupPageState extends State<SignupPage> {
                 await _authActions.handleRegisterButtonPress(
                   context: context,
                   emailController: _emailController,
-                  passwordController: _passwordController,
-                  confirmPasswordController: _confirmPasswordController,
+                  //passwordController: _passwordController,
+                  //confirmPasswordController: _confirmPasswordController,
                   usernameController: _usernameController,
                   otpController: _otpController,
                   showAdditionalFields: _showAdditionalFields,
@@ -133,7 +134,16 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: '',
-        backgroundImage: 'assets/bg.jpeg', // Path to your background image
+        backgroundImage: 'assets/bg.jpeg',
+        onPressed: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) =>
+                  BackgroundPage(), // Replace with the page you want to navigate to
+            ),
+          );
+        },
+        // Path to your background image
       ), // Conditionally display the app bar
       body: SingleChildScrollView(
         child: Container(
@@ -169,10 +179,10 @@ class _SignupPageState extends State<SignupPage> {
               if (_showAdditionalFields) ...[
                 _username(),
                 const SizedBox(height: 10.0),
-                _password(),
-                const SizedBox(height: 10.0),
-                _confPassword(),
-                const SizedBox(height: 10.0),
+                //_password(),
+                //const SizedBox(height: 10.0),
+                //_confPassword(),
+                //const SizedBox(height: 10.0),
                 _otp(),
               ],
               _regBtn(),

@@ -44,7 +44,7 @@ class AuthService {
   Future<bool> createUser({
     required String email,
     required String username,
-    required String password,
+    // required String password,
     required String address,
     required String contactNo,
     required int otp,
@@ -56,7 +56,7 @@ class AuthService {
       body: json.encode({
         'email': email,
         'username': username,
-        'passwd': password,
+        //'passwd': password,
         'address': address,
         'contact_no': contactNo,
         'otp': otp,

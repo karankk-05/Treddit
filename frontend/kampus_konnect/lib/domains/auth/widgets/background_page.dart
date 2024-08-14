@@ -80,7 +80,7 @@ class BackgroundPage extends StatelessWidget {
                           .withOpacity(0.3), // Button background color
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => LoginPage()),
@@ -105,7 +105,7 @@ class BackgroundPage extends StatelessWidget {
                   // Create Account Button
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => SignupPage()),
                       );

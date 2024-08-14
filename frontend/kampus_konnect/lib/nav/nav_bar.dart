@@ -44,6 +44,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
         extendBody:
             true, // Ensures the body extends behind the bottom navigation bar
         backgroundColor: Colors

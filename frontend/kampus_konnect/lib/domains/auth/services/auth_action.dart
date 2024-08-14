@@ -8,8 +8,8 @@ class AuthActions {
   Future<void> handleRegisterButtonPress({
     required BuildContext context,
     required TextEditingController emailController,
-    required TextEditingController passwordController,
-    required TextEditingController confirmPasswordController,
+    //required TextEditingController passwordController,
+    //required TextEditingController confirmPasswordController,
     required TextEditingController usernameController,
     required TextEditingController otpController,
     required bool showAdditionalFields,
@@ -17,28 +17,28 @@ class AuthActions {
   }) async {
     final email = emailController.text.trim();
     if (showAdditionalFields) {
-      final password = passwordController.text.trim();
-      final confirmPassword = confirmPasswordController.text.trim();
+      // final password = passwordController.text.trim();
+      // final confirmPassword = confirmPasswordController.text.trim();
       final username = usernameController.text.trim();
       final otp = int.tryParse(otpController.text.trim()) ?? 0;
 
-      if (password != confirmPassword) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "Passwords do not match",
-              style: mytext.headingtext1(fontSize: 15, context),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          ),
-        );
-        return;
-      }
+      // if (password != confirmPassword) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text(
+      //         "Passwords do not match",
+      //         style: mytext.headingtext1(fontSize: 15, context),
+      //       ),
+      //       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      //     ),
+      //   );
+      //   return;
+      // }
 
       final userCreated = await _authService.createUser(
         email: email,
         username: username,
-        password: password,
+        //password: password,
         address: '',
         contactNo: '',
         otp: otp,
@@ -53,7 +53,10 @@ class AuthActions {
             ),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
+          
+
         );
+        Navigator.pushReplacementNamed(context, '/main');
         // Navigate to another page or perform another action
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +94,8 @@ class AuthActions {
       }
     }
   }
-Future<void> sendOtp({
+
+  Future<void> sendOtp({
     required String email,
     required BuildContext context,
     required Function onOtpSent,
@@ -103,8 +107,9 @@ Future<void> sendOtp({
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "OTP sent successfully",
-                      style: TextStyle(color: Colors.black,
-                      ),
+          style: TextStyle(
+            color: Colors.black,
+          ),
         ),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ));
@@ -113,18 +118,20 @@ Future<void> sendOtp({
         SnackBar(
           content: Text(
             "Failed to send OTP",
-                       style: TextStyle(color: Colors.black,),
-
+            style: TextStyle(
+              color: Colors.black,
+            ),
           ),
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         ),
       );
     }
   }
- void handleLoginButton(String email, int otp, context) async {
-  print("handling login");
+
+  void handleLoginButton(String email, int otp, context) async {
+    print("handling login");
     final isLoggedIn = await _authService.login(email, otp);
-print(isLoggedIn);
+    print(isLoggedIn);
     if (isLoggedIn) {
       Navigator.pushReplacementNamed(context, '/main');
     } else {

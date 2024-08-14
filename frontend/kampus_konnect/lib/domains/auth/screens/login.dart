@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
 import '../services/auth_action.dart';
 import '../widgets/custom_appbar.dart';
+import '../widgets/background_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -70,6 +71,14 @@ class _LoginPageState extends State<LoginPage> {
       appBar: CustomAppBar(
         title: '',
         backgroundImage: 'assets/bg.jpeg',
+        onPressed: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) =>
+                  BackgroundPage(), // Replace with the page you want to navigate to
+            ),
+          );
+        },
       ),
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
