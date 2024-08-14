@@ -1,7 +1,8 @@
 use super::json::*;
+use super::search::{search_post_ids, PageFilter};
 use crate::{auth::utils::validate_token, token_json::*, SharedState};
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     http::StatusCode,
     response::Result,
     Json,
@@ -50,6 +51,14 @@ pub async fn get_post(
     Path(id): Path<i32>,
 ) -> Result<Json<PostInfo>, StatusCode> {
     Ok(Json(fetch_post(id, None, &state.read().await.pool).await?))
+}
+
+pub async fn search_posts(
+    State(state): State<SharedState>,
+    Query(filters): Query<PageFilter>,
+) -> Result<Json<Vec<i32>>, StatusCode> {
+    let st = state.read();
+    search_post_ids(&st.await.pool, filters, false).await
 }
 
 pub async fn get_post_as_owner(
