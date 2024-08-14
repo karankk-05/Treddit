@@ -1,7 +1,8 @@
+use super::login::generate_token;
 use super::{super::json::*, utils::verify_otp};
+use crate::token_json::Token;
 use crate::utils::sanitize_check_email;
 use crate::{Otp, SharedState};
-
 use axum::{extract::State, http::StatusCode, Json};
 use chrono::{Duration, Utc};
 use lettre::message::header::ContentType;
@@ -63,7 +64,7 @@ pub async fn send_otp(
 pub async fn create_user(
     State(state): State<SharedState>,
     Json(payload): Json<NewUser>,
-) -> Result<StatusCode, StatusCode> {
+) -> Result<Json<Token>, StatusCode> {
     let mut st = state.write().await;
 
     let mut new_user = payload;
@@ -85,7 +86,9 @@ pub async fn create_user(
     }
 
     // save_passwd(&st.pool, &new_user.email, "blank").await?;
-    Ok(StatusCode::OK)
+
+    let token = generate_token(new_user.email.to_string(), st.jwt_secret_key).await?;
+    Ok(Json(Token { token }))
 }
 
 fn prepare_mail(
