@@ -61,7 +61,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Profile')),
+        title: Center(
+            child: Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+        )),
         backgroundColor: Theme.of(context).colorScheme.surface,
         automaticallyImplyLeading: false,
         centerTitle: true,

@@ -130,6 +130,7 @@ class _MyPostsState extends State<MyPosts> {
               itemBuilder: (context, index) {
                 return MyPostCardTile(
                   postCard: productProvider.products[index],
+                  purpose:selectedCategory
                 );
               },
             ),

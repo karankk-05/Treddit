@@ -8,9 +8,11 @@ import '../screens/my_post_details.dart';
 class MyPostCardTile extends StatelessWidget {
   final Product postCard;
   final _baseUrl = MyApp.baseUrl;
+  final String purpose;
   const MyPostCardTile({
     super.key,
     required this.postCard,
+    required this.purpose
   });
 
   @override
@@ -22,6 +24,7 @@ class MyPostCardTile extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => MyPostDetailsPage(
               product: postCard,
+              purpose:purpose
             ),
           ),
         );
