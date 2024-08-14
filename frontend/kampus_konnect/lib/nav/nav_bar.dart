@@ -1,10 +1,8 @@
 // ignore_for_file: must_be_immutable
 import 'package:Treddit/domains/addpost/screens/add_post_options.dart';
-
-import '../domains/lost_n_found/lost_n_found.dart';
+import 'package:Treddit/domains/lost_n_found/found.dart';
 import 'package:flutter/material.dart';
 import '../domains/homepage/post_cards/screens/homepage.dart';
-import '../domains/addpost/screens/add_post_page.dart';
 import '../domains/myposts/screens/my_posts_page.dart';
 import '../domains/user_details/screens/profile_page.dart';
 
@@ -20,7 +18,7 @@ class _MainPageState extends State<MainPage> {
   static final List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     MyPosts(),
-    LostAndFound(), // Add Wishlist page
+    FoundPage(), // Add Wishlist page
     ProfilePage(),
     AddPostOptions()
   ];
@@ -30,6 +28,7 @@ class _MainPageState extends State<MainPage> {
       widget.selectedIndex = index;
     });
   }
+
   void _showOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -41,6 +40,7 @@ class _MainPageState extends State<MainPage> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +53,7 @@ class _MainPageState extends State<MainPage> {
           heroTag: "Unique",
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(500)),
-         onPressed: () => _showOptions(context),
+          onPressed: () => _showOptions(context),
           child: Icon(
             Icons.add,
             color: Theme.of(context).colorScheme.onSecondary,

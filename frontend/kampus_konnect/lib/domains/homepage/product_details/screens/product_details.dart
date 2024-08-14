@@ -57,18 +57,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isWishlisted = !isWishlisted;
-              });
-            },
-            icon: Icon(
-              isWishlisted ? Icons.favorite : Icons.favorite_border,
-              color: isWishlisted ? Colors.red : theme.onSurface,
-            ),
-          ),
-          const SizedBox(width: 10), // Adjust spacing as needed
+          // IconButton(
+          //   onPressed: () {
+          //     setState(() {
+          //       isWishlisted = !isWishlisted;
+          //     });
+          //   },
+          //   icon: Icon(
+          //     isWishlisted ? Icons.favorite : Icons.favorite_border,
+          //     color: isWishlisted ? Colors.red : theme.onSurface,
+          //   ),
+          // ),
+          //const SizedBox(width: 10), // Adjust spacing as needed
         ],
       ),
       body: post == null

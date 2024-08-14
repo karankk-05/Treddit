@@ -106,17 +106,17 @@ class _PostCardTileState extends State<PostCardTile> {
                             textAlign: TextAlign.left,
                           ),
                           Expanded(child: const SizedBox()),
-                          GestureDetector(
-                            //onTap: _toggleFavorite,
-                            child: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: isFavorite ? Colors.red : Colors.grey,
-                              size: 25,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
+                          // GestureDetector(
+                          //   //onTap: _toggleFavorite,
+                          //   child: Icon(
+                          //     isFavorite
+                          //         ? Icons.favorite
+                          //         : Icons.favorite_border,
+                          //     color: isFavorite ? Colors.red : Colors.grey,
+                          //     size: 25,
+                          //   ),
+                          // ),
+                          // const SizedBox(width: 10),
                         ],
                       ),
                     ],

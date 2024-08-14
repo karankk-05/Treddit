@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
     if (email != null && token != null) {
-      await postCardProvider.fetchPostCards(query: query);
+      await postCardProvider.fetchPostCards(query: query, purpose: "old");
     }
   }
 
