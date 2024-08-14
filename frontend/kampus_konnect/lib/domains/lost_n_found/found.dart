@@ -5,7 +5,6 @@ import '../homepage/post_cards/model_provider/provider.dart';
 import '../homepage/post_cards/widgets/post_card_tile.dart';
 import '../auth/services/auth.dart';
 import '../homepage/post_cards/widgets/search_bar.dart' as CustomSearchBar;
-import 'lost.dart';
 
 class FoundPage extends StatefulWidget {
   @override
@@ -173,6 +172,7 @@ class _FoundPageState extends State<FoundPage> {
                     if (adjustedIndex < postCardProvider.productCard.length) {
                       return PostCardTile(
                         postCard: postCardProvider.productCard[adjustedIndex],
+                        purpose:selectedSection
                       );
                     } else {
                       return Container();

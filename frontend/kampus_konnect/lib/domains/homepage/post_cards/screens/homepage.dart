@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final AuthService _authService = AuthService();
   String searchQuery = '';
+  final String purpose="old";
   @override
   void initState() {
     super.initState();
@@ -27,7 +28,7 @@ class _HomePageState extends State<HomePage> {
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
     if (email != null && token != null) {
-      await postCardProvider.fetchPostCards(query: query, purpose: "old");
+      await postCardProvider.fetchPostCards(query: query, purpose: purpose);
     }
   }
 
@@ -86,6 +87,7 @@ class _HomePageState extends State<HomePage> {
               if (adjustedIndex < postCardProvider.productCard.length) {
                 return PostCardTile(
                   postCard: postCardProvider.productCard[adjustedIndex],
+                  purpose: purpose,
                 );
               } else {
                 return Container(); // or some placeholder widget

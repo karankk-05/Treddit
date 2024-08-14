@@ -15,7 +15,7 @@ class LostPage extends StatefulWidget {
 class _LostPageState extends State<LostPage> {
   final AuthService _authService = AuthService();
   String searchQuery = '';
-
+final String purpose="lost";
   @override
   void initState() {
     super.initState();
@@ -28,7 +28,7 @@ class _LostPageState extends State<LostPage> {
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
     if (email != null && token != null) {
-      await postCardProvider.fetchPostCards(query: query, purpose: "lost");
+      await postCardProvider.fetchPostCards(query: query, purpose: purpose);
     }
   }
 
@@ -108,6 +108,7 @@ class _LostPageState extends State<LostPage> {
                     if (adjustedIndex < postCardProvider.productCard.length) {
                       return PostCardTile(
                         postCard: postCardProvider.productCard[adjustedIndex],
+                        purpose: purpose,
                       );
                     } else {
                       return Container();

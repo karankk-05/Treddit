@@ -6,10 +6,11 @@ import '../../../../theme/decorations.dart';
 
 class PostCardTile extends StatefulWidget {
   final PostCard postCard;
-
+final String purpose;
   const PostCardTile({
     Key? key,
     required this.postCard,
+    required this.purpose
   }) : super(key: key);
 
   @override
@@ -98,6 +99,7 @@ class _PostCardTileState extends State<PostCardTile> {
                         ),
                       ),
                       const SizedBox(height: 15),
+                      widget.purpose=="old"?
                       Row(
                         children: [
                           Text(
@@ -118,7 +120,7 @@ class _PostCardTileState extends State<PostCardTile> {
                           // ),
                           // const SizedBox(width: 10),
                         ],
-                      ),
+                      ):Container()
                     ],
                   ),
                 ),
