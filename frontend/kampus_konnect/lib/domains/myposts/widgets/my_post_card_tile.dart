@@ -8,10 +8,12 @@ import '../screens/my_post_details.dart';
 class MyPostCardTile extends StatelessWidget {
   final Product postCard;
   final _baseUrl = MyApp.baseUrl;
+  final String purpose;
   const MyPostCardTile({
-    Key? key,
+    super.key,
     required this.postCard,
-  }) : super(key: key);
+    required this.purpose
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class MyPostCardTile extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => MyPostDetailsPage(
               product: postCard,
+              purpose:purpose
             ),
           ),
         );
@@ -44,25 +47,24 @@ class MyPostCardTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: (postCard.imageUrls[0] != null &&
-                          (postCard.imageUrls[0] as String) != "$_baseUrl/res/")
+                  child: (postCard.imageUrls[0] != "$_baseUrl/res/")
                       ? Image.network(
                           height: 150,
                           postCard.imageUrls[0],
                           fit: BoxFit.cover,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.photo_rounded,
                           size: 100,
                           color: Colors.black,
                         ),
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Row(
                 children: [
                   Text(
@@ -70,7 +72,7 @@ class MyPostCardTile extends StatelessWidget {
                     style: mytext.headingbold(fontSize: 15, context),
                     textAlign: TextAlign.left,
                   ),
-                  Expanded(child: SizedBox()),
+                  const Expanded(child: const SizedBox()),
                 ],
               ),
             ],

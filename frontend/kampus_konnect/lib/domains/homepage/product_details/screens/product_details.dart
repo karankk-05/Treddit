@@ -10,11 +10,9 @@ import '../widgets/collapsible_fab.dart'; // Import the collapsible FAB widget
 
 class ProductDetailsPage extends StatefulWidget {
   final int id;
-
-  const ProductDetailsPage({
-    Key? key,
-    required this.id,
-  }) : super(key: key);
+  final String purpose;
+  const ProductDetailsPage({Key? key, required this.id, required this.purpose})
+      : super(key: key);
 
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
@@ -57,18 +55,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isWishlisted = !isWishlisted;
-              });
-            },
-            icon: Icon(
-              isWishlisted ? Icons.favorite : Icons.favorite_border,
-              color: isWishlisted ? Colors.red : theme.onSurface,
-            ),
-          ),
-          SizedBox(width: 10), // Adjust spacing as needed
+          // IconButton(
+          //   onPressed: () {
+          //     setState(() {
+          //       isWishlisted = !isWishlisted;
+          //     });
+          //   },
+          //   icon: Icon(
+          //     isWishlisted ? Icons.favorite : Icons.favorite_border,
+          //     color: isWishlisted ? Colors.red : theme.onSurface,
+          //   ),
+          // ),
+          //const SizedBox(width: 10), // Adjust spacing as needed
         ],
       ),
       body: post == null
@@ -91,26 +89,28 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          post.title ?? '',
+                          post.title,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
+                        widget.purpose == "old"
+                            ? Text(
+                                '₹${post.price}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              )
+                            : Container(),
+                        const SizedBox(height: 10),
                         Text(
-                          '₹${post.price}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          post.body ?? '',
+                          post.body,
                           textAlign: TextAlign.justify,
                           style: TextStyle(
                             fontSize: 16,
@@ -130,7 +130,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Seller: ${post.owner ?? ''}',
+                          'Seller: ${post.owner}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -139,7 +139,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -150,24 +150,22 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 Icons.chat,
                 color: theme.primary,
               ),
-              onPressed: post.postId != null
-                  ? () {
-                      Provider.of<ChatProvider>(
-                        context,
-                        listen: false,
-                      ).updatePostId(post.postId!);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailScreen(
-                            postId: post.postId!,
-                            reciever: post.owner!,
-                            sender: _sender,
-                          ),
-                        ),
-                      );
-                    }
-                  : null,
+              onPressed: () {
+                Provider.of<ChatProvider>(
+                  context,
+                  listen: false,
+                ).updatePostId(post.postId);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatDetailScreen(
+                      postId: post.postId,
+                      reciever: post.owner,
+                      sender: _sender,
+                    ),
+                  ),
+                );
+              },
               label: "Chat Now",
             )
           : null, // Show FAB only if _sender is not null

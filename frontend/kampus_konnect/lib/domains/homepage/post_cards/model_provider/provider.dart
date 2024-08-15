@@ -10,13 +10,13 @@ class PostCardProvider with ChangeNotifier {
 
   List<PostCard> get productCard => _productCard;
 
-  Future<void> fetchPostCards({String query = ''}) async {
+  Future<void> fetchPostCards({String query = '',String purpose='old'}) async {
     try {
       // Step 1: Fetch post IDs from /posts/unsold or /posts/unsold?query=...
       print(query);
       final responseIds = await http.get(
         Uri.parse(
-            '$baseUrl/posts/unsold${query.isNotEmpty ? '?search_query=$query' : ''}'),
+            '$baseUrl/posts/unsold?search_query=$query&purpose=$purpose'),
       );
 
       if (responseIds.statusCode == 200) {

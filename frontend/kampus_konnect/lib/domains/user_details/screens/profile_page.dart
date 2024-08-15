@@ -1,15 +1,13 @@
 import 'package:Treddit/domains/auth/screens/background_page.dart';
+import 'package:Treddit/domains/user_details/widgets/profile_detail_field.dart';
 import 'package:flutter/material.dart';
-import 'package:Treddit/domains/auth/screens/login.dart';
-import 'package:Treddit/main.dart';
-import '../auth/services/auth.dart';
-import 'app_user_provider.dart';
+import '../../auth/services/auth.dart';
+import '../model_provider/app_user_provider.dart';
 import 'package:provider/provider.dart';
-import 'edit_details/edit_user_details.dart';
-import 'action__buttons.dart';
+import '../edit_details/edit_user_details.dart';
+import '../widgets/action__buttons.dart';
 
 class ProfilePage extends StatefulWidget {
-  final _baseUrl = MyApp.baseUrl;
   ProfilePage({super.key});
 
   @override
@@ -63,7 +61,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Profile')),
+        title: Center(
+            child: Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+        )),
         backgroundColor: Theme.of(context).colorScheme.surface,
         automaticallyImplyLeading: false,
         centerTitle: true,
@@ -105,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ? NetworkImage(user.profilePicPath)
                                 : null,
                             child: user.profilePicPath.isEmpty
-                                ? Icon(
+                                ? const Icon(
                                     Icons.person,
                                     size: 60,
                                     color: Colors.black,
@@ -116,44 +118,40 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildProfileDetail(
-                          context,
-                          title: 'Username',
-                          detail: user.username,
-                          icon: Icons.person,
-                        ),
+                        Profile_detail_field(
+                            context: context,
+                            title: 'Username',
+                            detail: user.username,
+                            icon: Icons.person),
                         Divider(),
-                        _buildProfileDetail(
-                          context,
-                          title: 'Email',
-                          detail: user.email,
-                          icon: Icons.email,
-                        ),
+                        Profile_detail_field(
+                            context: context,
+                            title: 'Email',
+                            detail: user.email,
+                            icon: Icons.email),
                         Divider(),
-                        _buildProfileDetail(
-                          context,
-                          title: 'Address',
-                          detail: user.address.isNotEmpty
-                              ? user.address
-                              : 'Add Your Address',
-                          icon: Icons.location_on,
-                        ),
+                        Profile_detail_field(
+                            context: context,
+                            title: 'Address',
+                            detail: user.address.isNotEmpty
+                                ? user.address
+                                : 'Add Your Address',
+                            icon: Icons.location_on),
                         Divider(),
-                        _buildProfileDetail(
-                          context,
-                          title: 'Phone Number',
-                          detail: user.contactNo.isNotEmpty
-                              ? user.contactNo
-                              : 'Add Your Phone Number',
-                          icon: Icons.phone,
-                        ),
-                        SizedBox(height: 16),
+                        Profile_detail_field(
+                            context: context,
+                            title: 'Phone Number',
+                            detail: user.contactNo.isNotEmpty
+                                ? user.contactNo
+                                : 'Add Your Phone Number',
+                            icon: Icons.phone),
+                        const SizedBox(height: 16),
                         Action_Buttons(
                           context: context,
                           label: 'Edit Details',
@@ -164,7 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ));
                           },
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Action_Buttons(
                           context: context,
                           label: 'Logout',
@@ -175,48 +173,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                     builder: (context) => BackgroundPage()));
                           },
                         ),
-                        SizedBox(height: 100),
+                        const SizedBox(height: 100),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildProfileDetail(BuildContext context,
-      {required String title, required String detail, required IconData icon}) {
-    final theme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(icon, color: theme.primary),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: theme.onSurface.withOpacity(0.5),
-                  ),
-                ),
-                Text(
-                  detail,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

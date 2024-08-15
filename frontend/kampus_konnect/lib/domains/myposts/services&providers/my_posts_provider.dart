@@ -9,11 +9,11 @@ class MyPostsProvider with ChangeNotifier {
 
   List<Product> get products => _products;
 
-  Future<void> fetchUserPosts(String email) async {
+  Future<void> fetchUserPosts(String email, String purpose) async {
     // Fetch post IDs
     const baseUrl = MyApp.baseUrl;
     final response = await http.post(
-      Uri.parse('$baseUrl/user/posts'),
+      Uri.parse('$baseUrl/user/posts?purpose=$purpose'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -48,7 +48,6 @@ class MyPostsProvider with ChangeNotifier {
       Uri.parse('$baseUrl/posts/$productId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-      
       },
       body: jsonEncode({
         'token': token,
@@ -60,10 +59,11 @@ class MyPostsProvider with ChangeNotifier {
       }),
     );
 
-   if (response.statusCode == 200) {
-    print("product updated successfully");
-    } 
+    if (response.statusCode == 200) {
+      print("product updated successfully");
+    }
   }
+
   void deleteProduct(int productId) {
     _products.removeWhere((product) => product.id == productId);
     notifyListeners();

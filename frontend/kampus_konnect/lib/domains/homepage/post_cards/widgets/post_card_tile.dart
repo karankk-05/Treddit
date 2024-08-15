@@ -4,15 +4,11 @@ import '../../product_details/screens/product_details.dart';
 import 'package:flutter/material.dart';
 import '../../../../theme/decorations.dart';
 
-import '../../../auth/services/auth.dart';
-
 class PostCardTile extends StatefulWidget {
   final PostCard postCard;
-
-  const PostCardTile({
-    Key? key,
-    required this.postCard,
-  }) : super(key: key);
+  final String purpose;
+  const PostCardTile({Key? key, required this.postCard, required this.purpose})
+      : super(key: key);
 
   @override
   _PostCardTileState createState() => _PostCardTileState();
@@ -53,6 +49,7 @@ class _PostCardTileState extends State<PostCardTile> {
           context,
           MaterialPageRoute(
             builder: (context) => ProductDetailsPage(
+              purpose: widget.purpose,
               id: widget.postCard.postId,
             ),
           ),
@@ -80,7 +77,7 @@ class _PostCardTileState extends State<PostCardTile> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(
@@ -92,35 +89,38 @@ class _PostCardTileState extends State<PostCardTile> {
                                   widget.postCard.image as String,
                                   fit: BoxFit.cover,
                                 )
-                              : Icon(
+                              : const Icon(
                                   Icons.photo_rounded,
                                   size: 100,
                                   color: Colors.black,
                                 ),
                         ),
                       ),
-                      SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Text(
-                            '₹${widget.postCard.price}',
-                            style: mytext.headingbold(fontSize: 15, context),
-                            textAlign: TextAlign.left,
-                          ),
-                          Expanded(child: SizedBox()),
-                          GestureDetector(
-                            //onTap: _toggleFavorite,
-                            child: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: isFavorite ? Colors.red : Colors.grey,
-                              size: 25,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                        ],
-                      ),
+                      const SizedBox(height: 15),
+                      widget.purpose == "old"
+                          ? Row(
+                              children: [
+                                Text(
+                                  '₹${widget.postCard.price}',
+                                  style:
+                                      mytext.headingbold(fontSize: 15, context),
+                                  textAlign: TextAlign.left,
+                                ),
+                                Expanded(child: const SizedBox()),
+                                // GestureDetector(
+                                //   //onTap: _toggleFavorite,
+                                //   child: Icon(
+                                //     isFavorite
+                                //         ? Icons.favorite
+                                //         : Icons.favorite_border,
+                                //     color: isFavorite ? Colors.red : Colors.grey,
+                                //     size: 25,
+                                //   ),
+                                // ),
+                                // const SizedBox(width: 10),
+                              ],
+                            )
+                          : Container()
                     ],
                   ),
                 ),

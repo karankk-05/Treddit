@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String backgroundImage;
-  final Color backgroundColor; // Color for the curved area
+  final Color backgroundColor;
+  final VoidCallback onPressed; // Callback for IconButton
 
   CustomAppBar({
     required this.title,
     required this.backgroundImage,
-    this.backgroundColor = Colors.white, // Default color for the background
+    this.backgroundColor = Colors.white,
+    required this.onPressed, // Pass the onPressed callback
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(200); // Increased height of AppBar
+  Size get preferredSize =>
+      const Size.fromHeight(200); // Increased height of AppBar
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +38,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         // AppBar with rounded bottom corners
         AppBar(
+          leading: null,
           surfaceTintColor: theme.surface,
           title: Text(title),
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(30),
             ),
@@ -47,6 +51,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           elevation: 0, // Remove shadow for better image visibility
           toolbarHeight: 250, // Increased height of AppBar
           centerTitle: true,
+        ),
+        Positioned(
+          left: 30,
+          top: 50,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle, // Makes the container circular
+
+              color: Colors.white
+                  .withOpacity(0.85), // Transparent green background
+            ),
+            padding: const EdgeInsets.all(3.0), // Add padding to make it larger
+            child: IconButton(
+              onPressed: onPressed, // Callback for the button press
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.black, // Customize the icon color
+              ),
+            ),
+          ),
         ),
       ],
     );

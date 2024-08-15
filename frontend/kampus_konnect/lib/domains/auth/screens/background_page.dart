@@ -1,10 +1,11 @@
+import 'package:Treddit/domains/auth/services/auth.dart';
+import 'package:Treddit/nav/nav_bar.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui';
-import '../../../theme/themes.dart';
 import 'login.dart'; // Import the LoginPage
 import 'signup.dart'; // Import the SignupPage
 
 class BackgroundPage extends StatelessWidget {
+  final AuthService authService=AuthService();
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
@@ -26,8 +27,8 @@ class BackgroundPage extends StatelessWidget {
                   .withOpacity(0.3), // Adjust color and opacity if needed
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 50.0, top: 100),
+          const Padding(
+            padding: EdgeInsets.only(left: 50.0, top: 100),
             child: Align(
               alignment: Alignment.topLeft,
               child: Column(
@@ -82,13 +83,17 @@ class BackgroundPage extends StatelessWidget {
                           .withOpacity(0.3), // Button background color
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => LoginPage()),
                           );
                         },
-                        child: Text(
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
+                        ),
+                        child: const Text(
                           'Sign In',
                           style: TextStyle(
                             color: Color.fromARGB(
@@ -96,31 +101,57 @@ class BackgroundPage extends StatelessWidget {
                             fontSize: 18,
                           ),
                         ),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
-                        ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20), // Space between buttons
+                  const SizedBox(height: 20), // Space between buttons
                   // Create Account Button
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => SignupPage()),
                       );
                     },
-                    child: Text(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                    ),
+                    child: const Text(
                       'Create An Account',
                       style: TextStyle(
                         color: Color.fromARGB(255, 203, 202, 202), // Text color
                         fontSize: 16,
                       ),
                     ),
+                  ),
+                  // const SizedBox(height: 10),
+                  Text(
+                    "Or",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 203, 202, 202),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: ()async {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MainPage(
+                                  selectedIndex: 0,
+                                 
+                                )),
+                      );
+                                await authService.setloginStatus(false);
+                    },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 24),
+                    ),
+                    child: const Text(
+                      'Continue Without Login',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 203, 202, 202), // Text color
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ],
