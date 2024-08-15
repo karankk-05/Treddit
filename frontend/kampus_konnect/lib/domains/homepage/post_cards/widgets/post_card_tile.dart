@@ -4,8 +4,6 @@ import '../../product_details/screens/product_details.dart';
 import 'package:flutter/material.dart';
 import '../../../../theme/decorations.dart';
 
-import '../../../auth/services/auth.dart';
-
 class PostCardTile extends StatefulWidget {
   final PostCard postCard;
 
@@ -80,7 +78,7 @@ class _PostCardTileState extends State<PostCardTile> {
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(
@@ -92,14 +90,14 @@ class _PostCardTileState extends State<PostCardTile> {
                                   widget.postCard.image as String,
                                   fit: BoxFit.cover,
                                 )
-                              : Icon(
+                              : const Icon(
                                   Icons.photo_rounded,
                                   size: 100,
                                   color: Colors.black,
                                 ),
                         ),
                       ),
-                      SizedBox(height: 15),
+                      const SizedBox(height: 15),
                       Row(
                         children: [
                           Text(
@@ -107,7 +105,7 @@ class _PostCardTileState extends State<PostCardTile> {
                             style: mytext.headingbold(fontSize: 15, context),
                             textAlign: TextAlign.left,
                           ),
-                          Expanded(child: SizedBox()),
+                          Expanded(child: const SizedBox()),
                           GestureDetector(
                             //onTap: _toggleFavorite,
                             child: Icon(
@@ -118,7 +116,7 @@ class _PostCardTileState extends State<PostCardTile> {
                               size: 25,
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                         ],
                       ),
                     ],

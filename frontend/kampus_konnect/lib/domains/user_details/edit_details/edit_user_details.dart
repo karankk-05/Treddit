@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:Treddit/domains/user_details/action__buttons.dart';
-import 'package:Treddit/domains/user_details/app_user_model.dart';
-import 'package:Treddit/domains/user_details/app_user_provider.dart';
+import 'package:Treddit/domains/user_details/widgets/action__buttons.dart';
+import 'package:Treddit/domains/user_details/model_provider/app_user_model.dart';
+import 'package:Treddit/domains/user_details/model_provider/app_user_provider.dart';
 import 'package:Treddit/nav/nav_bar.dart';
 import 'package:provider/provider.dart';
 import '../../auth/services/auth.dart';
@@ -99,7 +99,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
             ? FileImage(_profileImage!)
             : NetworkImage(widget.user.profilePicPath) as ImageProvider,
         child: _profileImage == null
-            ? Icon(
+            ? const Icon(
                 Icons.camera_alt,
                 size: 50,
                 color: Colors.black,
@@ -124,7 +124,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
               child: Column(
                 children: <Widget>[
                   _profileImageWidget(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(labelText: 'Username'),
@@ -135,7 +135,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextFormField(
                     controller: _addressController,
                     decoration: InputDecoration(labelText: 'Address'),
@@ -146,7 +146,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextFormField(
                     controller: _contactNoController,
                     decoration: InputDecoration(labelText: 'Contact No'),
@@ -157,14 +157,14 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Action_Buttons(
                       context: context,
                       label: "Save",
                       onTap: () {
                         _saveForm();
                       }),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Action_Buttons(
                       context: context,
                       label: "Change Password",

@@ -1,8 +1,10 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import '../domains/homepage/post_cards/screens/homepage.dart';
-import '../../domains/addpost/add_post_page.dart';
+import '../domains/addpost/screens/add_post_page.dart';
 import '../domains/myposts/screens/my_posts_page.dart';
-import '../domains/user_details/profile_page.dart';
+import '../domains/user_details/screens/profile_page.dart';
 import '../wishlist/wishlist_page.dart'; // Import the Wishlist page
 
 class MainPage extends StatefulWidget {

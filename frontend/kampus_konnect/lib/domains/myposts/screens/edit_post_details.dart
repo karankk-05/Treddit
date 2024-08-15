@@ -115,7 +115,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _bodyController,
                 decoration: InputDecoration(labelText: 'Body'),
@@ -126,7 +126,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextFormField(
                 controller: _priceController,
                 decoration: InputDecoration(labelText: 'Price'),
@@ -141,7 +141,7 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _SaveDetailsBtn(),
             ],
           ),

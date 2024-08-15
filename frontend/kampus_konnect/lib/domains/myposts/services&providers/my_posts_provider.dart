@@ -48,7 +48,6 @@ class MyPostsProvider with ChangeNotifier {
       Uri.parse('$baseUrl/posts/$productId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-      
       },
       body: jsonEncode({
         'token': token,
@@ -60,10 +59,11 @@ class MyPostsProvider with ChangeNotifier {
       }),
     );
 
-   if (response.statusCode == 200) {
-    print("product updated successfully");
-    } 
+    if (response.statusCode == 200) {
+      print("product updated successfully");
+    }
   }
+
   void deleteProduct(int productId) {
     _products.removeWhere((product) => product.id == productId);
     notifyListeners();
