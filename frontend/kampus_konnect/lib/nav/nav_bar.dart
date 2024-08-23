@@ -102,7 +102,7 @@ class _MainPageState extends State<MainPage> {
         color: Theme.of(context).colorScheme.secondaryContainer,
         shape: CircularNotchedRectangle(),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             // Only show Home and Lost & Found if the user is not logged in
             IconButton(
@@ -114,14 +114,18 @@ class _MainPageState extends State<MainPage> {
               onPressed: () => _onItemTapped(0),
             ),
             if (isLoggedin)
-              IconButton(
-                icon: widget.selectedIndex == 1
-                    ? Icon(Icons.list,
-                        color:
-                            Theme.of(context).colorScheme.onSecondaryContainer)
-                    : Icon(Icons.list_outlined,
-                        color: Theme.of(context).colorScheme.onSecondary),
-                onPressed: () => _onItemTapped(1),
+              Padding(
+                padding: const EdgeInsets.only(right: 60.0),
+                child: IconButton(
+                  icon: widget.selectedIndex == 1
+                      ? Icon(Icons.list,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSecondaryContainer)
+                      : Icon(Icons.list_outlined,
+                          color: Theme.of(context).colorScheme.onSecondary),
+                  onPressed: () => _onItemTapped(1),
+                ),
               ),
             IconButton(
               icon: widget.selectedIndex == (isLoggedin ? 2 : 1)

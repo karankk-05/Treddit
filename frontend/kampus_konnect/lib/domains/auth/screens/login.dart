@@ -15,7 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final AuthActions _authActions = AuthActions();
-  final AuthService authService=AuthService();
+  final AuthService authService = AuthService();
   bool _otpSent = false; // Tracks if OTP has been sent
 
   @override
@@ -86,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.65,
+          height: MediaQuery.of(context).size.height * 0.75,
           decoration: BoxDecoration(color: theme.surface),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
@@ -130,16 +130,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => MainPage(
                                   selectedIndex: 0,
-                                  
                                 )),
                       );
-                                 await authService.setloginStatus(false);
+                      await authService.setloginStatus(false);
                     },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 24),

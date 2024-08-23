@@ -22,6 +22,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   bool isWishlisted = false;
   String? _sender; // Make sender nullable
   final AuthService _authService = AuthService();
+  bool isLoggedin = false;
 
   @override
   void initState() {
@@ -33,6 +34,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   Future<void> _fetchSenderEmail() async {
     _sender = await _authService.getEmail();
+    isLoggedin = await _authService.getloginStatus();
+
     setState(() {}); // Update the UI after fetching the sender's email
   }
 
@@ -144,31 +147,33 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               ),
             ),
       backgroundColor: theme.primaryContainer,
-      floatingActionButton: post != null && post.owner != _sender
-          ? CollapsibleFAB(
-              iconlabel: Icon(
-                Icons.chat,
-                color: theme.primary,
-              ),
-              onPressed: () {
-                Provider.of<ChatProvider>(
-                  context,
-                  listen: false,
-                ).updatePostId(post.postId);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatDetailScreen(
-                      postId: post.postId,
-                      reciever: post.owner,
-                      sender: _sender,
-                    ),
+
+      floatingActionButton:
+          post != null && post.owner != _sender && isLoggedin == true
+              ? CollapsibleFAB(
+                  iconlabel: Icon(
+                    Icons.chat,
+                    color: theme.primary,
                   ),
-                );
-              },
-              label: "Chat Now",
-            )
-          : null, // Show FAB only if _sender is not null
+                  onPressed: () {
+                    Provider.of<ChatProvider>(
+                      context,
+                      listen: false,
+                    ).updatePostId(post.postId);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatDetailScreen(
+                          postId: post.postId,
+                          reciever: post.owner,
+                          sender: _sender,
+                        ),
+                      ),
+                    );
+                  },
+                  label: "Chat Now",
+                )
+              : null, // Show FAB only if _sender is not null
     );
   }
 }

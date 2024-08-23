@@ -1,3 +1,4 @@
+import 'package:Treddit/domains/auth/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -13,20 +14,32 @@ class FoundPage extends StatefulWidget {
 class _FoundPageState extends State<FoundPage> {
   String searchQuery = '';
   String selectedSection = 'found'; // Track the selected section
+  bool isLoggedin = false;
+
+  final AuthService authService = AuthService();
 
   @override
   void initState() {
     super.initState();
     _fetchPosts();
+    _getLoginStatus(); // Fetch login status during initialization
+  }
+
+  Future<void> _getLoginStatus() async {
+    // Fetch login status from SecureStorage
+    final loginStatus =
+        await authService.getloginStatus(); // Replace with your method
+    setState(() {
+      isLoggedin = loginStatus; // Update the isLoggedin state
+    });
   }
 
   Future<void> _fetchPosts({String query = ''}) async {
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
-    
-      await postCardProvider.fetchPostCards(
-          query: query, purpose: selectedSection);
-    
+
+    await postCardProvider.fetchPostCards(
+        query: query, purpose: selectedSection);
   }
 
   bool isRefreshing = false;
@@ -65,6 +78,11 @@ class _FoundPageState extends State<FoundPage> {
         );
       },
     );
+  }
+
+  void _onLoginPressed() {
+    Navigator.pushReplacementNamed(
+        context, '/login'); // Replace with your login route
   }
 
   Widget _buildTile(
@@ -132,6 +150,21 @@ class _FoundPageState extends State<FoundPage> {
           fit: BoxFit.contain,
         ),
         actions: [
+          if (!isLoggedin) // Show the button only if not logged in
+            Padding(
+              padding: const EdgeInsets.only(right: 0),
+              child: TextButton(
+                onPressed: _onLoginPressed,
+                child: Text(
+                  'Log In Now',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
           IconButton(
             icon: Icon(Icons.more_vert),
             onPressed: () => _showSectionSelector(context),

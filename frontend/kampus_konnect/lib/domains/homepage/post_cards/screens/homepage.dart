@@ -5,6 +5,7 @@ import '../model_provider/provider.dart';
 import '../widgets/post_card_tile.dart';
 import '../widgets/search_bar.dart'
     as CustomSearchBar; // Import the SearchBar widget with an alias
+import '../../../auth/services/auth.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,13 +13,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
+  bool isLoggedin = false;
   String searchQuery = '';
   final String purpose = "old";
+  final AuthService authService = AuthService();
+
   @override
   void initState() {
     super.initState();
     _fetchPosts();
+    _getLoginStatus();
+  }
+
+  Future<void> _getLoginStatus() async {
+    // Fetch login status from SecureStorage
+    final loginStatus =
+        await authService.getloginStatus(); // Replace with your method
+    setState(() {
+      isLoggedin = loginStatus; // Update the isLoggedin state
+    });
   }
 
   Future<void> _fetchPosts({String query = ''}) async {
@@ -47,6 +60,11 @@ class _HomePageState extends State<HomePage> {
     _fetchPosts(query: query);
   }
 
+  void _onLoginPressed() {
+    Navigator.pushReplacementNamed(
+        context, '/login'); // Replace with your login route
+  }
+
   @override
   Widget build(BuildContext context) {
     final postCardProvider = Provider.of<PostCardProvider>(context);
@@ -55,13 +73,29 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: null,
         surfaceTintColor: Colors.transparent,
         title: Image.asset(
           'assets/title.png', // Path to your image asset
           height: 30, // Adjust the height as needed
           fit: BoxFit.contain, // Ensure the image fits within the space
         ),
+        actions: [
+          if (!isLoggedin) // Show the button only if not logged in
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: TextButton(
+                onPressed: _onLoginPressed,
+                child: Text(
+                  'Log In Now',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
       body: RefreshIndicator(
         color: Theme.of(context).colorScheme.onSecondary,
