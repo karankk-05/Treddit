@@ -41,7 +41,7 @@ class _PostCardTileState extends State<PostCardTile> {
 
   @override
   Widget build(BuildContext context) {
-    // print(widget.postCard.image as String);
+     print(widget.postCard.image as String);
 
     return GestureDetector(
       onTap: () {
@@ -84,9 +84,13 @@ class _PostCardTileState extends State<PostCardTile> {
                               15), // Adjust the radius as needed
                           child: (widget.postCard.image != null &&
                                   (widget.postCard.image as String) !=
+                                  
                                       "$_baseUrl/res/")
-                              ? Image.network(
+                                      
+                              ? 
+                              Image.network(
                                   widget.postCard.image as String,
+                                 
                                   fit: BoxFit.cover,
                                 )
                               : const Icon(

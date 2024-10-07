@@ -1,12 +1,17 @@
-import 'package:flutter/material.dart';
-import '../../../theme/decorations.dart';
-import '../services/add_product_service.dart';
-import '../services/image_service.dart';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:Treddit/domains/addpost/services/image_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
+import '../services/add_product_service.dart'; // For image compression
+
+// ImageService class for picking and compressing images
+// AddPost widget
 class AddPost extends StatefulWidget {
   final String tag; // Add this line
   AddPost({required this.tag}); // Modify the constructor
+
   @override
   State<AddPost> createState() => _AddPostState();
 }
@@ -35,15 +40,38 @@ class _AddPostState extends State<AddPost> {
 
   Future<void> _submit() async {
     int price = int.tryParse(_priceController.text) ?? 0;
-    bool success = await _productService.addProduct(
-      title: _titleController.text,
-      price: widget.tag == 'old' ? price : 0, // Set price only if tag is 'new'
-      description: _descriptionController.text,
-      images: _images.map((image) => image['compressed'] as File).toList(),
-      purpose:widget.tag
-    );
+    bool success;
+
+    // Debugging: Print the submission details
+    print(
+        'Submitting product with title: ${_titleController.text}, Price: $price');
+
+    if (kIsWeb) {
+      List<Uint8List> webImages =
+          _images.map((image) => image['original'] as Uint8List).toList();
+      success = await _productService.addProduct(
+        title: _titleController.text,
+        price: widget.tag == 'old' ? price : 0,
+        description: _descriptionController.text,
+        images: webImages,
+        purpose: widget.tag,
+      );
+    } else {
+      List<File> mobileImages =
+          _images.map((image) => image['compressed'] as File).toList();
+      success = await _productService.addProduct(
+        title: _titleController.text,
+        price: widget.tag == 'old' ? price : 0,
+        description: _descriptionController.text,
+        images: mobileImages,
+        purpose: widget.tag,
+      );
+    }
+
     if (success) {
       Navigator.pushReplacementNamed(context, '/main');
+    } else {
+      print('Submission failed');
     }
   }
 
@@ -53,7 +81,7 @@ class _AddPostState extends State<AddPost> {
       appBar: AppBar(
         title: Text(
           widget.tag == 'old' ? 'Add New Product' : 'Add Post',
-          style: mytext.headingbold(fontSize: 20, context),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(
@@ -109,11 +137,18 @@ class _AddPostState extends State<AddPost> {
                         Expanded(
                           child: Stack(
                             children: [
-                              Image.file(
-                                _images[index]['compressed'],
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
+                              if (kIsWeb)
+                                Image.memory(
+                                  _images[index]['original'],
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                )
+                              else
+                                Image.file(
+                                  _images[index]['compressed'],
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
                               Positioned(
                                 right: -10,
                                 top: -10,

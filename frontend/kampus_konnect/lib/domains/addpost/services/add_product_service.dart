@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import '../../auth/services/auth.dart';
@@ -12,8 +13,9 @@ class ProductService {
     required String title,
     required int price,
     required String description,
-    required List<File> images,
-    required String purpose
+    required List
+        images, // Images can be a List of Uint8List (web) or List of File (mobile)
+    required String purpose,
   }) async {
     try {
       final email = await _authService.getEmail();
@@ -33,23 +35,38 @@ class ProductService {
         ..fields['title'] = title
         ..fields['price'] = price.toString()
         ..fields['body'] = description
-        ..fields['purpose']=purpose;
+        ..fields['purpose'] = purpose;
 
       for (var image in images) {
-        var stream = http.ByteStream(image.openRead());
-        var length = await image.length();
-        var multipartFile = http.MultipartFile(
-          'img_${basename(image.path)}', // Ensure the name starts with 'img'
-          stream,
-          length,
-          filename: basename(image.path),
-        );
-        request.files.add(multipartFile);
+        if (image is Uint8List) {
+          // Handle the image as Uint8List (web)
+          var filename =
+              'img_${DateTime.now().millisecondsSinceEpoch}.jpg'; // Generate a unique filename
+          request.files.add(http.MultipartFile.fromBytes(
+            'img_${filename}', // Ensure the name starts with 'img'
+            image,
+            filename: filename, // Use a generated filename
+          ));
+        } else if (image is File) {
+          // Handle the image as File (mobile)
+          var stream = http.ByteStream(image.openRead());
+          var length = await image.length();
+          request.files.add(http.MultipartFile(
+            'img_${basename(image.path)}', // Ensure the name starts with 'img'
+            stream,
+            length,
+            filename: basename(image.path),
+          ));
+        } else {
+          // Handle unexpected type
+          print('Unexpected image type: ${image.runtimeType}');
+        }
       }
 
       var response = await request.send();
 
       if (response.statusCode == 201) {
+        print("Product submitted");
         return true;
       } else {
         // Debugging: Print the response status code and reason phrase
