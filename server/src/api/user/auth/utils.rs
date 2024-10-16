@@ -2,13 +2,12 @@ use super::super::json::*;
 
 use crate::Otp;
 use axum::http::StatusCode;
-use chrono::Utc;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use std::collections::HashMap;
 
 pub async fn validate_token(token: String, email: &str, key: [u8; 32]) -> Result<(), StatusCode> {
     let claims = decode_token(token, key).await?;
-    match claims.email == email && claims.exp > Utc::now().timestamp() as usize {
+    match claims.is_valid(email) {
         true => Ok(()),
         false => Err(StatusCode::UNAUTHORIZED),
     }
@@ -32,7 +31,7 @@ pub fn verify_otp(
 ) -> Result<(), StatusCode> {
     let stored_otp = &otp_storage.remove(email);
     match stored_otp {
-        Some(val) => match !val.expired()? && val.email == email && val.otp == otp {
+        Some(val) => match !val.expired() && val.email == email && val.otp == otp {
             true => Ok(()),
             false => Err(StatusCode::UNAUTHORIZED),
         },

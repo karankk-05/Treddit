@@ -1,3 +1,4 @@
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize)]
@@ -57,4 +58,12 @@ pub struct ReportUser {
 pub struct Claims {
     pub email: String,
     pub exp: usize,
+}
+impl Claims {
+    pub fn expired(&self) -> bool {
+        Utc::now().timestamp() as usize > self.exp
+    }
+    pub fn is_valid(&self, email: &str) -> bool {
+        self.email == email && !self.expired()
+    }
 }
