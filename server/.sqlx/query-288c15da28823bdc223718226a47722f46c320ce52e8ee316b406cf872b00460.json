@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "select chat_id from post_chats where (sender = $1 or reciever = $1) and post_id = $2",
+  "query": "select chat_id from post_chats where (sender = $1 and reciever = $2) or (sender = $1 and reciever = $2) and post_id = $3",
   "describe": {
     "columns": [
       {
@@ -12,6 +12,7 @@
     "parameters": {
       "Left": [
         "Text",
+        "Text",
         "Int4"
       ]
     },
@@ -19,5 +20,5 @@
       false
     ]
   },
-  "hash": "527333d1bd5be46e7adc9ed21741056afbe44113c33896ae447f3ee07fe19031"
+  "hash": "288c15da28823bdc223718226a47722f46c320ce52e8ee316b406cf872b00460"
 }

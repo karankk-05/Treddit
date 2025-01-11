@@ -1,7 +1,7 @@
 use super::json::*;
 use crate::{
     api::user::auth::utils::*,
-    token_json::{Token, ValidToken},
+    token_json::{GetChatIds, Token, ValidToken},
     SharedState,
 };
 use axum::{
@@ -37,14 +37,15 @@ pub async fn send_chat(
 pub async fn get_chat_ids(
     State(state): State<SharedState>,
     Path(id): Path<i32>,
-    Json(payload): Json<Token>,
+    Json(payload): Json<GetChatIds>,
 ) -> Result<Json<Vec<i32>>, StatusCode> {
     let st = state.read().await;
     let claims = decode_token(payload.token.clone(), st.jwt_secret_key).await?;
     validate_token(payload.token, &claims.email, st.jwt_secret_key).await?;
     match sqlx::query!(
-        "select chat_id from post_chats where (sender = $1 or reciever = $1) and post_id = $2",
+        "select chat_id from post_chats where (sender = $1 and reciever = $2) or (sender = $1 and reciever = $2) and post_id = $3",
         claims.email,
+        payload.communicator,
         id
     )
     .fetch_all(&st.pool)

@@ -11,3 +11,9 @@ pub struct ValidToken {
 pub struct Token {
     pub token: String,
 }
+
+#[derive(Serialize, Deserialize, JsonSchema)]
+pub struct GetChatIds {
+    pub token: String,
+    pub communicator: String,
+}
