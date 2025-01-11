@@ -56,7 +56,7 @@ class AuthService {
       body: json.encode({
         'email': email,
         'username': username,
-        //'passwd': password,
+        'passwd': password,
         'address': address,
         'contact_no': contactNo,
         'otp': otp,

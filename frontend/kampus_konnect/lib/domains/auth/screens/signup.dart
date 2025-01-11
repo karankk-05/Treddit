@@ -12,6 +12,8 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _otpController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -24,8 +26,10 @@ class _SignupPageState extends State<SignupPage> {
   @override
   void dispose() {
     _emailController.dispose();
-    //_passwordController.dispose();
-    //_confirmPasswordController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
     _otpController.dispose();
     _usernameController.dispose();
     super.dispose();
@@ -65,6 +69,22 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  Widget _contact() {
+    return CustomTextField(
+      icon: Icons.phone,
+      label: "Contact",
+      controller: _phoneController,
+    );
+  }
+
+  Widget _address() {
+    return CustomTextField(
+      icon: Icons.house,
+      label: "Address",
+      controller: _addressController,
+    );
+  }
+
   Widget _otp() {
     return CustomTextField(
       icon: Icons.code,
@@ -91,6 +111,8 @@ class _SignupPageState extends State<SignupPage> {
                   passwordController: _passwordController,
                   confirmPasswordController: _confirmPasswordController,
                   usernameController: _usernameController,
+                  phoneController: _phoneController,
+                  addressController: _addressController,
                   otpController: _otpController,
                   showAdditionalFields: _showAdditionalFields,
                   updateUI: () {
@@ -183,6 +205,10 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 10.0),
                 _confPassword(),
                 const SizedBox(height: 10.0),
+                //_contact(),
+                //const SizedBox(height: 10.0),
+                //_address(),
+                //const SizedBox(height: 10.0),
                 _otp(),
               ],
               _regBtn(),

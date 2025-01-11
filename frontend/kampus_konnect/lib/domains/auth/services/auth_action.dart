@@ -11,6 +11,8 @@ class AuthActions {
     required TextEditingController passwordController,
     required TextEditingController confirmPasswordController,
     required TextEditingController usernameController,
+    required TextEditingController phoneController,
+    required TextEditingController addressController,
     required TextEditingController otpController,
     required bool showAdditionalFields,
     required Function updateUI,
@@ -20,6 +22,8 @@ class AuthActions {
       final password = passwordController.text.trim();
       final confirmPassword = confirmPasswordController.text.trim();
       final username = usernameController.text.trim();
+      final contact = phoneController.text.trim();
+      final address = addressController.text.trim();
       final otp = int.tryParse(otpController.text.trim()) ?? 0;
 
       if (password != confirmPassword) {
