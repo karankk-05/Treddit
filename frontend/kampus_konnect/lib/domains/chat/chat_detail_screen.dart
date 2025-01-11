@@ -28,7 +28,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   String convertUtcToIst(String utcTimestamp) {
     DateTime utcDateTime = DateTime.parse(utcTimestamp).toUtc();
-    DateTime istDateTime = utcDateTime.add(Duration(hours: 5, minutes: 30));
+    DateTime istDateTime = utcDateTime.toLocal();
+    //DateTime istDateTime = utcDateTime.add(Duration(hours: 5, minutes: 30));
     return '${istDateTime.hour.toString().padLeft(2, '0')}:${istDateTime.minute.toString().padLeft(2, '0')}';
   }
 

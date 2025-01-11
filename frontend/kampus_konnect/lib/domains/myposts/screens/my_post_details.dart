@@ -68,7 +68,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
     Provider.of<ChatProvider>(
       context,
       listen: false,
-    ).updatePostId(postId);
+    ).updatePostId(postId, sender);
     Navigator.push(
       context,
       MaterialPageRoute(

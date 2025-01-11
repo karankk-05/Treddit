@@ -154,7 +154,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 Provider.of<ChatProvider>(
                   context,
                   listen: false,
-                ).updatePostId(post.postId);
+                ).updatePostId(post.postId, post.owner);
                 Navigator.push(
                   context,
                   MaterialPageRoute(

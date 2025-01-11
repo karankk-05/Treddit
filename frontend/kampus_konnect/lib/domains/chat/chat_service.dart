@@ -41,7 +41,7 @@ class ChatService {
     }
   }
 
-  Future<List<int>> getChatIds(int postId) async {
+  Future<List<int>> getChatIds(int postId, String communicator) async {
     final token = await _authService.getToken();
     final email = await _authService.getEmail();
     print("-->$email");
@@ -55,6 +55,7 @@ class ChatService {
         body: jsonEncode({
           'token': token,
           'email': email,
+          'communicator': communicator,
         }),
       );
 

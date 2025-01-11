@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => ProductDetailsProvider()),
         ChangeNotifierProvider(create: (_) => PostCardProvider()),
         ChangeNotifierProvider(create: (_) => AppUserProvider()),
-        ChangeNotifierProvider(create: (_) => ChatProvider(1))
+        ChangeNotifierProvider(create: (_) => ChatProvider(1, "1"))
       ],
       child: FutureBuilder<bool>(
         future: _isTokenValid,
