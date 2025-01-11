@@ -1,11 +1,12 @@
 use super::posts::Posts;
 use axum::{http::StatusCode, Json};
+use schemars::JsonSchema;
 use sea_query::{Expr, PostgresQueryBuilder, Query as SeaQuery};
 use serde::Deserialize;
 use sqlx::postgres::PgPool;
 use sqlx::Row;
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, JsonSchema)]
 pub struct PageFilter {
     pub search_query: Option<String>,
     pub category: Option<String>,

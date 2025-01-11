@@ -40,19 +40,19 @@ pub async fn get_user_private(
     Ok(Json(user))
 }
 
-fn build_update_query(payload: ChUser) -> String {
+fn build_update_query(payload: &ChUser) -> String {
     let mut update_query = SeaQuery::update()
         .table(Users::Table)
-        .and_where(Expr::col(Users::Email).eq(payload.email))
+        .and_where(Expr::col(Users::Email).eq(&payload.email))
         .to_owned();
 
-    if let Some(username) = payload.username {
+    if let Some(username) = &payload.username {
         update_query.value(Users::Username, username);
     }
-    if let Some(contact_no) = payload.contact_no {
+    if let Some(contact_no) = &payload.contact_no {
         update_query.value(Users::ContactNo, contact_no);
     }
-    if let Some(address) = payload.address {
+    if let Some(address) = &payload.address {
         update_query.value(Users::Address, address);
     }
     update_query.to_string(PostgresQueryBuilder)
@@ -64,7 +64,7 @@ pub async fn change_user_info(
 ) -> Result<StatusCode, StatusCode> {
     let st = state.read().await;
     validate_token(payload.token.clone(), &payload.email, st.jwt_secret_key).await?;
-    match sqlx::query(&build_update_query(payload))
+    match sqlx::query(&build_update_query(&payload))
         .execute(&st.pool)
         .await
     {
@@ -116,10 +116,10 @@ pub async fn change_profile_pic(
     let mut token = String::new();
 
     while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = &field.name().expect("Cannot get name from user").to_owned();
+        let name = field.name().expect("Cannot get name from user").to_owned();
         let data = field.bytes().await.expect("Cannot get data from user");
 
-        match name as &str {
+        match &name as &str {
             "fname" => fname = bytes_to_string(data)?,
             "email" => email = bytes_to_string(data)?,
             "data" => fdata = data.to_vec(),
@@ -154,7 +154,6 @@ pub async fn change_profile_pic(
     }
 }
 
-//Redundant function not required but kept for compatibility with frontend
 pub async fn get_posts_as_owner(
     State(state): State<SharedState>,
     Query(mut filters): Query<PageFilter>,
@@ -210,5 +209,39 @@ pub async fn report_user(
             eprintln!("{}", err);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn check_query_builder() {
+        let mut user = ChUser {
+            token: String::new(),
+            email: "hatt@fatt".to_owned(),
+            username: Some("hatt".to_owned()),
+            address: Some("home".to_owned()),
+            contact_no: Some("123456789".to_owned()),
+        };
+        let q1 = build_update_query(&user);
+        user.contact_no = None;
+        let q2 = build_update_query(&user);
+        user.address = None;
+        let q3 = build_update_query(&user);
+
+        assert_eq!(
+            "UPDATE \"users\" SET \"username\" = 'hatt', \"contact_no\" = '123456789', \"address\" = 'home' WHERE \"email\" = 'hatt@fatt'",
+            q1
+        );
+        assert_eq!(
+            "UPDATE \"users\" SET \"username\" = 'hatt', \"address\" = 'home' WHERE \"email\" = 'hatt@fatt'",
+            q2
+        );
+        assert_eq!(
+            "UPDATE \"users\" SET \"username\" = 'hatt' WHERE \"email\" = 'hatt@fatt'",
+            q3
+        );
     }
 }
