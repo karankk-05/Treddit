@@ -1,4 +1,4 @@
-import 'package:Treddit/domains/auth/widgets/background_page.dart';
+import 'package:Treddit/domains/auth/screens/background_page.dart';
 import 'package:Treddit/domains/user_details/widgets/profile_detail_field.dart';
 import 'package:flutter/material.dart';
 import '../../auth/services/auth.dart';
@@ -61,7 +61,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Profile')),
+        title: Center(
+            child: Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+        )),
         backgroundColor: Theme.of(context).colorScheme.surface,
         automaticallyImplyLeading: false,
         centerTitle: true,

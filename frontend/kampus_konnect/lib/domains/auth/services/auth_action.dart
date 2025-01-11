@@ -45,15 +45,7 @@ class AuthActions {
       );
 
       if (userCreated) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "User registered successfully",
-              style: mytext.headingtext1(fontSize: 15, context),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          ),
-        );
+        Navigator.pushReplacementNamed(context, '/main');
         // Navigate to another page or perform another action
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -92,10 +84,53 @@ class AuthActions {
     }
   }
 
-  void handleLoginButton(String email, String password, context) async {
-    await _authService.login(email, password);
+  Future<void> sendOtp({
+    required String email,
+    required BuildContext context,
+    required Function onOtpSent,
+  }) async {
+    final otpSent = await _authService.sendOtp(email);
 
-    Navigator.pushReplacementNamed(context, '/main');
-    // Navigate to another page or perform another action
+    if (otpSent) {
+      onOtpSent(); // Update UI to show OTP input field
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "OTP sent successfully",
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Failed to send OTP",
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        ),
+      );
+    }
+  }
+
+  void handleLoginButton(String email, String passwd, context) async {
+    print("handling login");
+    final isLoggedIn = await _authService.login(email, passwd);
+    print(isLoggedIn);
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, '/main');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Login failed",
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ));
+    }
   }
 }

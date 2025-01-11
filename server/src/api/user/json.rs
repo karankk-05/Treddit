@@ -1,6 +1,8 @@
+use chrono::Utc;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize)]
+#[derive(Serialize, JsonSchema)]
 pub struct UserDisp {
     pub email: String,
     pub username: String,
@@ -9,14 +11,14 @@ pub struct UserDisp {
     pub contact_no: Option<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, JsonSchema)]
 pub struct User {
     #[serde(flatten)]
     pub disp: UserDisp,
     pub reports: i32,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct ChUser {
     pub token: String,
     pub email: String,
@@ -25,7 +27,7 @@ pub struct ChUser {
     pub contact_no: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct NewUser {
     pub email: String,
     pub username: String,
@@ -35,25 +37,18 @@ pub struct NewUser {
     pub otp: u16,
 }
 
-#[derive(Deserialize)]
-pub struct ChPassd {
-    pub email: String,
-    pub otp: u16,
-    pub passwd: String,
-}
-
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct Email {
     pub email: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct LoginInfo {
     pub email: String,
     pub passwd: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct ReportUser {
     pub email: String,
     pub token: String,
@@ -61,8 +56,16 @@ pub struct ReportUser {
     pub statement: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, JsonSchema)]
 pub struct Claims {
     pub email: String,
     pub exp: usize,
+}
+impl Claims {
+    pub fn expired(&self) -> bool {
+        Utc::now().timestamp() as usize > self.exp
+    }
+    pub fn is_valid(&self, email: &str) -> bool {
+        self.email == email && !self.expired()
+    }
 }

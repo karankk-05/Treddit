@@ -5,6 +5,8 @@ import '../services/image_service.dart';
 import 'dart:io';
 
 class AddPost extends StatefulWidget {
+  final String tag; // Add this line
+  AddPost({required this.tag}); // Modify the constructor
   @override
   State<AddPost> createState() => _AddPostState();
 }
@@ -35,9 +37,10 @@ class _AddPostState extends State<AddPost> {
     int price = int.tryParse(_priceController.text) ?? 0;
     bool success = await _productService.addProduct(
       title: _titleController.text,
-      price: price,
+      price: widget.tag == 'old' ? price : 0, // Set price only if tag is 'new'
       description: _descriptionController.text,
       images: _images.map((image) => image['compressed'] as File).toList(),
+      purpose:widget.tag
     );
     if (success) {
       Navigator.pushReplacementNamed(context, '/main');
@@ -49,7 +52,7 @@ class _AddPostState extends State<AddPost> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add New Product',
+          widget.tag == 'old' ? 'Add New Product' : 'Add Post',
           style: mytext.headingbold(fontSize: 20, context),
         ),
       ),
@@ -73,25 +76,22 @@ class _AddPostState extends State<AddPost> {
               const SizedBox(height: 20),
               TextField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Product Title'),
+                decoration: InputDecoration(labelText: 'Title'),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                controller: _priceController,
-                decoration: InputDecoration(labelText: 'Product Price'),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
+              if (widget.tag == 'old') ...[
+                const SizedBox(height: 20),
+                TextField(
+                  controller: _priceController,
+                  decoration: InputDecoration(labelText: 'Price'),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+              const SizedBox(height: 20),
               TextField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Product Details'),
+                decoration: InputDecoration(labelText: 'Details'),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               if (_images.isNotEmpty)
                 GridView.builder(
                   shrinkWrap: true,
@@ -136,17 +136,19 @@ class _AddPostState extends State<AddPost> {
               Center(
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    minimumSize: WidgetStateProperty.all(Size(100, 60)),
-                    backgroundColor: WidgetStateProperty.all<Color>(
+                    minimumSize: MaterialStateProperty.all(Size(100, 60)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
                       Theme.of(context).colorScheme.secondaryContainer,
                     ),
                   ),
                   onPressed: _submit,
-                  child: Text('Let\'s Sell',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).colorScheme.primary,
-                      )),
+                  child: Text(
+                    widget.tag == 'old' ? 'Let\'s Sell' : 'Submit Report',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ),
               ),
             ],

@@ -8,21 +8,18 @@ use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use sqlx::PgPool;
 
-use super::utils::validate_token;
+use super::utils::{validate_token, verify_otp};
 
 pub async fn login(
     State(state): State<SharedState>,
     Json(payload): Json<LoginInfo>,
 ) -> Result<Json<Token>, StatusCode> {
-    let st = &state.read().await;
+    let st = &mut state.write().await;
     let email = sanitize_check_email(payload.email)?;
     validate_passwd(&st.pool, &email, &payload.passwd).await?;
+    // verify_otp(&email, payload.otp, &mut st.otp_storage)?;
 
-    let claims = Claims {
-        email,
-        exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
-    };
-    let token = generate_token(claims, st.jwt_secret_key).await?;
+    let token = generate_token(email.to_string(), st.jwt_secret_key).await?;
     Ok(Json(Token { token }))
 }
 
@@ -35,7 +32,11 @@ pub async fn is_token_valid(
     Ok(StatusCode::OK)
 }
 
-async fn generate_token(claims: Claims, jwt_secret_key: [u8; 32]) -> Result<String, StatusCode> {
+pub async fn generate_token(email: String, jwt_secret_key: [u8; 32]) -> Result<String, StatusCode> {
+    let claims = Claims {
+        email,
+        exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
+    };
     match encode(
         &Header::default(),
         &claims,

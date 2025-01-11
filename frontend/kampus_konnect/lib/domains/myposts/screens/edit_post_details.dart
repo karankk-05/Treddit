@@ -9,8 +9,8 @@ import '../../auth/services/auth.dart';
 
 class EditPostDetailsPage extends StatefulWidget {
   final Product product;
-
-  EditPostDetailsPage({required this.product});
+  final String purpose;
+  EditPostDetailsPage({required this.product, required this.purpose});
 
   @override
   _EditPostDetailsPageState createState() => _EditPostDetailsPageState();
@@ -127,20 +127,22 @@ class _EditPostDetailsPageState extends State<EditPostDetailsPage> {
                 },
               ),
               const SizedBox(height: 10),
-              TextFormField(
-                controller: _priceController,
-                decoration: InputDecoration(labelText: 'Price'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a price';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  return null;
-                },
-              ),
+              widget.purpose == "old"
+                  ? TextFormField(
+                      controller: _priceController,
+                      decoration: InputDecoration(labelText: 'Price'),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a price';
+                        }
+                        if (int.tryParse(value) == null) {
+                          return 'Please enter a valid number';
+                        }
+                        return null;
+                      },
+                    )
+                  : Container(),
               const SizedBox(height: 20),
               _SaveDetailsBtn(),
             ],

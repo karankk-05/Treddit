@@ -1,5 +1,6 @@
+import 'package:Treddit/domains/addpost/screens/add_post_options.dart';
 import 'package:flutter/material.dart';
-import 'package:Treddit/domains/auth/widgets/background_page.dart';
+import 'package:Treddit/domains/auth/screens/background_page.dart';
 import 'package:Treddit/domains/chat/chat_provider.dart';
 import 'package:Treddit/domains/user_details/model_provider/app_user_provider.dart';
 import 'package:Treddit/domains/homepage/post_cards/model_provider/provider.dart';
@@ -7,7 +8,6 @@ import 'package:Treddit/domains/homepage/product_details/model_provider/provider
 import 'domains/auth/screens/login.dart';
 import 'theme/themes.dart';
 import 'nav/nav_bar.dart';
-import 'domains/addpost/screens/add_post_page.dart';
 import 'domains/homepage/post_cards/screens/homepage.dart';
 import 'domains/myposts/screens/my_posts_page.dart';
 import 'domains/user_details/screens/profile_page.dart';
@@ -21,7 +21,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  static const String baseUrl = 'http://192.168.85.64:3000';
+  static const String baseUrl = 'http://172.23.148.208:3000';
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
                 '/main': (context) => MainPage(selectedIndex: 0),
                 '/home': (context) => HomePage(),
                 // '/chat': (context) => Chat(),
-                '/addPost': (context) => AddPost(),
+                '/addPostOptions': (context) => AddPostOptions(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
               },
@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                 '/login': (context) => LoginPage(),
                 '/home': (context) => HomePage(),
                 // '/chat': (context) => Chat(),
-                '/addPost': (context) => AddPost(),
+                '/addPostOptions': (context) => AddPostOptions(),
                 '/myPosts': (context) => MyPosts(),
                 '/profile': (context) => ProfilePage(),
                 '/main': (context) => MainPage(selectedIndex: 0),

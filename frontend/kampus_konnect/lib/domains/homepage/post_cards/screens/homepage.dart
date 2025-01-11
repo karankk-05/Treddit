@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../model_provider/provider.dart';
 import '../widgets/post_card_tile.dart';
-import '../../../auth/services/auth.dart';
 import '../widgets/search_bar.dart'
     as CustomSearchBar; // Import the SearchBar widget with an alias
 
@@ -13,8 +12,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final AuthService _authService = AuthService();
+  
   String searchQuery = '';
+  final String purpose = "old";
   @override
   void initState() {
     super.initState();
@@ -22,13 +22,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _fetchPosts({String query = ''}) async {
-    final email = await _authService.getEmail();
-    final token = await _authService.getToken();
     final postCardProvider =
         Provider.of<PostCardProvider>(context, listen: false);
-    if (email != null && token != null) {
-      await postCardProvider.fetchPostCards(query: query);
-    }
+
+    await postCardProvider.fetchPostCards(query: query, purpose: purpose);
   }
 
   bool isRefreshing = false;
@@ -86,6 +83,7 @@ class _HomePageState extends State<HomePage> {
               if (adjustedIndex < postCardProvider.productCard.length) {
                 return PostCardTile(
                   postCard: postCardProvider.productCard[adjustedIndex],
+                  purpose: purpose,
                 );
               } else {
                 return Container(); // or some placeholder widget

@@ -1,18 +1,16 @@
 use super::posts::Posts;
-use crate::SharedState;
-use axum::{
-    extract::{Query, State},
-    http::StatusCode,
-    Json,
-};
+use axum::{http::StatusCode, Json};
+use schemars::JsonSchema;
 use sea_query::{Expr, PostgresQueryBuilder, Query as SeaQuery};
 use serde::Deserialize;
+use sqlx::postgres::PgPool;
 use sqlx::Row;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone, JsonSchema)]
 pub struct PageFilter {
     pub search_query: Option<String>,
     pub category: Option<String>,
+    pub purpose: Option<String>,
     pub min_price: Option<i32>,
     pub max_price: Option<i32>,
     pub owner: Option<String>,
@@ -27,13 +25,16 @@ fn sanitize_query(search_query: String) -> String {
     sanitized_query
 }
 
-fn build_search_query(filters: PageFilter) -> String {
+fn build_filter_query(filters: PageFilter, is_owner: bool) -> String {
     let mut search_sql = SeaQuery::select()
         .column(Posts::PostId)
         .from(Posts::Table)
-        .and_where(Expr::col(Posts::Visible).is(true))
-        .and_where(Expr::col(Posts::Sold).is(false))
         .to_owned();
+
+    if !is_owner {
+        search_sql.and_where(Expr::col(Posts::Visible).is(true));
+        search_sql.and_where(Expr::col(Posts::Sold).is(false));
+    }
 
     if let Some(owner) = filters.owner {
         search_sql.and_where(Expr::col(Posts::Owner).eq(owner));
@@ -50,6 +51,10 @@ fn build_search_query(filters: PageFilter) -> String {
     if let Some(max) = filters.max_price {
         search_sql.and_where(Expr::col(Posts::Price).lte(max));
     };
+
+    if let Some(purpose) = filters.purpose {
+        search_sql.and_where(Expr::col(Posts::Purpose).eq(purpose));
+    }
 
     if let Some(search_query) = filters.search_query {
         let sanitized_query = sanitize_query(search_query);
@@ -71,14 +76,13 @@ fn build_search_query(filters: PageFilter) -> String {
     search_sql.to_string(PostgresQueryBuilder)
 }
 
-pub async fn get_post_ids(
-    State(state): State<SharedState>,
-    Query(filters): Query<PageFilter>,
+pub async fn search_post_ids(
+    pool: &PgPool,
+    filters: PageFilter,
+    is_owner: bool,
 ) -> Result<Json<Vec<i32>>, StatusCode> {
-    let st = state.read();
-    let search_query = build_search_query(filters);
-
-    match sqlx::query(&search_query).fetch_all(&st.await.pool).await {
+    let filter_query = build_filter_query(filters, is_owner);
+    match sqlx::query(&filter_query).fetch_all(pool).await {
         Ok(val) => Ok(Json(
             val.into_iter().map(|row| row.get("post_id")).collect(),
         )),

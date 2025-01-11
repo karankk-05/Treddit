@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
 import '../services/auth_action.dart';
 import '../widgets/custom_appbar.dart';
+import 'background_page.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -23,8 +24,8 @@ class _SignupPageState extends State<SignupPage> {
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    //_passwordController.dispose();
+    //_confirmPasswordController.dispose();
     _otpController.dispose();
     _usernameController.dispose();
     super.dispose();
@@ -133,7 +134,16 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: '',
-        backgroundImage: 'assets/bg.jpeg', // Path to your background image
+        backgroundImage: 'assets/bg.jpeg',
+        onPressed: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) =>
+                  BackgroundPage(), // Replace with the page you want to navigate to
+            ),
+          );
+        },
+        // Path to your background image
       ), // Conditionally display the app bar
       body: SingleChildScrollView(
         child: Container(

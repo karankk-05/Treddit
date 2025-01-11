@@ -10,11 +10,9 @@ import '../widgets/collapsible_fab.dart'; // Import the collapsible FAB widget
 
 class ProductDetailsPage extends StatefulWidget {
   final int id;
-
-  const ProductDetailsPage({
-    Key? key,
-    required this.id,
-  }) : super(key: key);
+  final String purpose;
+  const ProductDetailsPage({Key? key, required this.id, required this.purpose})
+      : super(key: key);
 
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();
@@ -57,18 +55,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                isWishlisted = !isWishlisted;
-              });
-            },
-            icon: Icon(
-              isWishlisted ? Icons.favorite : Icons.favorite_border,
-              color: isWishlisted ? Colors.red : theme.onSurface,
-            ),
-          ),
-          const SizedBox(width: 10), // Adjust spacing as needed
+          // IconButton(
+          //   onPressed: () {
+          //     setState(() {
+          //       isWishlisted = !isWishlisted;
+          //     });
+          //   },
+          //   icon: Icon(
+          //     isWishlisted ? Icons.favorite : Icons.favorite_border,
+          //     color: isWishlisted ? Colors.red : theme.onSurface,
+          //   ),
+          // ),
+          //const SizedBox(width: 10), // Adjust spacing as needed
         ],
       ),
       body: post == null
@@ -99,15 +97,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Text(
-                          '₹${post.price}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
+                        widget.purpose == "old"
+                            ? Text(
+                                '₹${post.price}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              )
+                            : Container(),
                         const SizedBox(height: 10),
                         Text(
                           post.body,

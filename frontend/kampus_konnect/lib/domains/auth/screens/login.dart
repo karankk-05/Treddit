@@ -1,7 +1,10 @@
+import 'package:Treddit/domains/auth/services/auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
 import '../services/auth_action.dart';
 import '../widgets/custom_appbar.dart';
+import 'background_page.dart';
+import '../../../nav/nav_bar.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthActions _authActions = AuthActions();
+  final AuthService authService = AuthService();
 
   @override
   void dispose() {
@@ -20,26 +24,39 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Widget _LoginBtn() {
+  Widget _loginBtn() {
     final theme = Theme.of(context).colorScheme;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
+          String email = _emailController.text.trim();
+          String password = _passwordController.text.trim();
+
+          if (email.isEmpty || password.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Please fill in all fields')),
+            );
+            return;
+          }
+
+          // Handle login with email and password
           _authActions.handleLoginButton(
-            _emailController.text.trim(),
-            _passwordController.text.trim(),
+            email,
+            password,
             context,
           );
         },
         style: ButtonStyle(
-          minimumSize: WidgetStateProperty.all(Size(100, 60)),
-          backgroundColor: WidgetStateProperty.all<Color>(
-              Theme.of(context).colorScheme.secondaryContainer),
+          minimumSize: MaterialStateProperty.all(Size(100, 60)),
+          backgroundColor:
+              MaterialStateProperty.all<Color>(theme.secondaryContainer),
         ),
-        child:
-            Text('LOGIN', style: TextStyle(fontSize: 18, color: theme.primary)),
+        child: Text(
+          'LOGIN',
+          style: TextStyle(fontSize: 18, color: theme.primary),
+        ),
       ),
     );
   }
@@ -50,13 +67,20 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: '',
-        backgroundImage: 'assets/bg.jpeg', // Path to your background image
+        backgroundImage: 'assets/bg.jpeg',
+        onPressed: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) =>
+                  BackgroundPage(), // Replace with the page you want to navigate to
+            ),
+          );
+        },
       ),
-      resizeToAvoidBottomInset:
-          true, // Ensures the view resizes when the keyboard appears
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.65,
+          height: MediaQuery.of(context).size.height * 0.7,
           decoration: BoxDecoration(color: theme.surface),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 40),
@@ -69,20 +93,13 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary, // Primary color
+                      color: theme.primary,
                     ),
                   ),
                   const SizedBox(height: 20),
                   Text(
                     'Sign into your account',
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface // Text color
-                        ),
+                    style: TextStyle(fontSize: 14, color: theme.onSurface),
                   ),
                   const SizedBox(height: 25),
                   CustomTextField(
@@ -97,7 +114,36 @@ class _LoginPageState extends State<LoginPage> {
                     obscureText: true,
                     controller: _passwordController,
                   ),
-                  _LoginBtn(),
+                  const SizedBox(height: 20),
+                  _loginBtn(),
+                  Text(
+                    "Or",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 51, 50, 50),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MainPage(
+                                  selectedIndex: 0,
+                                )),
+                      );
+                      await authService.setloginStatus(false);
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                    ),
+                    child: const Text(
+                      'Continue Without Login',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 94, 92, 92), // Text color
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

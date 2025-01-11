@@ -56,22 +56,32 @@ class AuthService {
       body: json.encode({
         'email': email,
         'username': username,
-        'passwd': password,
+        //'passwd': password,
         'address': address,
         'contact_no': contactNo,
         'otp': otp,
       }),
     );
-
-    return response.statusCode == 200;
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print('JWT Token: $data[token]');
+      await secureStorage.write(key: 'jwt_token', value: data['token']);
+      await secureStorage.write(key: 'email', value: email);
+      // await secureStorage.write(key: 'login_status', value: true as String);
+      await setloginStatus(true);
+      String? token = await secureStorage.read(key: 'jwt_token');
+      print("The saved Token is ${token}");
+      return true;
+    } else
+      return false;
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(String email, String passwd) async {
     final url = Uri.parse('$_baseUrl/user/login');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email, 'passwd': password}),
+      body: json.encode({'email': email, 'passwd': passwd}),
     );
 
     if (response.statusCode == 200) {
@@ -79,6 +89,8 @@ class AuthService {
       print('JWT Token: $data[token]');
       await secureStorage.write(key: 'jwt_token', value: data['token']);
       await secureStorage.write(key: 'email', value: email);
+      await setloginStatus(true);
+
       String? token = await secureStorage.read(key: 'jwt_token');
       print("The saved Token is ${token}");
       return true;
@@ -105,6 +117,19 @@ class AuthService {
 
   Future<String?> getEmail() async {
     return await secureStorage.read(key: 'email');
+  }
+
+  Future<void> setloginStatus(bool status) async {
+    await secureStorage.write(key: 'login_status', value: status.toString());
+  }
+
+  Future<bool> getloginStatus() async {
+    String? stored_status = await secureStorage.read(key: 'login_status');
+    if (stored_status == 'true') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<void> logout() async {

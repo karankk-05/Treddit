@@ -12,8 +12,8 @@ import '../../chat/chat_provider.dart';
 
 class MyPostDetailsPage extends StatefulWidget {
   final Product product;
-
-  const MyPostDetailsPage({required this.product});
+  final String purpose;
+  const MyPostDetailsPage({required this.product, required this.purpose});
 
   @override
   _MyPostDetailsPageState createState() => _MyPostDetailsPageState();
@@ -64,7 +64,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
     );
   }
 
-  void _navigateToChatDetail(String sender, String reciever, int postId) {
+  void _navigateToChatDetail(String sender, String receiver, int postId) {
     Provider.of<ChatProvider>(
       context,
       listen: false,
@@ -75,7 +75,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
         builder: (context) => ChatDetailScreen(
           postId: postId,
           reciever: sender,
-          sender: reciever,
+          sender: receiver,
         ),
       ),
     );
@@ -86,6 +86,8 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
     final product = widget.product;
     final onPrimaryContainer = Theme.of(context).colorScheme.onPrimaryContainer;
     final theme = Theme.of(context).colorScheme;
+
+    final bool isOld = widget.purpose == 'old'; // Check if purpose is 'old'
 
     return Scaffold(
       appBar: AppBar(
@@ -105,6 +107,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
             MaterialPageRoute(
               builder: (context) => EditPostDetailsPage(
                 product: product,
+                purpose: widget.purpose,
               ),
             ),
           );
@@ -119,7 +122,9 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
             children: [
               SwitchListTile(
                 title: Text(
-                  _isSold ? 'Sold' : 'On Sale',
+                  _isSold
+                      ? (isOld ? 'Sold' : 'Issue Resolved')
+                      : (isOld ? 'On Sale' : 'On Display'),
                   style: TextStyle(color: onPrimaryContainer),
                 ),
                 value: !_isSold,
@@ -143,9 +148,7 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
+                    const SizedBox(height: 10),
                     Text(
                       product.title,
                       style: TextStyle(
@@ -155,14 +158,15 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      '₹${product.price}',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
+                    if (isOld) // Show price only if purpose is 'old'
+                      Text(
+                        '₹${product.price}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
                       ),
-                    ),
                     const SizedBox(height: 10),
                     Text(
                       product.body,
@@ -174,24 +178,20 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               Container(
                 width: double.infinity,
                 height: 5,
                 color: theme.surface,
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(left: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Buy Requests',
+                      isOld ? 'Buy Requests' : 'Requests', // Conditional text
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -205,7 +205,9 @@ class _MyPostDetailsPageState extends State<MyPostDetailsPage> {
                   ? Padding(
                       padding: const EdgeInsets.only(left: 10.0, top: 10),
                       child: Text(
-                        "No Buy Requests",
+                        isOld
+                            ? "No Buy Requests"
+                            : "No Requests", // Conditional text
                         style: TextStyle(
                           color: onPrimaryContainer,
                         ),

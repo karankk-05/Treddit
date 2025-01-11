@@ -1,4 +1,6 @@
-use super::super::json::*;
+use super::login::generate_token;
+use super::{super::json::*, utils::verify_otp};
+use crate::token_json::Token;
 use crate::utils::sanitize_check_email;
 use crate::{Otp, SharedState};
 use argon2::{
@@ -12,7 +14,6 @@ use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 use rand::Rng;
 use sqlx::PgPool;
-use std::collections::HashMap;
 
 pub async fn send_otp(
     State(state): State<SharedState>,
@@ -68,7 +69,7 @@ pub async fn send_otp(
 pub async fn create_user(
     State(state): State<SharedState>,
     Json(payload): Json<NewUser>,
-) -> Result<StatusCode, StatusCode> {
+) -> Result<Json<Token>, StatusCode> {
     let mut st = state.write().await;
 
     let mut new_user = payload;
@@ -90,28 +91,9 @@ pub async fn create_user(
     }
 
     save_passwd(&st.pool, &new_user.email, &new_user.passwd).await?;
-    Ok(StatusCode::OK)
-}
 
-pub async fn change_password(
-    State(state): State<SharedState>,
-    Json(payload): Json<ChPassd>,
-) -> Result<StatusCode, StatusCode> {
-    let mut st = state.write().await;
-    verify_otp(&payload.email, payload.otp, &mut st.otp_storage)?;
-    update_passwd(&st.pool, &payload.email, &payload.passwd).await?;
-    Ok(StatusCode::OK)
-}
-
-async fn update_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
-    let hash = get_hash(passwd).await?;
-    match sqlx::query!("update login set passwd = $1 where email = $2", hash, email)
-        .execute(pool)
-        .await
-    {
-        Ok(_) => Ok(()),
-        Err(_) => Err(StatusCode::NOT_FOUND),
-    }
+    let token = generate_token(new_user.email.to_string(), st.jwt_secret_key).await?;
+    Ok(Json(Token { token }))
 }
 
 async fn save_passwd(pool: &PgPool, email: &str, passwd: &str) -> Result<(), StatusCode> {
@@ -169,21 +151,6 @@ fn prepare_mail(
             eprintln!("{}", err);
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
-    }
-}
-
-fn verify_otp(
-    email: &str,
-    otp: u16,
-    otp_storage: &mut HashMap<String, Otp>,
-) -> Result<(), StatusCode> {
-    let stored_otp = &otp_storage.remove(email);
-    match stored_otp {
-        Some(val) => match !val.expired()? && val.email == email && val.otp == otp {
-            true => Ok(()),
-            false => Err(StatusCode::UNAUTHORIZED),
-        },
-        None => Err(StatusCode::UNAUTHORIZED),
     }
 }
 

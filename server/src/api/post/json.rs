@@ -1,28 +1,29 @@
 use chrono::{DateTime, Utc};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct AddWish {
     pub email: String,
     pub token: String,
     pub post_id: i32,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct RemoveWish {
     pub email: String,
     pub token: String,
     pub post_id: i32,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, JsonSchema)]
 pub struct PostCard {
     pub title: String,
     pub price: i32,
     pub image: Option<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, JsonSchema)]
 pub struct PostInfo {
     pub post_id: i32,
     pub owner: String,
@@ -36,7 +37,7 @@ pub struct PostInfo {
     pub reports: i32,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct ChPost {
     pub email: String,
     pub token: String,
@@ -48,7 +49,7 @@ pub struct ChPost {
     pub sold: Option<bool>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, JsonSchema)]
 pub struct ReportPost {
     pub email: String,
     pub token: String,

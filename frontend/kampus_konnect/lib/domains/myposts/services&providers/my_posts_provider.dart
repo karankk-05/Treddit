@@ -9,11 +9,11 @@ class MyPostsProvider with ChangeNotifier {
 
   List<Product> get products => _products;
 
-  Future<void> fetchUserPosts(String email) async {
+  Future<void> fetchUserPosts(String email, String purpose) async {
     // Fetch post IDs
     const baseUrl = MyApp.baseUrl;
     final response = await http.post(
-      Uri.parse('$baseUrl/user/posts'),
+      Uri.parse('$baseUrl/user/posts?purpose=$purpose'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
