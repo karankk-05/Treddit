@@ -43,7 +43,7 @@ pub async fn get_chat_ids(
     let claims = decode_token(payload.token.clone(), st.jwt_secret_key).await?;
     validate_token(payload.token, &claims.email, st.jwt_secret_key).await?;
     match sqlx::query!(
-        "select chat_id from post_chats where (sender = $1 and reciever = $2) or (sender = $2 and reciever = $1) and post_id = $3",
+        "select chat_id from post_chats where ((sender = $1 and reciever = $2) or (sender = $2 and reciever = $1)) and post_id = $3",
         claims.email,
         payload.communicator,
         id
