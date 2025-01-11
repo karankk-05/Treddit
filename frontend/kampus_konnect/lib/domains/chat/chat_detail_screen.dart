@@ -40,6 +40,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).colorScheme;
+    MediaQueryData mediaQueryData = MediaQuery.of(context);
 
     return Scaffold(
       backgroundColor: theme.primaryContainer,
@@ -142,7 +143,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         },
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.fromLTRB(
+          mediaQueryData.viewInsets.left + mediaQueryData.viewPadding.left + 3,
+          mediaQueryData.viewInsets.top + mediaQueryData.viewPadding.top,
+          mediaQueryData.viewInsets.right + mediaQueryData.viewPadding.right,
+          mediaQueryData.viewInsets.bottom +
+              mediaQueryData.viewPadding.bottom +
+              5,
+        ),
+        //padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
             Expanded(
